@@ -32,7 +32,11 @@ Yet to do...
 ### References
 
 [1] B. Peng et al., **R-Storm: Resource-Aware Scheduling in Storm**, ACM Middleware 2015
+
 [2] A. Shukla et al., **RIoTBench: An IoT benchmark for distributed stream processing systems**, Wiley Concurrency Computation 2017
+
 [3] G. Hesse et al., **Senska - Towards an Enterprise Streaming Benchmark**, Springer TPCTC 2017
+
 [4] S. Chatterjee, C. Morin, **Experimental Study on the Performance and Resource Utilization of Data Streaming Frameworks**, IEEE/ACM CCGrid 2018
+
 [5] M. Cermak et al., **A Performance Benchmark for NetFlow Data Analysis on Distributed Stream Processing Systems**, IEEE/IFIP NOMS 2016
