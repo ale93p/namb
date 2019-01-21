@@ -7,10 +7,8 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
-import org.apache.storm.utils.Utils;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.Map;
 
@@ -22,20 +20,18 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
     private int tuplesCounter;
 
     public BaseNamedBolt(){
-        this.bean = ManagementFactory.getThreadMXBean();
+
         this.tuplesCounter = 0;
 
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
         _collector = collector;
+        this.bean = ManagementFactory.getThreadMXBean();
         this.cpuTimeSupported = this.bean.isCurrentThreadCpuTimeSupported();
     }
 
     public void execute(Tuple tuple){
-
-
-
         String result = this.runTask(tuple);
         if (result != "none") _collector.emit(new Values(result));
         _collector.ack(tuple);

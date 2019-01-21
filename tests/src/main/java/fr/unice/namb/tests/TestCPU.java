@@ -1,8 +1,7 @@
 package fr.unice.namb.tests;
 
 import fr.unice.namb.tests.bolts.IdentityBolt;
-import fr.unice.namb.tests.spouts.TestingSpout;
-import fr.unice.namb.tests.bolts.BaseNamedBolt;
+import fr.unice.namb.tests.spouts.XMLSpout;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -17,7 +16,7 @@ public class TestCPU {
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("spout", new TestingSpout(), 1);
+        builder.setSpout("spout", new XMLSpout(), 1);
 
         IdentityBolt bolt = new IdentityBolt();
         builder.setBolt(bolt.name(), bolt, 1).globalGrouping("spout");
