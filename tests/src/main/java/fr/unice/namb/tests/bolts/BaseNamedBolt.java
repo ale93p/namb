@@ -17,7 +17,7 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
     private ThreadMXBean bean;
     private boolean cpuTimeSupported;
     private OutputCollector _collector;
-    private int tuplesCounter;
+    public int tuplesCounter;
 
     public BaseNamedBolt(){
 
@@ -29,6 +29,7 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
         _collector = collector;
         this.bean = ManagementFactory.getThreadMXBean();
         this.cpuTimeSupported = this.bean.isCurrentThreadCpuTimeSupported();
+        this.otherInitialization();
     }
 
     public void execute(Tuple tuple){
@@ -42,7 +43,9 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
 
     }
 
-    public String name(){ return "testing_bolt"; }
+    public void otherInitialization(){};
+
+    public abstract String name();
 
     public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("word"));}
 
