@@ -2,6 +2,7 @@ package fr.unice.namb.tests;
 
 import fr.unice.namb.tests.bolts.AggregationBolt;
 import fr.unice.namb.tests.bolts.IdentityBolt;
+import fr.unice.namb.tests.bolts.RankingBolt;
 import fr.unice.namb.tests.bolts.TransformationBolt;
 import fr.unice.namb.tests.spouts.XMLSpout;
 import org.apache.storm.Config;
@@ -24,7 +25,10 @@ public class TestCPU {
         builder.setBolt(transformationBolt.name(), transformationBolt, 1).globalGrouping("spout");
 
         AggregationBolt aggregationBolt = new AggregationBolt();
-        builder.setBolt(aggregationBolt.name(), aggregationBolt, 1).globalGrouping(transformationBolt.name());
+        builder.setBolt(aggregationBolt.name(), aggregationBolt, 2).shuffleGrouping(transformationBolt.name());
+
+        RankingBolt rankingBolt = new RankingBolt();
+        builder.setBolt(rankingBolt.name(), rankingBolt, 1).globalGrouping(aggregationBolt.name());
 
         if (args != null && args.length > 0){
             StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
