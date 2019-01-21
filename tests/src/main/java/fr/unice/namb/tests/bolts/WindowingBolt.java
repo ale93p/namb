@@ -12,12 +12,12 @@ public abstract class WindowingBolt extends BaseNamedBolt {
     @Override
     public String runTask(Tuple tuple) {
 
-        windowedValue = runSubTask(tuple);
-        return windowedValue.toString();
+        this.windowedValue = runSubTask(tuple, this.windowedValue);
+        return this.windowedValue.toString();
 
     }
 
-    public abstract Object runSubTask(Tuple tuple);
+    public abstract Object runSubTask(Tuple tuple, Object windowedValue);
 
 
 }
