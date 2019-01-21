@@ -15,7 +15,7 @@ Defined different common CPU-intensive DSP tasks categories[1-5]:
 * Identity (i.e. "Input data processing without executing any operation on them" [5])
 * Transformation (e.g. Parsing)
 * Filter
-* ~~Join~~ ([comment 456091723](https://github.com/ale93p/namb/issues/6#issuecomment-456091723))
+* ~~Join~~ ([merged with Windowing](https://github.com/ale93p/namb/issues/6#issuecomment-456091723))
 * Windowing (e.g. Aggregation, Sorting)
 * ~~Normalization (?)~~
 
