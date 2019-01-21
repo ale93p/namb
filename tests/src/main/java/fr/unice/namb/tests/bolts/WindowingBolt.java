@@ -5,9 +5,9 @@ import org.apache.storm.tuple.Tuple;
 import java.util.ArrayList;
 
 
-public abstract class WindowingBolt extends BaseNamedBolt {
+public abstract class WindowingBolt<T> extends BaseNamedBolt {
 
-    public Object windowedValue;
+    public T windowedValue;
 
     @Override
     public String runTask(Tuple tuple) {
@@ -17,7 +17,7 @@ public abstract class WindowingBolt extends BaseNamedBolt {
 
     }
 
-    public abstract Object runSubTask(Tuple tuple, Object windowedValue);
+    public abstract T runSubTask(Tuple tuple, T windowedValue);
 
 
 }
