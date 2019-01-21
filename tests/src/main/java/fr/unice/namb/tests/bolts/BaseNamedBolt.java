@@ -35,7 +35,7 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
     public void execute(Tuple tuple){
         String result = this.runTask(tuple);
         System.out.println(this.name() + " emitted " + result);
-        if (result != "none") _collector.emit(new Values(result));
+        if (result != null) _collector.emit(new Values(result));
         _collector.ack(tuple);
 
         this.tuplesCounter++;

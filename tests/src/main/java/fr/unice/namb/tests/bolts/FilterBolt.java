@@ -11,13 +11,13 @@ public class FilterBolt extends BaseNamedBolt {
 
     @Override
     public String runTask(Tuple tuple){
-        String data = tuple.getString(0);
-        if(data == "hello"){
-            return data;
+        long value = Long.parseLong(tuple.getString(0));
+        if(value >= 90){
+            return String.valueOf(value);
         }
         else
         {
-            return "none";
+            return null;
         }
     }
 }
