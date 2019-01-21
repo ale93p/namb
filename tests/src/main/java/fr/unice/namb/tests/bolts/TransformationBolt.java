@@ -30,7 +30,6 @@ public class TransformationBolt extends BaseNamedBolt {
             doc.normalize();
 
             mark = doc.getElementsByTagName("marks").item(0).getTextContent();
-            System.out.println("mark: " + mark);
 
         } catch (Exception e){
             e.printStackTrace();

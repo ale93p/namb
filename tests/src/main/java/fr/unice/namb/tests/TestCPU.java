@@ -1,6 +1,8 @@
 package fr.unice.namb.tests;
 
+import fr.unice.namb.tests.bolts.AggregationBolt;
 import fr.unice.namb.tests.bolts.IdentityBolt;
+import fr.unice.namb.tests.bolts.TransformationBolt;
 import fr.unice.namb.tests.spouts.XMLSpout;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -18,8 +20,11 @@ public class TestCPU {
 
         builder.setSpout("spout", new XMLSpout(), 1);
 
-        IdentityBolt bolt = new IdentityBolt();
-        builder.setBolt(bolt.name(), bolt, 1).globalGrouping("spout");
+        TransformationBolt transformationBolt = new TransformationBolt();
+        builder.setBolt(transformationBolt.name(), transformationBolt, 1).globalGrouping("spout");
+
+        AggregationBolt aggregationBolt = new AggregationBolt();
+        builder.setBolt(aggregationBolt.name(), aggregationBolt, 1).globalGrouping(transformationBolt.name());
 
         if (args != null && args.length > 0){
             StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
