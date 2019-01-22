@@ -23,7 +23,7 @@ Defined different common CPU-intensive DSP tasks categories[1-5]:
 
 These task have then been imolemented in a testing Storm topology and run in local mode to analyze their CPU consumption.
 
-The details of the benchmarks are described in issues #9 and #15. The findings summary can be found below.
+The details of the benchmarks are described in [Milestone 1](https://github.com/ale93p/namb/milestone/1). The findings summary can be found below.
 
 ### Results
 
