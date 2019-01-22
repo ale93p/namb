@@ -30,11 +30,13 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
-        String outputPath = "tests/logs/" + System.currentTimeMillis() + "_" + this.name() + "_cpu_load_.csv";
+        String outputPath = "/home/sdnuser/namb/tests/logs/" + System.currentTimeMillis() + "_" + this.name() + "_cpu_load_.csv";
         _collector = collector;
         this.bean = ManagementFactory.getThreadMXBean();
         this.cpuTimeSupported = this.bean.isCurrentThreadCpuTimeSupported();
         try {
+            File csvFile = new File(outputPath);
+            csvFile.getParentFile().mkdirs();
             this.csvWriter = new FileWriter(new File(outputPath));
             //Initialize header
             this.csvWriter.write("tot,sys,usr\n");
