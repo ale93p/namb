@@ -15,11 +15,15 @@ Defined different common CPU-intensive DSP tasks categories[1-5]:
 * Identity (i.e. "Input data processing without executing any operation on them" [5])
 * Transformation (e.g. Parsing)
 * Filter
+* Windowing (e.g. Aggregation, Sorting):
+  * Aggregation
+  * Ranking
 * ~~Join~~ ([merged with Windowing](https://github.com/ale93p/namb/issues/6#issuecomment-456091723))
-* Windowing (e.g. Aggregation, Sorting)
 * ~~Normalization (?)~~
 
-These task have then been imolemented in a testing Storm topology and run in localhost to analyze their CPU consumption.
+These task have then been imolemented in a testing Storm topology and run in local mode to analyze their CPU consumption.
+
+The details of the benchmarks are described in [Milestone 1](https://github.com/ale93p/namb/milestone/1). The findings summary can be found below.
 
 ### Results
 
