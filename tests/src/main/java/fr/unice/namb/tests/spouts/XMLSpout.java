@@ -28,6 +28,7 @@ public class XMLSpout extends BaseRichSpout {
 
     private SpoutOutputCollector _collector;
     private long count;
+    private long sleepTime;
     private File exampleXMLFile;
     private ArrayList<String> XMLData;
 
@@ -35,12 +36,11 @@ public class XMLSpout extends BaseRichSpout {
     //String[] words;
 
     public XMLSpout(){
-        try {
-            this.exampleXMLFile = new File("tests/resources/example.xml");
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        this.count = 0;
+        this.sleepTime = 1000;
+    }
+
+    public XMLSpout(long millis){
+        this.sleepTime = millis;
     }
 
     public Document parseXMLFile(File inpytFile){
@@ -113,10 +113,16 @@ public class XMLSpout extends BaseRichSpout {
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
+        try {
+            this.exampleXMLFile = new File("tests/resources/example.xml");
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        this.count = 0;
+
         Document doc = parseXMLFile(this.exampleXMLFile);
         this.XMLData = SplitXML(doc);
         this._collector = collector;
-
     }
 
     @Override
@@ -125,7 +131,7 @@ public class XMLSpout extends BaseRichSpout {
     }
 
     public void nextTuple(){
-        Utils.sleep(1000);
+        Utils.sleep(this.sleepTime);
         String nextTuple = this.XMLData.get((int)count%this.XMLData.size());
         _collector.emit(new Values(nextTuple), count++);
         System.out.println("emitted: \n" + nextTuple);
