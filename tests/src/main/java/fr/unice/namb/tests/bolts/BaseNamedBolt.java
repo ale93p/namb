@@ -8,6 +8,9 @@ import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Map;
@@ -16,6 +19,7 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
 
     private ThreadMXBean bean;
     private boolean cpuTimeSupported;
+    private FileWriter csvWriter;
     private OutputCollector _collector;
     public int tuplesCounter;
 
@@ -26,15 +30,24 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
+        String outputPath = "tests/logs/" + System.currentTimeMillis() + "_" + this.name() + "_cpu_load_.csv";
         _collector = collector;
         this.bean = ManagementFactory.getThreadMXBean();
         this.cpuTimeSupported = this.bean.isCurrentThreadCpuTimeSupported();
+        try {
+            this.csvWriter = new FileWriter(new File(outputPath));
+            //Initialize header
+            this.csvWriter.write("tot,sys,usr\n");
+            this.csvWriter.flush();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         this.otherInitialization();
     }
 
     public void execute(Tuple tuple){
         String result = this.runTask(tuple);
-        System.out.println(this.name() + " emitted " + result);
+        //System.out.println(this.name() + " emitted " + result);
         if (result != null) _collector.emit(new Values(result));
         _collector.ack(tuple);
 
@@ -66,6 +79,14 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
             tot = bean.getCurrentThreadCpuTime();
             usr = bean.getCurrentThreadUserTime();
             sys = tot - usr;
+
+            try {
+                this.csvWriter.append(tot + "," + sys + "," + usr + "\n");
+                this.csvWriter.flush();
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
             System.out.println("TOT: " + tot);
             System.out.println("SYS: " + sys);
             System.out.println("USR: " + usr);
