@@ -2,3 +2,5 @@
 namb.iml
 */target/*
 .*
+__pycache__
+*.pdf
