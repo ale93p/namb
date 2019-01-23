@@ -29,3 +29,4 @@ def boxplot(root, opts = {}):
     output_name = "{}_boxplot.{}".format(root, opts["img_format"])
     if "out" in opts: plt.savefig(os.path.join(opts["out"], output_name))
     else: plt.show()
+    plt.close('all')
