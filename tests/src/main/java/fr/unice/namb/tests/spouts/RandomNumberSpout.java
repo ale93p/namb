@@ -38,7 +38,7 @@ public class RandomNumberSpout extends BaseRichSpout {
 
     public void nextTuple(){
         Utils.sleep(this.sleepTime);
-        int nextTuple = this.randomNumber.nextInt(100);
+        String nextTuple = String.valueOf(this.randomNumber.nextInt(100));
         _collector.emit(new Values(nextTuple), count++);
         System.out.println("emitted: \"" + nextTuple + "\"");
     }
