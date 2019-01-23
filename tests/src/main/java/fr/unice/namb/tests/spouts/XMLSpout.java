@@ -114,7 +114,8 @@ public class XMLSpout extends BaseRichSpout {
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
         try {
-            this.exampleXMLFile = new File("tests/resources/example.xml");
+            this.exampleXMLFile = new File("/home/sdnuser/namb/tests/resources/example.xml");
+            System.out.println("Looking for file in: " + this.exampleXMLFile);
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -134,7 +135,7 @@ public class XMLSpout extends BaseRichSpout {
         Utils.sleep(this.sleepTime);
         String nextTuple = this.XMLData.get((int)count%this.XMLData.size());
         _collector.emit(new Values(nextTuple), count++);
-        System.out.println("emitted: \n" + nextTuple);
+        // System.out.println("emitted: \n" + nextTuple);
     }
 
     @Override
