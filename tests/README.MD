@@ -44,7 +44,7 @@ Each topology has been run over two workers:
 
 | A | B |
 |-------------------|------------------|
-|![](plots/common_individual_boxplot.pdf.pdf)| ![](images/common_full_topo_boxplot.pdf)|
+|![](logs/plots/common_individual_boxplot.pdf.pdf)| ![](logs/plots/common_full_topo_boxplot.pdf)|
 
 
 ### Abstraction
