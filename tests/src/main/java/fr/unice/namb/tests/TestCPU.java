@@ -1,16 +1,12 @@
 package fr.unice.namb.tests;
 
 import fr.unice.namb.tests.bolts.*;
-import fr.unice.namb.tests.spouts.RandomNumberSpout;
+// import fr.unice.namb.tests.spouts.RandomNumberSpout;
 import fr.unice.namb.tests.spouts.XMLSpout;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
-import org.apache.storm.generated.KillOptions;
-import org.apache.storm.generated.Nimbus.Client;
 import org.apache.storm.topology.TopologyBuilder;
-import org.apache.storm.utils.NimbusClient;
-import org.apache.storm.utils.Utils;
 
 public class TestCPU {
 
