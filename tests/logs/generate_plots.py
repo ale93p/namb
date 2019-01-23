@@ -39,4 +39,4 @@ if __name__ == "__main__":
         for test in valid_names:
             main(test, args)
     else:
-        main(args.test_name[0], args)
+        main(args.test_name, args)
