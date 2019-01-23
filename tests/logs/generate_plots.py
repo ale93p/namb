@@ -8,10 +8,11 @@ import plotting as p
 plots_dir = './plots'
 
 def main(test_name, args):
-    if args.just_show: 
-        p.boxplot(test_name)
-    else: 
-        p.boxplot(test_name, out = plots_dir)
+    opts = {}
+    if not args.just_show: opts["out"] = plots_dir
+    opts["img_format"] = args.out_format
+    
+    p.boxplot(test_name, opts)
 
 def init():
     if not os.path.exists(plots_dir):
@@ -28,6 +29,7 @@ if __name__ == "__main__":
     group.add_argument("test_name", metavar="test_name", type=str, nargs='?', choices=valid_names, help="generates plots for the test name specified")
     group.add_argument("-a", "--all", dest="all_tests", action="store_true", default=False, help="generates plots for all the available tests")
     parser.add_argument("-s", "--show", dest="just_show", action="store_true", default=False, help="only shows the plot instead of saving the pdf")
+    parser.add_argument("-f", "--format", dest="out_format", choices=['pdf','png', 'jpg'], default='pdf', help="output image format")
     
 
     args = parser.parse_args()

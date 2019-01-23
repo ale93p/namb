@@ -4,7 +4,7 @@ import re
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def boxplot(root, out = None):
+def boxplot(root, opts = {}):
 
     cpu_to_plot = {}
     re_pattern = '([0-9]*)_([a-z]+?)_(bolt|[0-9]*_)'
@@ -25,5 +25,7 @@ def boxplot(root, out = None):
     plt.xticks(range(1, len(labels) + 1), labels)
     plt.ylabel("CPU Load (ms)")
     plt.title(root.replace("_", " "))
-    if out: plt.savefig(os.path.join(out, "{}_boxplot.pdf".format(root)))
+
+    output_name = "{}_boxplot.{}".format(root, opts["img_format"])
+    if "out" in opts: plt.savefig(os.path.join(opts["out"], output_name))
     else: plt.show()
