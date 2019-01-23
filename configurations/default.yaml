@@ -82,6 +82,9 @@ data_stream:
     #TODO: define specific data generation types or leave definition to user?
     #TODO: should the size be variable? variable directly at input or variable inside the application? 
     #       e.g. sentence -> split -> words, json -> just a parameter chosen
+    # The size of data impact the processing time: 
+    # * should be implemented a way to change the size during processing?
+    # * or simply changing the processing load of tasks would be enough?
     size_avg: 8 # min-max size of the single data
     data_type: text # [number, text][1]
     ## Input Ratio
