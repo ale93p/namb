@@ -42,7 +42,10 @@ Each topology has been run over two workers:
 
 ### Findings
 
-Yet to do...
+| A | B |
+|-------------------|------------------|
+|![](plots/common_individual_boxplot.pdf.pdf)| ![](images/common_full_topo_boxplot.pdf)|
+
 
 ### Abstraction
 
