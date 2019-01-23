@@ -8,8 +8,10 @@ import plotting as p
 plots_dir = './plots'
 
 def main(test_name, args):
-    if args.just_show: p.boxplot(test_name)
-    else: p.boxplot(test_name, out = plots_dir)
+    if args.just_show: 
+        p.boxplot(test_name)
+    else: 
+        p.boxplot(test_name, out = plots_dir)
 
 def init():
     if not os.path.exists(plots_dir):
@@ -34,6 +36,5 @@ if __name__ == "__main__":
     if args.all_tests:
         for test in valid_names:
             main(test, args)
-    
     else:
         main(args.test_name[0], args)
