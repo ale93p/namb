@@ -1,4 +1,4 @@
-# Logs
+# Results plotting
 
 Here are all the tests results. It's also available a python script to generate the plots.
 
