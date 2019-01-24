@@ -75,6 +75,10 @@ Aggregation     Aggregation
            (100)
 ```
 
+#### Step 5
+
+The two topologies has been then tested with different input throughputs to confirm the consistency on the CPU load.
+
 ### Findings
 
 The CPU Load is represented as **ms of CPU time / 1000 tuples**.
