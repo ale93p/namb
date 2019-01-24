@@ -1,4 +1,4 @@
-# Tests Section
+# Preliminary Tests Section
 
 Where testing is made
 
@@ -38,42 +38,42 @@ The common tasks has been tested one by one in a spout->task topology:
 
 #### Step 2
 A sample topology has been built using the implementation of the common tasks, under the form:
-    ```
-             XMLSpout
-                |
-          Transformation
-                |
-              Filter
-            /        \
-    Aggregation     Aggregation
-            \        /
-              Ranking
-    ```
+```
+         XMLSpout
+            |
+      Transformation
+            |
+          Filter
+        /        \
+Aggregation     Aggregation
+        \        /
+          Ranking
+```
 
 #### Step 3
 The BusyWaitBolt has been run with different cycles values to get the CPU Load generated.
 
 #### Step 4
-Given the results ([BusyWait individual](#BusyWait Benchmark)) of the previous step,
+Given the results ([BusyWait individual](#busywait-benchmark)) of the previous step,
 has been implemented a topology using only BusyWait bolts, changing the cycles number
-in ordet to simulate the load seen for the topology in [step 2](#Step 2).
+in ordet to simulate the load seen for the topology in [step 2](#step-2).
 
 Between paranthesis the number of thousands of cycles set to simulate the tasks:
-    ```
-             XMLSpout
-                |
-          Transformation
-              (400)
-                |
-              Filter
-              (0.75)
-            /        \
-    Aggregation     Aggregation
-      (0.80)          (0.80)
-            \        /
-              Ranking
-               (100)
-    ```
+```
+         XMLSpout
+            |
+      Transformation
+          (400)
+            |
+          Filter
+          (0.75)
+        /        \
+Aggregation     Aggregation
+  (0.80)          (0.80)
+        \        /
+          Ranking
+           (100)
+```
 
 ### Findings
 
