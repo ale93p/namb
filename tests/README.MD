@@ -113,7 +113,16 @@ the simulated tasks replicates the same CPU Load than the real tasks.
 
 ### Abstraction
 
-Yet to do...
+A possible abstraction for the CPU load can then be the number of _thousands of cycles_ for the BusyWait. We could also
+define three load values, under a literal form, that correspond to predefined cycles values, so to be directly and easily
+configured by the user:
+
+| Literal Load | Corresponding K cycles | Motivation |
+|--------------|------------------------|------------|
+| **lower** | 0,5 | slightly less than _aggregation_ |
+| **medium** | 150 | almost _ranking_ |
+| **higher** | 500 | slightly more than _transformation_ |
+
 
 ### References
 
