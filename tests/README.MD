@@ -96,7 +96,12 @@ the simulated tasks replicates the same CPU Load than the real tasks.
 
 #### Comparison with different input throughput
 
-Yet to do...
+| Input Tput (t/s) | Common Tasks Topology | BusyWait Simulated Topology |
+|------------------|-----------------------|-----------------------------|
+|   10 | ![](logs/plots/common_10_full_topo_boxplot.png)| ![](logs/plots/busywait_10_full_topo_boxplot.png)|
+|  100 | ![](logs/plots/common_100_full_topo_boxplot.png)| ![](logs/plots/busywait_100_full_topo_boxplot.png)|
+| 1000 | ![](logs/plots/common_full_topo_boxplot.png)| ![](logs/plots/busywait_full_topo_boxplot.png)|
+|10000 | ![](logs/plots/common_10000_full_topo_boxplot.png)| ![](logs/plots/busywait_10000_full_topo_boxplot.png)|
 
 ### Abstraction
 
