@@ -2,7 +2,7 @@
 
 Where testing is made
 
-## CPU
+## CPU Load Abstraction
 
 ### Objective
 
@@ -10,6 +10,7 @@ Find the CPU load from different tasks, so to define a load abstraction in the c
 
 ### Methodology
 
+### Common DSP Tasks
 Defined different common CPU-intensive DSP tasks categories[1-5]:
 
 * Identity (i.e. "Input data processing without executing any operation on them" [5])
@@ -21,13 +22,22 @@ Defined different common CPU-intensive DSP tasks categories[1-5]:
 * ~~Join~~ ([merged with Windowing](https://github.com/ale93p/namb/issues/6#issuecomment-456091723))
 * ~~Normalization (?)~~
 
-These task have then been imolemented in a testing Storm topology and run in local mode to analyze their CPU consumption.
+#### Environment
+- The tests has been run in a single machine. The version of Storm used is **1.2.2**. 
+- The cluster has been set with ZooKeeper, Nimbus and Supervisor co-existing in a single machine.
+- Each topology has been run over two workers.
+- The base input throughput (Spout generation) is `1000tuples/s`.
 
-The tests has been run in a single machine. The version of Storm used is **1.2.2**. 
-The cluster has been set with ZooKeeper, Nimbus and Supervisor co-existing in a single machine.
-Each topology has been run over two workers:
-* individual tasks benchmarks has been run in a spout->bolt manner.
-* full topology tasks has been run as:
+#### Step 1
+The common tasks has been tested one by one in a spout->task topology:
+* Identity: `XMLSpout->IdentityBolt`
+* Transformation: `XMLSpout->TransformationBolt`
+* Filter: `RandomIntegerSpout->FilterBolt`
+* Aggregation: `RandomIntegerSpout->AggregationBolt`
+* Ranking: `RandomIntegerSpout->AggregationBolt`
+
+#### Step 2
+A sample topology has been built using the implementation of the common tasks, under the form:
     ```
              XMLSpout
                 |
@@ -40,12 +50,53 @@ Each topology has been run over two workers:
               Ranking
     ```
 
+#### Step 3
+The BusyWaitBolt has been run with different cycles values to get the CPU Load generated.
+
+#### Step 4
+Given the results ([BusyWait individual](#BusyWait Benchmark)) of the previous step,
+has been implemented a topology using only BusyWait bolts, changing the cycles number
+in ordet to simulate the load seen for the topology in [step 2](#Step 2).
+
+Between paranthesis the number of thousands of cycles set to simulate the tasks:
+    ```
+             XMLSpout
+                |
+          Transformation
+              (400)
+                |
+              Filter
+              (0.75)
+            /        \
+    Aggregation     Aggregation
+      (0.80)          (0.80)
+            \        /
+              Ranking
+               (100)
+    ```
+
 ### Findings
 
-| A | B |
+#### Common Tasks Benchmarks
+
+| Common tasks individual  | Common tasks topology |
 |-------------------|------------------|
 |![](logs/plots/common_individual_boxplot.png)| ![](logs/plots/common_full_topo_boxplot.png)|
 
+Small and not relevant difference when running in full topology.
+
+#### BusyWait Benchmark
+
+| BusyWait individual | BusyWait simulated topology |
+|-------------------|------------------|
+|![](logs/plots/busywait_individual_boxplot.png)| ![](logs/plots/busywait_full_topo_boxplot.png)|
+
+In the figure on the right we can see that using the parameters previously described,
+the simulated tasks replicates the same CPU Load than the real tasks.
+
+#### Comparison with different input throughput
+
+Yet to do...
 
 ### Abstraction
 
