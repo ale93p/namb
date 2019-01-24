@@ -77,6 +77,8 @@ Aggregation     Aggregation
 
 ### Findings
 
+The CPU Load is represented as **ms of CPU time / 1000 tuples**.
+
 #### Common Tasks Benchmarks
 
 | Common tasks individual  | Common tasks topology |
@@ -90,6 +92,9 @@ Small and not relevant difference when running in full topology.
 | BusyWait individual | BusyWait simulated topology |
 |-------------------|------------------|
 |![](logs/plots/busywait_individual_boxplot.png)| ![](logs/plots/busywait_full_topo_boxplot.png)|
+
+In the figure on the left, the number in the x axis represent the number of thousand of cycles with
+which the BusyWait bolt was configured for the test.
 
 In the figure on the right we can see that using the parameters previously described,
 the simulated tasks replicates the same CPU Load than the real tasks.
