@@ -13,15 +13,20 @@ Tests from [#9](https://github.com/ale93p/namb/issues/9):
 To generate the plots for the tests in this folder, use the **python3** script `generate_plots.py`. The plots in pdf format will be stored in the folder `./plots`.
 
 ```
-usage: generate_plots.py [-h] [-a] [-s] [test_name]
+usage: generate_plots.py [-h] [-a] [-s] [-f {pdf,png,jpg}] [test_name]
 
 Generate plots for tests results
 
 positional arguments:
-  test_name   generates plots for the test name specified (default: None)
+  test_name             generates plots for the test name specified (default:
+                        None)
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -a, --all   generates plots for all the available tests (default: False)
-  -s, --show  only shows the plot instead of saving the pdf (default: False)
+  -h, --help            show this help message and exit
+  -a, --all             generates plots for all the available tests (default:
+                        False)
+  -s, --show            only shows the plot instead of saving the pdf
+                        (default: False)
+  -f {pdf,png,jpg}, --format {pdf,png,jpg}
+                        output image format (default: pdf)
 ```
