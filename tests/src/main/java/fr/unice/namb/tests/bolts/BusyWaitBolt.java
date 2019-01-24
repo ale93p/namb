@@ -5,9 +5,10 @@ import org.apache.storm.tuple.Tuple;
 public class BusyWaitBolt extends BaseNamedBolt {
 
     private long cycles;
+    private String name = "busywait_bolt";
 
-    public BusyWaitBolt(long kCycles){
-        this.cycles = kCycles * 1000;
+    public BusyWaitBolt(double kCycles){
+        this.cycles = Math.round(kCycles * 1000);
     }
 
     @Override
@@ -16,9 +17,13 @@ public class BusyWaitBolt extends BaseNamedBolt {
         return tuple.getString(0);
     }
 
+    public void setName(String n){
+        this.name = n;
+    }
+
     @Override
     public String name(){
-        return "busywait_bolt";
+        return name;
     }
 
 }
