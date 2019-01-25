@@ -33,51 +33,42 @@ and the **Dataflow** that describe the application tasks composition.
 Both of this components has several fundamental characteristics that defines the behaviour of the entire application.
 
 ### Data Stream
-* **Data Characteristics**
-
+* **Data Characteristics**<br/>
 The flow of data arriving in input is normally of two kinds: **numerical** or **text**;
 and the size of a single data unit can consequently vary.
 Especially textual flows, where we can find different formats: _json_, _xml_, _plain text_, and so on.
 
-* **Input Ratio**
-
+* **Input Ratio**<br/> 
 The ratio at which the data arrive isn't always constant, it may vary depending on the context.
 For example, social network usage is higher in mornings and evenings, sensors-networks may have random peak moments.
 
 ### Dataflow
-* **DAG Depth**
-
+* **DAG Depth**<br/>
 A DSP application can be representes with a Directed Acyclic Graph (DAG), composed by a sequence of tasks.
 This sequence can be seen as a tree, so to give to the application a tree depth.
 
-* **Scalability**
-
+* **Scalability**<br/>
 One main characteristic of these middlewares is to perform tasks in a distributed (and parallel) manner.
 For that reason each single task can be parallelized and replicated to scale out the application performances.
 
-* **Connection**
-
+* **Connection**<br/>
 The flow of data between tasks can follow different kinds of topologies. From linear applications that simply execute
 one task after the another, to more complex trees where the data is duplicated between more paths, or different paths
 rejoin to a single one.
 
-* **Dependency**
-
+* **Dependency**<br/>
 A task may have to wait data coming from more than one path, like in the case of Complex Event Processing,
 and combine them to generate its output.
 
-* **Traffic Balancing**
-
+* **Traffic Balancing**<br/>
 When the flow splits in more pathways, or when a single task is parallelized, the balancing of the data over
 the several available paths not always is fully balanced. It may happen that some tasks receives more data than
 the others, that can be cause by a filtering task or by an hash routing.
 
-* **Message Reliability**
-
+* **Message Reliability**<br/>
 Most DSP allow the enabling of a reliability mechanism to ensure message processing.
 
-* **Workload**
-
+* **Workload**<br/>
 Each task by which the DAG is composed has to process the data, based on queries and instruction given at implementation.
 Between these different operations there are some that are more costly than others.
 For that reason, the processing load is not always balanced all over the applications, and we may find a _bottleneck_ task
