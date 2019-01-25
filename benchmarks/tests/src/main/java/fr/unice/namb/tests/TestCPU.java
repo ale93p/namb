@@ -10,7 +10,7 @@ import org.apache.storm.topology.TopologyBuilder;
 
 public class TestCPU {
 
-    private static long tuplesInterval = 1;
+    private static long tuplesInterval = 0;
 
     private static void commonFullTopo(TopologyBuilder builder){
         IdentityBolt identityBolt =
@@ -74,8 +74,8 @@ public class TestCPU {
         conf.put(Config.TOPOLOGY_WORKERS, 1);
 
         TopologyBuilder builder = new TopologyBuilder();
-        // commonFullTopo(builder);
-        busywaitFullTopo(builder);
+        commonFullTopo(builder);
+        //busywaitFullTopo(builder);
 
         if (args != null && args.length > 0){
             System.out.println("RUNNING IN REMOTE");
