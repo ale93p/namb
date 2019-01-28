@@ -4,16 +4,6 @@
 
 total_test_duration: 300 # seconds of application running
 
-## Fault Tolerance
-#TODO: I think this is out of scope. 
-#     It's an external behaviour not related to the application
-#     If the user want to test fault tolerance of a system should
-#     externally implement it by himself
-# fault_tolerance:
-#   machines: 0 # n. of machines to kill at each killphase (if 0 no fault tolerance)
-#   interval: 0 # ms between killphases (if 0 just one killphase)
-
-
 ###############################################
 # DATAFLOW: application (DAG) properties     #
 ###############################################
@@ -22,33 +12,19 @@ dataflow:
   ## DAG Depth
   depth:
     tree_levels: 3 # Number of the DAG levels (seen as a tree)
-    #TODO: is the application always representable as a DAG?
 
   ## Scalability
 
   # OPTION A
   scalability:
-    #TODO: should define parallelism per component?
     parallelism: 10 # Total number of executors
-  
-    # OPTION B
-    parallelism: # specify parallelism per tree_level
-    # list length must match tree depth
-      - 2 # spout
-      - 3 # bolt_1
-      - 2 # bolt_2
-      # ... and so on
-  #TODO: can both versions co-exist?
-  # I'd prefer version A, so that it remains more "standardizable"
   
   ## Connection and Dependency
   connection: 
     shape: linear #[linear, diamond, star]
-    dependency: false 
 
   ## Traffic Balancing
   balanced_traffic: true # Boolean, true if routing between tasks is balanced, false otherwise
-  #TODO: define how to implement unbalanced traffic (grouping methods?)
   # proposition, sobstitute with:
   # routing: [round-robin, hash, ???]
 
@@ -57,12 +33,10 @@ dataflow:
 
   ## Processing
   workload:
-    #TODO: should this be defined per component?
-    # io_simulation: 1 # ms of i/o operations # We don't need io simulation, as if we want 
-    # total_duration: 3 # total ms time of execution # duration should be hardware-dependant
-    
+
     processing: 300 # CPU load value (may be implemented by keywoards (low, medium, high... pre-defined functions))
-    #TODO: define what balanced mean, if unbalanced how the load is distributed? 
+    #TODO: define what balanced mean, if unbalanced how the load is distributed?
+    #TODO: should this be defined per component?
     #   (i.e. different components different computation)
     balancing: true # or false
 
@@ -81,16 +55,10 @@ data_stream:
 # + external: data source connected (kafka, ...)
 
   synthetic:
-    #TODO: define specific data generation types or leave definition to user?
-    #TODO: should the size be variable? variable directly at input or variable inside the application? 
-    #       e.g. sentence -> split -> words, json -> just a parameter chosen
-    # The size of data impact the processing time: 
-    # * should be implemented a way to change the size during processing?
-    # * or simply changing the processing load of tasks would be enough?
-    size_avg: 8 # min-max size of the single data
+    size: 8 # min-max size of the single data
     data_type: text # [number, text][1]
     ## Input Ratio
-    arrival_type: cbr # [cbr, variable] #TODO: implement variable ratio in some manner, how?
+    arrival_type: cbr # [cbr, variable]
       # Refer to [2] for different 'variable' arrival types (unifrom, burst, saw-tooth, normal, bimodal)
   
   #TODO: check needed configurations, e.g. kafka topics
@@ -99,7 +67,7 @@ data_stream:
   #   host: 127.0.0.1
   #   port: 1234
   #   topic: test_topic
-  #   size_avg: 8
+  #   size: 8 # ??
   #   data_type: text
 
 
