@@ -58,8 +58,8 @@ data_stream:
     size: 8 # size of the single data
     data_type: text # [number, text][1]
     ## Input Ratio
-    arrival_type: cbr # [cbr, variable]
-      # Refer to [2] for different 'variable' arrival types (unifrom, burst, saw-tooth, normal, bimodal)
+    arrival_distribution: cbr # [unifrom, burst, saw-tooth, normal, bimodal]
+      # Refer to [2] for different 'variable' arrival types 
   
   #TODO: check needed configurations, e.g. kafka topics
   # 
