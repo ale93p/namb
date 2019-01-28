@@ -3,6 +3,18 @@
 **NAMB** (__N__*ot* __A__ __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark application for Data Stream Processing Systems (DSP). 
 NAMB aims to be a general and standardized benchmark to generate reproducible results.
 
+## Table of Contents
+
+* [The Idea](#the-idea)
+  * [Why?](#why)
+  * [How?](#how)
+  * [Objectives](#objectives)
+* [Fundamental Characteristics](#fundamental-characteristics)
+  * [Data Stream](#data-stream)
+  * [Dataflow](#dataflow)
+  * [Others](#others)
+* [How to Run It](#how-to-run-it)
+  
 ## The Idea
 
 #### Why?
@@ -71,6 +83,9 @@ Each task by which the DAG is composed has to process the data, based on queries
 Between these different operations there are some that are more costly than others.
 For that reason, the processing load is not always balanced all over the applications, and we may find a _bottleneck_ task
 that could require more time to execute more complex operations than others.
+
+### Others
+[TODO]
 
 ## How to Run It
 [TODO]
