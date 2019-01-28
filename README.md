@@ -1,6 +1,7 @@
 # NAMB
 
-**NAMB** (__N__*ot* __A__ __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark application for Data Stream Processing Systems (DSP). 
+**NAMB** (__N__*ot* __A__ __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark
+application for Data Stream Processing Systems (DSP). 
 NAMB aims to be a general and standardized benchmark to generate reproducible results.
 
 ## Table of Contents
@@ -13,6 +14,9 @@ NAMB aims to be a general and standardized benchmark to generate reproducible re
   * [Data Stream](#data-stream)
   * [Dataflow](#dataflow)
   * [Others](#others)
+* [Implementation](#implementation)
+  * [Parameters Abstractions](#parameters-abstractions)
+  * [Application Components](#application-components)
 * [How to Run It](#how-to-run-it)
   
 ## The Idea
@@ -31,10 +35,13 @@ We then abstract these characteristics in a set of parameters configurable by th
 #### Objectives
 Given these configurations, NAMB will __deterministically__ create a DSP application. 
 The challenges the project overcome are:
-* **Ease-of-use**: the configuration given shall not be over-complicated, but give the minimum set of parameters that allows the best application definition flexibility.
+* **Ease-of-use**: the configuration given shall not be over-complicated, but give the minimum set of parameters that allows
+the best application definition flexibility.
 * **Determinism**: given the same set of configurations the application will always be the same, no use of random functions.
-* **Standardization**: the definition of the parameters has to make the benchmark results, over different systems/infrastructures, comparable **without the need of reproducing it**.
-* **Automation**: the application will be automatically created without the need of the user to __touch__ the specific middleware APIs.
+* **Standardization**: the definition of the parameters has to make the benchmark results, over different 
+systems/infrastructures, comparable **without the need of reproducing it**.
+* **Automation**: the application will be automatically created without the need of the user to __touch__ the specific 
+middleware APIs.
 
 ## Fundamental Characteristics
 A DSP application can be seen as composed by two major components: 
@@ -66,10 +73,6 @@ The flow of data between tasks can follow different kinds of topologies. From li
 one task after the another, to more complex trees where the data is duplicated between more paths, or different paths
 rejoin to a single one.
 
-* **Dependency**<br/>
-A task may have to wait data coming from more than one path, like in the case of Complex Event Processing,
-and combine them to generate its output.
-
 * **Traffic Balancing**<br/>
 When the flow splits in more pathways, or when a single task is parallelized, the balancing of the data over
 the several available paths not always is fully balanced. It may happen that some tasks receives more data than
@@ -85,6 +88,33 @@ For that reason, the processing load is not always balanced all over the applica
 that could require more time to execute more complex operations than others.
 
 ### Others
+* _Dependency_<br/>
+A task may have to wait data coming from more than one path, like in the case of Complex Event Processing,
+and combine them to generate its output.
+_This characteristic is not considered in this first version of the benchmark, as we think the impact it has can be
+alternatively simulated by changing the traffic balancing and so the tuple arrival frequency._
+
+* _Statefulness_<br/>
+A task may be statuful, keeping stored values to use and compare with future and updated data, normally implemented through windows.
+_The state of a task, and how it is implemented, is stricly dependant to the application. For that reason we decide not to implement it in our application, as we wouldn't be able to give a satisfying abstraction of the property._
+
+* _IO Operations_<br/>
+A common task in data processing is the interaction with an external database (read or write), these operations will
+consume time and resources. However, considered the _real-time_ objective of data streaming applications, it is common
+practice to use in-memory databases.
+_Thus, considering the used time unimportant, we don't include it in the available parameters._
+
+* _Fault Tolerance_<br/>
+Most DSP systems are designed to be fault resistant. In case of a node failure or a single task crash, they implements
+mechanisms to automatically restore the previous status, minimizing the damages.
+_We don't take it into account because we considere fault tolerance as an external behavious and not application related. 
+Our objective is to create a benchamark application, Fault Tolerance is something that has impact over the application but
+is not directly controlled by it._
+
+## Implementation
+### Parameters Abstractions
+[TODO]
+### Application Components
 [TODO]
 
 ## How to Run It
