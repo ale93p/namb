@@ -16,7 +16,7 @@ jobs:
     
     steps:
       - checkout:
-        path: ~/namb
+          path: ~/namb
 
       # Download and cache dependencies
       - restore_cache:
