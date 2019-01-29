@@ -38,7 +38,7 @@ dataflow:
     #TODO: define what balanced mean, if unbalanced how the load is distributed?
     #TODO: should this be defined per component?
     #   (i.e. different components different computation)
-    balancing: true # or false
+    balancing: balanced # [balanced, increasing, decreasing, bell]
 
 
 ###############################################
@@ -55,11 +55,11 @@ data_stream:
 # + external: data source connected (kafka, ...)
 
   synthetic:
-    size: 8 # min-max size of the single data
+    size: 8 # size of the single data
     data_type: text # [number, text][1]
     ## Input Ratio
-    arrival_type: cbr # [cbr, variable]
-      # Refer to [2] for different 'variable' arrival types (unifrom, burst, saw-tooth, normal, bimodal)
+    arrival_distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
+      # Refer to [2] for different 'variable' arrival types 
   
   #TODO: check needed configurations, e.g. kafka topics
   # 
