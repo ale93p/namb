@@ -1,3 +1,5 @@
+# Some entries borrowed from https://github.com/github/gitignore
+
 # Maven files
 target/
 pom.xml.tag
