@@ -108,6 +108,15 @@ public class ConfigScheme {
             private int data_size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
             private DataType data_type = ConfigDefaults.DS_SYNTHETIC_DATA_TYPE;
             private Distribution arrival_distribution = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
+            private int arrival_rate = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_RATE;
+
+            public int getArrival_rate() {
+                return arrival_rate;
+            }
+
+            public void setArrival_rate(int arrival_rate) {
+                this.arrival_rate = arrival_rate;
+            }
 
             public int getData_size() {
                 return data_size;

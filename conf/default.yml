@@ -55,7 +55,8 @@ data_stream:
     data_type: text # [numeric, text][1]
     ## Input Ratio
     arrival_distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
-      # Refer to [2] for different 'variable' arrival types 
+      # Refer to [2] for different 'variable' arrival types
+    arrival_rate: 1000 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
   
   #TODO: check needed configurations, e.g. kafka topics
   # 
