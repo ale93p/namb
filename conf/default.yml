@@ -10,9 +10,12 @@ total_test_duration: 300 # seconds of application running
 
 dataflow:
   ## DAG Depth
-  depth: 3
+  depth:
+    tree_levels: 3 # Number of the DAG levels (seen as a tree)
 
   ## Scalability
+
+  # OPTION A
   scalability:
     parallelism: 10 # Total number of executors
   
@@ -21,7 +24,7 @@ dataflow:
     shape: linear #[linear, diamond, star]
 
   ## Traffic Balancing
-  traffic_balancing: true # Boolean, true if routing between tasks is balanced, false otherwise
+  balanced_traffic: true # Boolean, true if routing between tasks is balanced, false otherwise
   # proposition, sobstitute with:
   # routing: [round-robin, hash, ???]
 
@@ -30,11 +33,12 @@ dataflow:
 
   ## Processing
   workload:
+
     processing: 300 # CPU load value (may be implemented by keywoards (low, medium, high... pre-defined functions))
     #TODO: define what balanced mean, if unbalanced how the load is distributed?
     #TODO: should this be defined per component?
     #   (i.e. different components different computation)
-    balancing: balanced # [balanced, increasing, decreasing, bell]
+    balancing: true # or false
 
 
 ###############################################
@@ -51,11 +55,11 @@ data_stream:
 # + external: data source connected (kafka, ...)
 
   synthetic:
-    data_size: 8 # size of the single data
-    data_type: text # [numeric, text][1]
+    size: 8 # min-max size of the single data
+    data_type: text # [number, text][1]
     ## Input Ratio
-    arrival_distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
-      # Refer to [2] for different 'variable' arrival types 
+    arrival_type: cbr # [cbr, variable]
+      # Refer to [2] for different 'variable' arrival types (unifrom, burst, saw-tooth, normal, bimodal)
   
   #TODO: check needed configurations, e.g. kafka topics
   # 

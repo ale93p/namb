@@ -11,7 +11,6 @@
 
     <modules>
         <module>tests</module>
-        <module>common</module>
         <!--<module>storm</module>-->
         <!--<module>heron</module>-->
         <!--<module>flink</module>-->

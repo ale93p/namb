@@ -1,0 +1,12 @@
+fr/unice/namb/tests/bolts/BusyWaitBolt.class
+fr/unice/namb/tests/bolts/IdentityBolt.class
+fr/unice/namb/tests/bolts/RankingBolt.class
+fr/unice/namb/tests/bolts/WindowingBolt.class
+fr/unice/namb/tests/bolts/TransformationBolt.class
+fr/unice/namb/tests/spouts/TextSpout.class
+fr/unice/namb/tests/bolts/AggregationBolt.class
+fr/unice/namb/tests/TestCPU.class
+fr/unice/namb/tests/spouts/XMLSpout.class
+fr/unice/namb/tests/bolts/BaseNamedBolt.class
+fr/unice/namb/tests/spouts/RandomNumberSpout.class
+fr/unice/namb/tests/bolts/FilterBolt.class
