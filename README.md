@@ -1,3 +1,5 @@
+[![CircleCI][circleci_shield]][circleci]
+
 # NAMB
 
 **NAMB** (__N__*ot* __A__ __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark
