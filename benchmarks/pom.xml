@@ -12,7 +12,7 @@
     <modules>
         <module>tests</module>
         <module>common</module>
-        <!--<module>storm</module>-->
+        <module>storm</module>
         <!--<module>heron</module>-->
         <!--<module>flink</module>-->
     </modules>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

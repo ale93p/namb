@@ -4,8 +4,8 @@ import fr.unice.namb.common.ConfigDefaults.*;
 
 public class ConfigScheme {
 
-    static class DataFlow {
-        static class Scalability{
+    public static class DataFlow {
+        public static class Scalability{
             private int parallelism = ConfigDefaults.DF_SCALABILITY_PARALLELISM;
 
             public int getParallelism() {
@@ -16,7 +16,7 @@ public class ConfigScheme {
                 this.parallelism = parallelism;
             }
         }
-        static class Connection{
+        public static class Connection{
             private ConnectionShape shape = ConfigDefaults.DF_CONNECTION_SHAPE;
 
             public ConnectionShape getShape() {
@@ -27,7 +27,7 @@ public class ConfigScheme {
                 this.shape = shape;
             }
         }
-        static class Workload{
+        public static class Workload{
             private int processing = ConfigDefaults.DF_WORKLOAD_PROCESSING;
             private Balancing balancing = ConfigDefaults.DF_WORKLOAD_BALANCING;
 
@@ -103,11 +103,20 @@ public class ConfigScheme {
             this.workload = workload;
         }
     }
-    static class DataStream {
-        static class Synthetic {
+    public static class DataStream {
+        public static class Synthetic {
             private int data_size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
             private DataType data_type = ConfigDefaults.DS_SYNTHETIC_DATA_TYPE;
             private Distribution arrival_distribution = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
+            private int arrival_rate = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_RATE;
+
+            public int getArrival_rate() {
+                return arrival_rate;
+            }
+
+            public void setArrival_rate(int arrival_rate) {
+                this.arrival_rate = arrival_rate;
+            }
 
             public int getData_size() {
                 return data_size;

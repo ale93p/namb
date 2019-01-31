@@ -16,7 +16,7 @@ public class ConfigDefaults {
     }
 
     public enum Distribution{
-        uniform, normal //TODO: add burst, saw-tooth, bimodal
+        uniform, burst //TODO: add normal, saw-tooth, bimodal
     }
 
     public static final int TOTAL_TEST_DURATION = 300;
@@ -30,6 +30,7 @@ public class ConfigDefaults {
     public static final int DS_SYNTHETIC_DATA_SIZE = 8;
     public static final DataType DS_SYNTHETIC_DATA_TYPE = DataType.text;
     public static final Distribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION = Distribution.uniform;
+    public static final int DS_SYNTHETIC_ARRIVAL_RATE = 1000;
 
 
 }
