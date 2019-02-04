@@ -2,7 +2,7 @@
 
 import argparse
 import subprocess
-import modules.folders as vars
+import modules.namb_variables as vars
 
 class CommandNotFound(Exception):
     def __init__(self, cmd):
