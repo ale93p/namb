@@ -9,7 +9,8 @@
         <artifactId>namb</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>common</artifactId>
+    <groupId>fr.unice.namb</groupId>
+    <artifactId>utils</artifactId>
     <packaging>jar</packaging>
 
     <properties>

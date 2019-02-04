@@ -10,11 +10,12 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>tests</module>
-        <module>common</module>
+        <module>utils</module>
         <module>storm</module>
         <!--<module>heron</module>-->
         <!--<module>flink</module>-->
+
+        <module>tests</module>
     </modules>
 
     <dependencyManagement>
