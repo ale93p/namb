@@ -23,7 +23,7 @@
         <dependency>
             <groupId>fr.unice.namb</groupId>
             <artifactId>utils</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${utils.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -42,12 +42,6 @@
 
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-
-        <resources>
-            <resource>
-                <directory>${project.parent.build.directory}/conf</directory>
-            </resource>
-        </resources>
 
         <plugins>
 
