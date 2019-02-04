@@ -37,3 +37,6 @@ __pycache__/
 
 # MacOS files
 .DS_Store
+
+# Apache Storm logs
+*/workers-artifacts/*
