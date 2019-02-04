@@ -17,5 +17,7 @@ jobs:
     steps:
       - checkout:
           path: ~/namb
-          
+
+      - run: mvn --version
+
       - run: mvn clean install
