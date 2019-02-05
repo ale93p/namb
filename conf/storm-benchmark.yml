@@ -1,1 +1,2 @@
-deployment: local # local or cluster
+workers: 1
+deployment: cluster # local or cluster
