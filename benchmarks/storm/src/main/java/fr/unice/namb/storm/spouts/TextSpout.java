@@ -1,6 +1,6 @@
 package fr.unice.namb.storm.spouts;
 
-import fr.unice.namb.utils.ConfigDefaults.Distribution;
+import fr.unice.namb.utils.configuration.ConfigDefaults.Distribution;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
