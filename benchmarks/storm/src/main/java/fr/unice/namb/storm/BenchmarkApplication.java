@@ -90,7 +90,7 @@ public class BenchmarkApplication {
         ArrayList<Integer> componentsParallelism = computeComponentsParallelism(totalParallelism, numberOfSpouts, numberOfBolts);
         Iterator<Integer> cpIterator = componentsParallelism.iterator();
         ArrayList<String> spoutsList = new ArrayList<>();
-        ArrayList<String> boltsLits = new ArrayList<>();
+        ArrayList<String> boltsList = new ArrayList<>();
 
         TopologyBuilder builder = new TopologyBuilder();
 
@@ -101,7 +101,7 @@ public class BenchmarkApplication {
         }
         for(int i=1; i<depth; i++){ //TODO: must handle multiple bolts on the same detph level
             String boltName = "bolt_" + i;
-            boltsLits.add(boltName);
+            boltsList.add(boltName);
             cycles = computeNextProcessing(cycles, balancing);
             if (i==1) {
                 builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability))
@@ -109,7 +109,7 @@ public class BenchmarkApplication {
             }
             else{
                 builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability))
-                        .shuffleGrouping(boltsLits.get(i-1));
+                        .shuffleGrouping(boltsList.get(i-2));
             }
         }
         return builder;
@@ -128,10 +128,13 @@ public class BenchmarkApplication {
 
             System.out.println(benchConf.getDataflow().isTraffic_balancing());
 
-            Config conf = new Config();
             TopologyBuilder builder = buildBenchmarkTopology(benchConf);
             if (builder != null) {
                 StormConfigScheme stormConf = ConfigParser.parseStormConfigurationFile(new File(stormConfFilePath));
+
+                Config conf = new Config();
+                conf.setNumWorkers(stormConf.getWorkers());
+
                 if (stormConf.getDeployment() == StormDeployment.local){
                     System.out.println("RUNNING IN LOCAL");
                     LocalCluster cluster = new LocalCluster();
