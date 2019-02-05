@@ -25,6 +25,7 @@ buildNumber.properties
 __pycache__/
 *.py[cod]
 *$py.class
+venv/
 
 # Package files #
 *.jar
