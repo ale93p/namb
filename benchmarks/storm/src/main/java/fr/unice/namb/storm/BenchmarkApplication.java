@@ -18,6 +18,7 @@ import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -25,7 +26,7 @@ import java.util.Iterator;
 
 public class BenchmarkApplication {
 
-    private static String nambConfFileName = "default.yml";
+    private static String nambConfFileName = "namb.yml";
     private static String stormConfFileName = "storm-benchmark.yml";
 
     private static TopologyBuilder buildBenchmarkTopology(ConfigScheme conf) throws Exception{
@@ -112,32 +113,33 @@ public class BenchmarkApplication {
 
         // Obtaining Configurations
         ConfigScheme benchConf = ConfigParser.parseNambConfigurationFile(new File(nambConfFilePath));
-
         // Check configuration validity, if something wrong it throws exception
-        ConfigChecker.validateConf(benchConf);
+        if(benchConf != null) {
+            ConfigChecker.validateConf(benchConf);
 
-        TopologyBuilder builder = buildBenchmarkTopology(benchConf);
-        if (builder != null) {
-            StormConfigScheme stormConf = ConfigParser.parseStormConfigurationFile(new File(stormConfFilePath));
+            TopologyBuilder builder = buildBenchmarkTopology(benchConf);
+            if (builder != null) {
+                StormConfigScheme stormConf = ConfigParser.parseStormConfigurationFile(new File(stormConfFilePath));
 
-            Config conf = new Config();
-            conf.setNumWorkers(stormConf.getWorkers());
+                if(stormConf != null) {
+                    Config conf = new Config();
+                    conf.setNumWorkers(stormConf.getWorkers());
 
-            if (stormConf.getDeployment() == StormDeployment.local){
-                System.out.println("RUNNING IN LOCAL");
-                LocalCluster cluster = new LocalCluster();
-                cluster.submitTopology("local-testing", conf, builder.createTopology());
-                Thread.sleep(100000); //100s of test duration
-                cluster.shutdown();
+                    if (stormConf.getDeployment() == StormDeployment.local) {
+                        System.out.println("RUNNING IN LOCAL");
+                        LocalCluster cluster = new LocalCluster();
+                        cluster.submitTopology("local-testing", conf, builder.createTopology());
+                        Thread.sleep(100000); //100s of test duration
+                        cluster.shutdown();
+                    } else {
+                        System.out.println("RUNNING IN CLUSTER MODE");
+                        String topologyName = "namb_bench_" + System.currentTimeMillis();
+                        StormSubmitter.submitTopologyWithProgressBar(topologyName, conf, builder.createTopology());
+                    }
+                }
+            } else {
+                throw new Exception("Something went wrong during configuration checking");
             }
-            else{
-                System.out.println("RUNNING IN CLUSTER MODE");
-                String topologyName = "namb_bench_" + System.currentTimeMillis();
-                StormSubmitter.submitTopologyWithProgressBar(topologyName, conf, builder.createTopology());
-            }
-
-        } else{
-            throw new Exception("Something went wrong during configuration checking");
         }
     }
 }

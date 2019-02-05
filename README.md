@@ -121,15 +121,20 @@ is not directly controlled by it._
 
 ## How to Run It
 
-[TODO]: a compile script is missing, for the moment you should do it manually:
-```
-$ cd {NAMB_DIR}/benchmarks
-$ mvn clean install
-$ cd .. #to go back to the main folder and run the benchmark
-```
+1. [TODO]: a compile script is missing, for the moment you should do it manually:
+ ```
+ $ cd {NAMB_DIR}/benchmarks
+ $ mvn clean install
+ $ cd .. #to go back to the main folder and run the benchmark
+ ```
+2. Generate configuration file:
+ ```
+ cp conf/default.yml conf/namb.yml
+ ```
+ Customize `namb.yml` as you need.
 
-**After customizing the configurations files**, run the benchmarks simply using the script `namb.py`:
-```
-python3 namb.py benchmark-suite
-```
-Use -h for more options and informations
+3. Run the benchmarks simply using the script `namb.py`:
+ ```
+ python3 namb.py benchmark-suite
+ ```
+ Use -h for more options and informations
