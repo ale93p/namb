@@ -7,13 +7,16 @@
     <parent>
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
-    <artifactId>common</artifactId>
+    <groupId>fr.unice.namb</groupId>
+    <artifactId>utils</artifactId>
+    <version>${utils.version}</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <aaa>1</aaa>
     </properties>
 
     <dependencies>

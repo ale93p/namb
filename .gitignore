@@ -25,6 +25,7 @@ buildNumber.properties
 __pycache__/
 *.py[cod]
 *$py.class
+venv/
 
 # Package files #
 *.jar
@@ -37,3 +38,6 @@ __pycache__/
 
 # MacOS files
 .DS_Store
+
+# Apache Storm logs
+*/workers-artifacts/*

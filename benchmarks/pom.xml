@@ -7,14 +7,21 @@
     <groupId>fr.unice</groupId>
     <artifactId>namb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
+
+    <properties>
+        <revision>0.1.0-alpha</revision>
+        <utils.version>0.1.0-alpha</utils.version>
+        <storm.version>0.1.0-alpha</storm.version>
+        <tests.version>0.1.0-beta</tests.version>
+    </properties>
 
     <modules>
-        <module>tests</module>
-        <module>common</module>
+        <module>utils</module>
         <module>storm</module>
         <!--<module>heron</module>-->
         <!--<module>flink</module>-->
+        <module>tests</module>
     </modules>
 
     <dependencyManagement>

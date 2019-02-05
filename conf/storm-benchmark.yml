@@ -1,0 +1,2 @@
+workers: 1
+deployment: cluster # local or cluster
