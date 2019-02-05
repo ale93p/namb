@@ -14,7 +14,7 @@ class CommandNotFound(Exception):
 def run_storm(custom_bin_path=None):
     storm_bin = custom_bin_path if custom_bin_path else 'storm'
     storm_command = [storm_bin, 'jar', vars.STORM_JAR, vars.STORM_CLASS, vars.CONF_PATH]
-    print(storm_command)
+    # print(storm_command)
     if subprocess.run([storm_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
         subprocess.run(storm_command)
         return
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     main_parser = argparse.ArgumentParser(prog="namb.py")
 
     # subparsers definition
-    subparsers = main_parser.add_subparsers(dest="command", metavar="Commands:")
+    subparsers = main_parser.add_subparsers(dest="command", metavar="Commands")
     subparsers.required = True
 
     # storm subparser
