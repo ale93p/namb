@@ -1,6 +1,6 @@
-package fr.unice.namb.utils;
+package fr.unice.namb.utils.configuration;
 
-import fr.unice.namb.utils.ConfigDefaults.*;
+import fr.unice.namb.utils.configuration.ConfigDefaults.*;
 
 public class ConfigScheme {
 

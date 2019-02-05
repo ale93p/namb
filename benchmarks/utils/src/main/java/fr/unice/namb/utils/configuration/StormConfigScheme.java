@@ -1,4 +1,4 @@
-package fr.unice.namb.utils;
+package fr.unice.namb.utils.configuration;
 
 public class StormConfigScheme {
     public enum StormDeployment{

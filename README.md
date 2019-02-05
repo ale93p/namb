@@ -1,5 +1,7 @@
 # NAMB
 
+[![CircleCI](https://circleci.com/gh/ale93p/namb.svg?style=shield&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/namb)
+
 **NAMB** (__N__*ot* __A__ __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark
 application for Data Stream Processing Systems (DSP). 
 NAMB aims to be a general and standardized benchmark to generate reproducible results.

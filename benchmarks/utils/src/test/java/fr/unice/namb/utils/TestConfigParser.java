@@ -1,5 +1,6 @@
 package fr.unice.namb.utils;
 
+import fr.unice.namb.utils.configuration.ConfigParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

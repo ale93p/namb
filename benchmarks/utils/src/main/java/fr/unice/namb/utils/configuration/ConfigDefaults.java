@@ -1,4 +1,4 @@
-package fr.unice.namb.utils;
+package fr.unice.namb.utils.configuration;
 
 public class ConfigDefaults {
 
