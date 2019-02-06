@@ -60,7 +60,7 @@ public class ConfigScheme {
         private int depth = ConfigDefaults.DF_DEPTH;
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
-        private boolean message_reliability = ConfigDefaults.DF_MESSAGE_RELIABILITY;
+        private boolean reliable = ConfigDefaults.DF_MESSAGE_RELIABILITY;
         private Workload workload = new Workload();
 
         public int getDepth() {
@@ -87,12 +87,12 @@ public class ConfigScheme {
             this.connection = connection;
         }
 
-        public boolean isMessage_reliability() {
-            return message_reliability;
+        public boolean isReliable() {
+            return reliable;
         }
 
-        public void setMessage_reliability(boolean message_reliability) {
-            this.message_reliability = message_reliability;
+        public void setReliable(boolean message_reliability) {
+            this.reliable = message_reliability;
         }
 
         public Workload getWorkload() {
@@ -158,20 +158,20 @@ public class ConfigScheme {
     }
 
     private DataFlow dataflow = new DataFlow();
-    private DataStream data_stream = new DataStream();
+    private DataStream datastream = new DataStream();
 
     public void setDataflow(DataFlow dataflow){
         this.dataflow = dataflow;
     }
-    public void setData_stream(DataStream data_stream){
-        this.data_stream = data_stream;
+    public void setDatastream(DataStream datastream){
+        this.datastream = datastream;
     }
 
     public DataFlow getDataflow(){
         return this.dataflow;
     }
-    public DataStream getData_stream(){
-        return this.data_stream;
+    public DataStream getDatastream(){
+        return this.datastream;
     }
 
 }
