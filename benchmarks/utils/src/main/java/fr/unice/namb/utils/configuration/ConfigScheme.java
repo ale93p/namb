@@ -106,41 +106,55 @@ public class ConfigScheme {
 
     public static class DataStream {
         public static class Synthetic {
-            private int data_size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
-            private DataType data_type = ConfigDefaults.DS_SYNTHETIC_DATA_TYPE;
-            private Distribution arrival_distribution = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
-            private int arrival_rate = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_RATE;
+            public static class Data{
+                private int size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
 
-            public int getArrival_rate() {
-                return arrival_rate;
+                public int getSize() {
+                    return size;
+                }
+
+                public void setSize(int size) {
+                    this.size = size;
+                }
+            }
+            public static class Flow{
+                private Distribution distribution = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
+                private int rate = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_RATE;
+
+                public Distribution getDistribution() {
+                    return distribution;
+                }
+
+                public void setDistribution(Distribution distribution) {
+                    this.distribution = distribution;
+                }
+
+                public int getRate() {
+                    return rate;
+                }
+
+                public void setRate(int rate) {
+                    this.rate = rate;
+                }
             }
 
-            public void setArrival_rate(int arrival_rate) {
-                this.arrival_rate = arrival_rate;
+            private Data data = new Data();
+            private Flow flow = new Flow();
+
+            public Data getData() {
+                return data;
             }
 
-            public int getData_size() {
-                return data_size;
+            public void setData(Data data) {
+                this.data = data;
             }
 
-            public void setData_size(int data_size) {
-                this.data_size = data_size;
+            public Flow getFlow() {
+                return flow;
             }
 
-            public DataType getData_type() {
-                return data_type;
-            }
-
-            public void setData_type(DataType data_type) {
-                this.data_type = data_type;
-            }
-
-            public Distribution getArrival_distribution() {
-                return arrival_distribution;
-            }
-
-            public void setArrival_distribution(Distribution arrival_distribution) {
-                this.arrival_distribution = arrival_distribution;
+            public void setFlow(Flow flow) {
+                this.flow = flow;
             }
         }
 

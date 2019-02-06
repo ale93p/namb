@@ -42,12 +42,13 @@ datastream:
 # + external: data source connected (kafka, ...)
 
   synthetic:
-    data_size: 8 # size of the single data
-    data_type: text # [numeric, text][1]
+    data:
+      size: 8 # size of the single data
     ## Input Ratio
-    arrival_distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
+    flow:
+      distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
       # Refer to [2] for different 'variable' arrival types
-    arrival_rate: 1000 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
+      rate: 1000 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
   
   #TODO: check needed configurations, e.g. kafka topics
   # 
