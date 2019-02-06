@@ -13,7 +13,7 @@
         <revision>0.1.0-alpha</revision>
         <utils.version>0.1.0-alpha</utils.version>
         <storm.version>0.1.0-alpha</storm.version>
-        <tests.version>0.1.0-beta</tests.version>
+        <tests.version>0.1.0</tests.version>
     </properties>
 
     <modules>
@@ -21,6 +21,7 @@
         <module>storm</module>
         <!--<module>heron</module>-->
         <!--<module>flink</module>-->
+        <!--<module>spark</module>-->
         <module>tests</module>
     </modules>
 
