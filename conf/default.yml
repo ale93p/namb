@@ -22,9 +22,6 @@ dataflow:
   ## Processing
   workload:
     processing: 300 # CPU load value (may be implemented by keywoards (low, medium, high... pre-defined functions))
-    #TODO: define what balanced mean, if unbalanced how the load is distributed?
-    #TODO: should this be defined per component?
-    #   (i.e. different components different computation)
     balancing: balanced # [balanced, increasing, decreasing, bell]
 
 
@@ -47,23 +44,13 @@ datastream:
     ## Input Ratio
     flow:
       distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
-      # Refer to [2] for different 'variable' arrival types
       rate: 1000 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
   
   #TODO: check needed configurations, e.g. kafka topics
-  # 
+  # WARNING: this section has nit yet being implemented
   # kafka:
   #   host: 127.0.0.1
   #   port: 1234
   #   topic: test_topic
   #   size: 8 # ??
   #   data_type: text
-
-
-###############################################
-# References                                  #
-###############################################
-#
-# [1] R. Lu et al., "StreamBench: Towards Benchmarking Modern Distributed Stream Computing", UCC 2014
-# [2] A. Shukla et al., "RIoTBench: An IoT benchmark for distributed stream processing systems", Concurrency and Computation 2017
-#
