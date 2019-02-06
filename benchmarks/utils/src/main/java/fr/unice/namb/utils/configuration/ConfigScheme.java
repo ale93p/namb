@@ -107,7 +107,29 @@ public class ConfigScheme {
     public static class DataStream {
         public static class Synthetic {
             public static class Data{
+                public static class Heterogeneity {
+                    private int values = ConfigDefaults.DS_DATA_VALUES;
+                    private Balancing balancing = ConfigDefaults.DS_DATA_BALANCING;
+
+                    public int getValues() {
+                        return values;
+                    }
+
+                    public void setValues(int values) {
+                        this.values = values;
+                    }
+
+                    public Balancing getBalancing() {
+                        return balancing;
+                    }
+
+                    public void setBalancing(Balancing balancing) {
+                        this.balancing = balancing;
+                    }
+                }
+
                 private int size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
+                private Heterogeneity heterogeneity = new Heterogeneity();
 
                 public int getSize() {
                     return size;
@@ -115,6 +137,14 @@ public class ConfigScheme {
 
                 public void setSize(int size) {
                     this.size = size;
+                }
+
+                public Heterogeneity getHeterogeneity() {
+                    return heterogeneity;
+                }
+
+                public void setHeterogenity(Heterogeneity heterogeneity) {
+                    this.heterogeneity = heterogeneity;
                 }
             }
             public static class Flow{
