@@ -18,6 +18,7 @@ public class ConfigScheme {
         }
         public static class Connection{
             private ConnectionShape shape = ConfigDefaults.DF_CONNECTION_SHAPE;
+            private TrafficRouting routing = ConfigDefaults.DF_TRAFFIC_ROUTING;
 
             public ConnectionShape getShape() {
                 return shape;
@@ -25,6 +26,14 @@ public class ConfigScheme {
 
             public void setShape(ConnectionShape shape) {
                 this.shape = shape;
+            }
+
+            public TrafficRouting getRouting() {
+                return routing;
+            }
+
+            public void setRouting(TrafficRouting routing) {
+                this.routing = routing;
             }
         }
         public static class Workload{
@@ -51,7 +60,6 @@ public class ConfigScheme {
         private int depth = ConfigDefaults.DF_DEPTH;
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
-        private boolean traffic_balancing = ConfigDefaults.DF_TRAFFIC_BALANCING;
         private boolean message_reliability = ConfigDefaults.DF_MESSAGE_RELIABILITY;
         private Workload workload = new Workload();
 
@@ -79,14 +87,6 @@ public class ConfigScheme {
             this.connection = connection;
         }
 
-        public boolean isTraffic_balancing() {
-            return traffic_balancing;
-        }
-
-        public void setTraffic_balancing(boolean traffic_balancing) {
-            this.traffic_balancing = traffic_balancing;
-        }
-
         public boolean isMessage_reliability() {
             return message_reliability;
         }
@@ -103,6 +103,7 @@ public class ConfigScheme {
             this.workload = workload;
         }
     }
+
     public static class DataStream {
         public static class Synthetic {
             private int data_size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
@@ -156,13 +157,9 @@ public class ConfigScheme {
         }
     }
 
-    private int total_test_duration = ConfigDefaults.TOTAL_TEST_DURATION;
     private DataFlow dataflow = new DataFlow();
     private DataStream data_stream = new DataStream();
 
-    public void setTotal_test_duration(int total_test_duration){
-        this.total_test_duration = total_test_duration;
-    }
     public void setDataflow(DataFlow dataflow){
         this.dataflow = dataflow;
     }
@@ -170,9 +167,6 @@ public class ConfigScheme {
         this.data_stream = data_stream;
     }
 
-    public int getTotal_test_duration(){
-        return this.total_test_duration;
-    }
     public DataFlow getDataflow(){
         return this.dataflow;
     }

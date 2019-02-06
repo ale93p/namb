@@ -1,10 +1,4 @@
 ###############################################
-# GENERAL: running properties                 # 
-###############################################
-
-total_test_duration: 300 # seconds of application running
-
-###############################################
 # DATAFLOW: application (DAG) properties     #
 ###############################################
 
@@ -19,11 +13,8 @@ dataflow:
   ## Connection and Dependency
   connection: 
     shape: linear #[linear, diamond, star]
-
-  ## Traffic Balancing
-  traffic_balancing: true # Boolean, true if routing between tasks is balanced, false otherwise
-  # proposition, sobstitute with:
-  # routing: [round-robin, hash, ???]
+    ## Traffic Balancing
+    routing: shuffle # [shuffle, hash, broadcast]
 
   ## Message Reliability
   message_reliability: true # Boolean, true to enable "acking-like" mechanism, false otherwise

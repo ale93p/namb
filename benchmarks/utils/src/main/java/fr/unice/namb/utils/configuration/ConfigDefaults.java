@@ -6,6 +6,9 @@ public class ConfigDefaults {
         linear, diamond, star
     }
 
+    public enum TrafficRouting{
+        shuffle, hash, broadcast
+    }
 
     public enum Balancing{
         balanced, increasing, decresing, bell
@@ -23,6 +26,7 @@ public class ConfigDefaults {
     public static final int DF_DEPTH = 3;
     public static final int DF_SCALABILITY_PARALLELISM = 10;
     public static final ConnectionShape DF_CONNECTION_SHAPE = ConnectionShape.linear;
+    public static final TrafficRouting DF_TRAFFIC_ROUTING = TrafficRouting.shuffle;
     public static final boolean DF_TRAFFIC_BALANCING = true;
     public static final boolean DF_MESSAGE_RELIABILITY = true;
     public static final int DF_WORKLOAD_PROCESSING = 300;
