@@ -18,11 +18,8 @@ import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-
 
 public class BenchmarkApplication {
 
@@ -38,15 +35,15 @@ public class BenchmarkApplication {
 
         // Spout configurations
         int numberOfSpouts = dagLevelsWidth.get(0);
-        int dataSize = conf.getData_stream().getSynthetic().getData_size();
-        Distribution distribution = conf.getData_stream().getSynthetic().getArrival_distribution();
-        int rate = conf.getData_stream().getSynthetic().getArrival_rate();
+        int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
+        Distribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+        int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Bolts configurations
         int numberOfBolts = sumArray(dagLevelsWidth) - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
         Balancing balancing = conf.getDataflow().getWorkload().getBalancing();
-        boolean reliability = conf.getDataflow().isMessage_reliability();
+        boolean reliability = conf.getDataflow().isReliable();
 
         ArrayList<Integer> componentsParallelism = computeComponentsParallelism(totalParallelism, dagLevelsWidth);
         Iterator<Integer> cpIterator = componentsParallelism.iterator();
