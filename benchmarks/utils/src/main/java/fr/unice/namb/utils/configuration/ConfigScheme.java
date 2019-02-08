@@ -38,13 +38,13 @@ public class ConfigScheme {
         }
         public static class Workload{
             private int processing = ConfigDefaults.DF_WORKLOAD_PROCESSING;
-            private Balancing balancing = ConfigDefaults.DF_WORKLOAD_BALANCING;
+            private LoadBalancing balancing = ConfigDefaults.DF_WORKLOAD_BALANCING;
 
             public int getProcessing() {
                 return processing;
             }
 
-            public Balancing getBalancing() {
+            public LoadBalancing getBalancing() {
                 return balancing;
             }
 
@@ -52,7 +52,7 @@ public class ConfigScheme {
                 this.processing = processing;
             }
 
-            public void setBalancing(Balancing balancing) {
+            public void setBalancing(LoadBalancing balancing) {
                 this.balancing = balancing;
             }
         }
@@ -107,29 +107,10 @@ public class ConfigScheme {
     public static class DataStream {
         public static class Synthetic {
             public static class Data{
-                public static class Heterogeneity {
-                    private int values = ConfigDefaults.DS_DATA_VALUES;
-                    private Balancing balancing = ConfigDefaults.DS_DATA_BALANCING;
-
-                    public int getValues() {
-                        return values;
-                    }
-
-                    public void setValues(int values) {
-                        this.values = values;
-                    }
-
-                    public Balancing getBalancing() {
-                        return balancing;
-                    }
-
-                    public void setBalancing(Balancing balancing) {
-                        this.balancing = balancing;
-                    }
-                }
 
                 private int size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
-                private Heterogeneity heterogeneity = new Heterogeneity();
+                private int values = ConfigDefaults.DS_DATA_VALUES;
+                private DataBalancing balancing = ConfigDefaults.DS_DATA_BALANCING;
 
                 public int getSize() {
                     return size;
@@ -139,12 +120,20 @@ public class ConfigScheme {
                     this.size = size;
                 }
 
-                public Heterogeneity getHeterogeneity() {
-                    return heterogeneity;
+                public int getValues() {
+                    return values;
                 }
 
-                public void setHeterogenity(Heterogeneity heterogeneity) {
-                    this.heterogeneity = heterogeneity;
+                public void setValues(int values) {
+                    this.values = values;
+                }
+
+                public DataBalancing getBalancing() {
+                    return balancing;
+                }
+
+                public void setBalancing(DataBalancing balancing) {
+                    this.balancing = balancing;
                 }
             }
             public static class Flow{

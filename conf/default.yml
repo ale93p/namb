@@ -41,9 +41,8 @@ datastream:
   synthetic:
     data:
       size: 8 # size of the single data
-      heterogeneity:
-        values: 100
-        balancing: balanced # [balanced, increasing, decreasing, bell]
+      values: 100 # different values
+      balancing: balanced # [balanced, unbalanced]
     ## Input Ratio
     flow:
       distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
