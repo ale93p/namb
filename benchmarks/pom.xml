@@ -7,14 +7,7 @@
     <groupId>fr.unice</groupId>
     <artifactId>namb</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}</version>
-
-    <properties>
-        <revision>0.1.0-alpha</revision>
-        <utils.version>0.1.0-alpha</utils.version>
-        <storm.version>0.1.0-alpha</storm.version>
-        <tests.version>0.1.0</tests.version>
-    </properties>
+    <version>0.1.0-alpha</version>
 
     <modules>
         <module>utils</module>
