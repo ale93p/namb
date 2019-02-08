@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 
-public class TextSpout extends BaseRichSpout {
+public class SyntheticSpout extends BaseRichSpout {
 
     private SpoutOutputCollector _collector;
 
@@ -23,7 +23,7 @@ public class TextSpout extends BaseRichSpout {
     private String payload;
     private long count;
 
-    public TextSpout(int dataSize, Distribution distribution, int rate) {
+    public SyntheticSpout(int dataSize, Distribution distribution, int rate) {
         this.dataSize = dataSize;
         this.sleepTime = convertToInterval(rate);
         this.distribution = distribution;
