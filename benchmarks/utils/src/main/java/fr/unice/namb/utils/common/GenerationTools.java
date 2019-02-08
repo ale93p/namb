@@ -11,7 +11,7 @@ public class GenerationTools {
     this is just a dummy implementation
     TODO: the increasing, decreasing and bell funcitons must be better ingegnerized
     */
-    public static int computeNextProcessing(int actual, ConfigDefaults.Balancing balancing) throws Exception{
+    public static int computeNextProcessing(int actual, ConfigDefaults.LoadBalancing balancing) throws Exception{
         switch (balancing){
             case balanced:
                 return actual;

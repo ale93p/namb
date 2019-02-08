@@ -17,6 +17,10 @@ public class ConfigChecker {
         if (! (parallelism >= totalComponents))
             throw new Exception("Configuration: parallelism level (" + parallelism + ") must be larger than total number of components (" + totalComponents + ")");
 
+        int values = conf.getDatastream().getSynthetic().getData().getValues();
+        int size = conf.getDatastream().getSynthetic().getData().getSize();
+        if (values > Math.pow(26, size))
+            throw new Exception("Configuraion: number of distinct values (" + values + ") cannot exceed 26^size (" + Math.pow(26,size) + ")");
     }
 
 }

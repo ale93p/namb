@@ -9,7 +9,7 @@ import fr.unice.namb.utils.configuration.StormConfigScheme;
 import fr.unice.namb.utils.configuration.StormConfigScheme.StormDeployment;
 import static fr.unice.namb.utils.common.GenerationTools.*;
 import fr.unice.namb.storm.bolts.BusyWaitBolt;
-import fr.unice.namb.storm.spouts.TextSpout;
+import fr.unice.namb.storm.spouts.SyntheticSpout;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -36,13 +36,15 @@ public class BenchmarkApplication {
         // Spout configurations
         int numberOfSpouts = dagLevelsWidth.get(0);
         int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
+        int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
+        DataBalancing dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
         Distribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
         int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Bolts configurations
         int numberOfBolts = sumArray(dagLevelsWidth) - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
-        Balancing balancing = conf.getDataflow().getWorkload().getBalancing();
+        LoadBalancing balancing = conf.getDataflow().getWorkload().getBalancing();
         boolean reliability = conf.getDataflow().isReliable();
 
         ArrayList<Integer> componentsParallelism = computeComponentsParallelism(totalParallelism, dagLevelsWidth);
@@ -57,7 +59,7 @@ public class BenchmarkApplication {
         for(int s=1; s<=numberOfSpouts; s++) {
             spoutName = "spout_" + s;
             spoutsList.add(spoutName);
-            builder.setSpout(spoutName,  new TextSpout(dataSize, distribution, rate), cpIterator.next());
+            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate), cpIterator.next());
         }
 
         int boltID = 1;
