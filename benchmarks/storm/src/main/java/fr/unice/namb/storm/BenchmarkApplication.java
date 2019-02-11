@@ -68,7 +68,7 @@ public class BenchmarkApplication {
         int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Bolts configurations
-        int numberOfBolts = sumArray(dagLevelsWidth) - numberOfSpouts;
+        int numberOfBolts = app.sumArray(dagLevelsWidth) - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
         boolean reliability = conf.getDataflow().isReliable();
 
@@ -109,7 +109,7 @@ public class BenchmarkApplication {
             }
             else{
                 for (int bolt=0; bolt<levelWidth; bolt++){
-                    int startingIdx = sumArray(dagLevelsWidth, i-2) - numberOfSpouts;
+                    int startingIdx = app.sumArray(dagLevelsWidth, i-2) - numberOfSpouts;
                     //System.out.print("\n" + startingIdx);
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
