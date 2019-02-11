@@ -52,10 +52,11 @@ public class BenchmarkApplication {
         int totalParallelism = conf.getDataflow().getScalability().getParallelism();
         ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
         TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
+        int processingLoad = conf.getDataflow().getWorkload().getProcessing();
         LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
 
         // Generating app builder
-        AppBuilder app = new AppBuilder(depth, totalParallelism, topologyShape, loadBalancing);
+        AppBuilder app = new AppBuilder(depth, totalParallelism, topologyShape, processingLoad, loadBalancing);
         ArrayList<Integer> dagLevelsWidth =  app.getDagLevelsWidth();
         ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
 
@@ -68,7 +69,7 @@ public class BenchmarkApplication {
         int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Bolts configurations
-        int numberOfBolts = app.sumArray(dagLevelsWidth) - numberOfSpouts;
+        int numberOfBolts = app.getTotalComponents() - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
         boolean reliability = conf.getDataflow().isReliable();
 
@@ -97,7 +98,7 @@ public class BenchmarkApplication {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = app.getNextProcessing(cycles);
+                    cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
@@ -113,7 +114,7 @@ public class BenchmarkApplication {
                     //System.out.print("\n" + startingIdx);
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = app.getNextProcessing(cycles);
+                    cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int boltCount=0; boltCount<dagLevelsWidth.get(i-1); boltCount++){
