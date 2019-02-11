@@ -1,7 +1,6 @@
 package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.ConfigDefaults;
-import sun.security.krb5.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,40 +11,54 @@ public class AppBuilder{
     private int parallelism;
     private ConfigDefaults.ConnectionShape shape;
     private ArrayList<Integer> dagLevelsWidth;
+    private int totalComponents;
     private ArrayList<Integer> componentsParallelism;
+    private int initialProcessing;
+    private int currentProcessing;
     private ConfigDefaults.LoadBalancing loadBalancing;
 
+    private int count;
 
-    public AppBuilder(int depth, int parallelism, ConfigDefaults.ConnectionShape shape, ConfigDefaults.LoadBalancing loadBalancing) throws Exception{
+
+    public AppBuilder(int depth, int parallelism, ConfigDefaults.ConnectionShape shape, int processing, ConfigDefaults.LoadBalancing loadBalancing) throws Exception{
         this.depth = depth;
         this.parallelism = parallelism;
         this.shape = shape;
         this.dagLevelsWidth = computeTopologyShape();
+        this.totalComponents = sumArray(this.dagLevelsWidth);
         this.componentsParallelism = computeComponentsParallelism();
+        this.initialProcessing = processing;
+        this.currentProcessing = processing;
         this.loadBalancing = loadBalancing;
+
+        this.count = 0;
     }
 
     // just to use utility functions
     public AppBuilder() throws Exception{
-        this(0, 0, null, null);
+        this(0, 0, null, 0, null);
     }
 
     /*
     this is just a dummy implementation
-    TODO: the increasing, decreasing and bell funcitons must be better ingegnerized
+    TODO: it can be improved
     */
-    public int getNextProcessing(int actual) throws Exception{
+    public int getNextProcessing() throws Exception{
         switch (this.loadBalancing){
             case balanced:
-                return actual;
+                break;
             case increasing:
-                return (int)(actual * 1.2);
+                this.currentProcessing = (int)(this.currentProcessing * 1.2);
+                break;
             case decresing:
-                return (int)(actual * 0.8);
-            case bell:
+                this.currentProcessing = (int)(this.currentProcessing * 0.8);
+            case pyramid:
+                this.currentProcessing = (this.count <= this.totalComponents/2) ? (int) (this.currentProcessing * 1.2) : (int) (this.currentProcessing * 0.8);
+                this.count++;
             default:
                 throw new Exception("case " + this.loadBalancing + " not yet implemented");
         }
+        return this.currentProcessing;
     }
 
     public ArrayList<Integer> getDagLevelsWidth(){
@@ -94,6 +107,10 @@ public class AppBuilder{
                 throw new Exception("This shape <" + shape.name() + "> has not been implemented yet");
         }
 
+    }
+
+    public int getTotalComponents(){
+        return this.totalComponents;
     }
 
     private ArrayList<Integer> computeTopologyShape() throws Exception {

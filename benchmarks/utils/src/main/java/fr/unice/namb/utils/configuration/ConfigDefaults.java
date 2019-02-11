@@ -11,7 +11,7 @@ public class ConfigDefaults {
     }
 
     public enum LoadBalancing {
-        balanced, increasing, decresing, bell
+        balanced, increasing, decresing, pyramid
     }
 
     public enum DataBalancing{
