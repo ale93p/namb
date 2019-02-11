@@ -66,7 +66,7 @@ public class SyntheticSpout extends BaseRichSpout {
     }
 
     public void nextTuple(){
-        byte[] nextValue = this.payloadArray.get(this.index.nextInt());
+        byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
         switch(this.distribution){
             case uniform:
                 Utils.sleep(this.sleepTime);
@@ -85,6 +85,6 @@ public class SyntheticSpout extends BaseRichSpout {
     public void ack(Object msgId){ super.ack(msgId); }
 
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("text"));
+        declarer.declare(new Fields("value"));
     }
 }

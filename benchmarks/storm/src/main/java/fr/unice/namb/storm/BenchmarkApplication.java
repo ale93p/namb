@@ -16,6 +16,7 @@ import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.tuple.Fields;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,11 +27,28 @@ public class BenchmarkApplication {
     private static String nambConfFileName = "namb.yml";
     private static String stormConfFileName = "storm-benchmark.yml";
 
+    private static void setRouting(BoltDeclarer bolt, String parent, TrafficRouting routing, String field){
+        switch(routing){
+            case hash:
+                bolt.partialKeyGrouping(parent, new Fields(field));
+                break;
+            case shuffle:
+                bolt.shuffleGrouping(parent);
+            case broadcast:
+                bolt.allGrouping(parent);
+        }
+    }
+
+    private static void setRouting(BoltDeclarer bolt, String parent, TrafficRouting routing){
+        setRouting(bolt, parent, routing, "value");
+    }
+
     private static TopologyBuilder buildBenchmarkTopology(ConfigScheme conf) throws Exception{
         // General configurations
         int depth = conf.getDataflow().getDepth();
         int totalParallelism = conf.getDataflow().getScalability().getParallelism();
         ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
+        TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
         ArrayList<Integer> dagLevelsWidth =  getTopologyShape(topologyShape, depth);
 
         // Spout configurations
@@ -44,7 +62,7 @@ public class BenchmarkApplication {
         // Bolts configurations
         int numberOfBolts = sumArray(dagLevelsWidth) - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
-        LoadBalancing balancing = conf.getDataflow().getWorkload().getBalancing();
+        LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
         boolean reliability = conf.getDataflow().isReliable();
 
         ArrayList<Integer> componentsParallelism = computeComponentsParallelism(totalParallelism, dagLevelsWidth);
@@ -72,11 +90,11 @@ public class BenchmarkApplication {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = computeNextProcessing(cycles, balancing);
+                    cycles = computeNextProcessing(cycles, loadBalancing);
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
-                        boltDeclarer.shuffleGrouping(spoutsList.get(spout));
+                        setRouting(boltDeclarer, spoutsList.get(spout), trafficRouting);
                         //System.out.append(spoutsList.get(spout) + " ");
                     }
                     boltID++;
@@ -88,12 +106,12 @@ public class BenchmarkApplication {
                     //System.out.print("\n" + startingIdx);
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = computeNextProcessing(cycles, balancing);
+                    cycles = computeNextProcessing(cycles, loadBalancing);
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int boltCount=0; boltCount<dagLevelsWidth.get(i-1); boltCount++){
                         int parentBoltIdx = startingIdx + boltCount;
-                        boltDeclarer.shuffleGrouping(boltsList.get(parentBoltIdx));
+                        setRouting(boltDeclarer, boltsList.get(parentBoltIdx), trafficRouting);
                         //System.out.append(boltsList.get(parentBoltIdx) + " ");
                     }
                     boltID++;
