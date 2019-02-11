@@ -1,13 +1,14 @@
 package fr.unice.namb.storm;
 
 
+import fr.unice.namb.utils.common.AppBuilder;
 import fr.unice.namb.utils.configuration.ConfigChecker;
 import fr.unice.namb.utils.configuration.ConfigDefaults.*;
 import fr.unice.namb.utils.configuration.ConfigParser;
 import fr.unice.namb.utils.configuration.ConfigScheme;
 import fr.unice.namb.utils.configuration.StormConfigScheme;
 import fr.unice.namb.utils.configuration.StormConfigScheme.StormDeployment;
-import static fr.unice.namb.utils.common.GenerationTools.*;
+import static fr.unice.namb.utils.common.AppBuilder.*;
 import fr.unice.namb.storm.bolts.BusyWaitBolt;
 import fr.unice.namb.storm.spouts.SyntheticSpout;
 
@@ -44,12 +45,19 @@ public class BenchmarkApplication {
     }
 
     private static TopologyBuilder buildBenchmarkTopology(ConfigScheme conf) throws Exception{
+
+
         // General configurations
         int depth = conf.getDataflow().getDepth();
         int totalParallelism = conf.getDataflow().getScalability().getParallelism();
         ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
         TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
-        ArrayList<Integer> dagLevelsWidth =  getTopologyShape(topologyShape, depth);
+        LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+
+        // Generating app builder
+        AppBuilder app = new AppBuilder(depth, totalParallelism, topologyShape, loadBalancing);
+        ArrayList<Integer> dagLevelsWidth =  app.getDagLevelsWidth();
+        ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
 
         // Spout configurations
         int numberOfSpouts = dagLevelsWidth.get(0);
@@ -62,10 +70,9 @@ public class BenchmarkApplication {
         // Bolts configurations
         int numberOfBolts = sumArray(dagLevelsWidth) - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
-        LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
         boolean reliability = conf.getDataflow().isReliable();
 
-        ArrayList<Integer> componentsParallelism = computeComponentsParallelism(totalParallelism, dagLevelsWidth);
+
         Iterator<Integer> cpIterator = componentsParallelism.iterator();
         ArrayList<String> spoutsList = new ArrayList<>();
         ArrayList<String> boltsList = new ArrayList<>();
@@ -90,7 +97,7 @@ public class BenchmarkApplication {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = computeNextProcessing(cycles, loadBalancing);
+                    cycles = app.getNextProcessing(cycles);
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
@@ -106,7 +113,7 @@ public class BenchmarkApplication {
                     //System.out.print("\n" + startingIdx);
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = computeNextProcessing(cycles, loadBalancing);
+                    cycles = app.getNextProcessing(cycles);
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int boltCount=0; boltCount<dagLevelsWidth.get(i-1); boltCount++){

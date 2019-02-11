@@ -1,6 +1,6 @@
 package fr.unice.namb.utils.configuration;
 
-import static fr.unice.namb.utils.common.GenerationTools.*;
+import fr.unice.namb.utils.common.AppBuilder;
 
 public class ConfigChecker {
 
@@ -10,7 +10,9 @@ public class ConfigChecker {
         int depth = conf.getDataflow().getDepth();
         ConfigDefaults.ConnectionShape shape = conf.getDataflow().getConnection().getShape();
 
-        int totalComponents = sumArray(getTopologyShape(shape, depth));
+
+        AppBuilder app = new AppBuilder();
+        int totalComponents = app.sumArray(app.getTopologyShape(shape, depth));
 
         // check that total number of executors is larger than total number of components
         // or at least it should have 1 executor per component

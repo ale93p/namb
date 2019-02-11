@@ -1,18 +1,41 @@
 package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.ConfigDefaults;
+import sun.security.krb5.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class GenerationTools {
+public class AppBuilder{
+
+    private int depth;
+    private int parallelism;
+    private ConfigDefaults.ConnectionShape shape;
+    private ArrayList<Integer> dagLevelsWidth;
+    private ArrayList<Integer> componentsParallelism;
+    private ConfigDefaults.LoadBalancing loadBalancing;
+
+
+    public AppBuilder(int depth, int parallelism, ConfigDefaults.ConnectionShape shape, ConfigDefaults.LoadBalancing loadBalancing) throws Exception{
+        this.depth = depth;
+        this.parallelism = parallelism;
+        this.shape = shape;
+        this.dagLevelsWidth = computeTopologyShape();
+        this.componentsParallelism = computeComponentsParallelism();
+        this.loadBalancing = loadBalancing;
+    }
+
+    // just to use utility functions
+    public AppBuilder() throws Exception{
+        this(0, 0, null, null);
+    }
 
     /*
     this is just a dummy implementation
     TODO: the increasing, decreasing and bell funcitons must be better ingegnerized
     */
-    public static int computeNextProcessing(int actual, ConfigDefaults.LoadBalancing balancing) throws Exception{
-        switch (balancing){
+    public int getNextProcessing(int actual) throws Exception{
+        switch (this.loadBalancing){
             case balanced:
                 return actual;
             case increasing:
@@ -21,19 +44,27 @@ public class GenerationTools {
                 return (int)(actual * 0.8);
             case bell:
             default:
-                throw new Exception("case " + balancing + " not yet implemented");
+                throw new Exception("case " + this.loadBalancing + " not yet implemented");
         }
+    }
+
+    public ArrayList<Integer> getDagLevelsWidth(){
+        return this.dagLevelsWidth;
+    }
+
+    public ArrayList<Integer> getComponentsParallelism(){
+        return this.componentsParallelism;
     }
 
     /*
     this is basic implementation
     TODO: to be improved after implementing balancing on scalability configuration
     */
-    public static ArrayList<Integer> computeComponentsParallelism(int parallelism, ArrayList<Integer> dagLevelsWidth) throws ArithmeticException{
+    private ArrayList<Integer> computeComponentsParallelism() throws ArithmeticException{
         ArrayList<Integer> componentsParallelism = new ArrayList<>();
-        int totComponents = sumArray(dagLevelsWidth);
-        int remainingExecutors = parallelism%totComponents;
-        int basePar = parallelism / totComponents;
+        int totComponents = sumArray(this.dagLevelsWidth);
+        int remainingExecutors = this.parallelism%totComponents;
+        int basePar = this.parallelism / totComponents;
 
         for(int i=0; i<totComponents; i++){
             componentsParallelism.add( (remainingExecutors==0) ? basePar : basePar + 1 );
@@ -45,7 +76,7 @@ public class GenerationTools {
         return componentsParallelism;
     }
 
-    public static ArrayList<Integer> getTopologyShape(ConfigDefaults.ConnectionShape shape, int depth) throws Exception{
+    private ArrayList<Integer> computeTopologyShape(ConfigDefaults.ConnectionShape shape, int depth) throws Exception{
         ArrayList<Integer> dagLevelsWidth;
         switch(shape){
             case linear:
@@ -60,11 +91,20 @@ public class GenerationTools {
                 dagLevelsWidth.set(1, 2);
                 return dagLevelsWidth;
             default:
-                throw new Exception("This shapa: <" + shape.name() + "> has not been implemented yet");
+                throw new Exception("This shape <" + shape.name() + "> has not been implemented yet");
         }
+
     }
 
-    public static int sumArray(ArrayList<Integer> arr, int lower, int upper) throws ArrayIndexOutOfBoundsException{
+    private ArrayList<Integer> computeTopologyShape() throws Exception {
+        return computeTopologyShape(this.shape, this.depth);
+    }
+
+    public ArrayList<Integer> getTopologyShape(ConfigDefaults.ConnectionShape shape, int depth) throws Exception{
+        return computeTopologyShape(shape, depth);
+    }
+
+    public int sumArray(ArrayList<Integer> arr, int lower, int upper) throws ArrayIndexOutOfBoundsException{
         if(lower>upper) throw new ArrayIndexOutOfBoundsException("upper limit must be greter than lower limit");
 
         if (lower<0) lower=0;
@@ -81,11 +121,11 @@ public class GenerationTools {
         return sum;
     }
 
-    public static int sumArray(ArrayList<Integer> arr, int upper){
+    public int sumArray(ArrayList<Integer> arr, int upper){
         return sumArray(arr, 0, upper);
     }
 
-    public static int sumArray(ArrayList<Integer> arr){
+    public int sumArray(ArrayList<Integer> arr){
         return sumArray(arr,0, arr.size());
     }
 
