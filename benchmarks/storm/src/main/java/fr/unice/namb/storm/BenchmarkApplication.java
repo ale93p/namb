@@ -9,44 +9,61 @@ import fr.unice.namb.utils.configuration.StormConfigScheme;
 import fr.unice.namb.utils.configuration.StormConfigScheme.StormDeployment;
 import static fr.unice.namb.utils.common.GenerationTools.*;
 import fr.unice.namb.storm.bolts.BusyWaitBolt;
-import fr.unice.namb.storm.spouts.TextSpout;
+import fr.unice.namb.storm.spouts.SyntheticSpout;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.tuple.Fields;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-
 
 public class BenchmarkApplication {
 
     private static String nambConfFileName = "namb.yml";
     private static String stormConfFileName = "storm-benchmark.yml";
 
+    private static void setRouting(BoltDeclarer bolt, String parent, TrafficRouting routing, String field){
+        switch(routing){
+            case hash:
+                bolt.partialKeyGrouping(parent, new Fields(field));
+                break;
+            case shuffle:
+                bolt.shuffleGrouping(parent);
+            case broadcast:
+                bolt.allGrouping(parent);
+        }
+    }
+
+    private static void setRouting(BoltDeclarer bolt, String parent, TrafficRouting routing){
+        setRouting(bolt, parent, routing, "value");
+    }
+
     private static TopologyBuilder buildBenchmarkTopology(ConfigScheme conf) throws Exception{
         // General configurations
         int depth = conf.getDataflow().getDepth();
         int totalParallelism = conf.getDataflow().getScalability().getParallelism();
         ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
+        TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
         ArrayList<Integer> dagLevelsWidth =  getTopologyShape(topologyShape, depth);
 
         // Spout configurations
         int numberOfSpouts = dagLevelsWidth.get(0);
-        int dataSize = conf.getData_stream().getSynthetic().getData_size();
-        Distribution distribution = conf.getData_stream().getSynthetic().getArrival_distribution();
-        int rate = conf.getData_stream().getSynthetic().getArrival_rate();
+        int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
+        int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
+        DataBalancing dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
+        Distribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+        int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Bolts configurations
         int numberOfBolts = sumArray(dagLevelsWidth) - numberOfSpouts;
         int cycles = conf.getDataflow().getWorkload().getProcessing();
-        Balancing balancing = conf.getDataflow().getWorkload().getBalancing();
-        boolean reliability = conf.getDataflow().isMessage_reliability();
+        LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+        boolean reliability = conf.getDataflow().isReliable();
 
         ArrayList<Integer> componentsParallelism = computeComponentsParallelism(totalParallelism, dagLevelsWidth);
         Iterator<Integer> cpIterator = componentsParallelism.iterator();
@@ -60,7 +77,7 @@ public class BenchmarkApplication {
         for(int s=1; s<=numberOfSpouts; s++) {
             spoutName = "spout_" + s;
             spoutsList.add(spoutName);
-            builder.setSpout(spoutName,  new TextSpout(dataSize, distribution, rate), cpIterator.next());
+            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate), cpIterator.next());
         }
 
         int boltID = 1;
@@ -73,11 +90,11 @@ public class BenchmarkApplication {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = computeNextProcessing(cycles, balancing);
+                    cycles = computeNextProcessing(cycles, loadBalancing);
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
-                        boltDeclarer.shuffleGrouping(spoutsList.get(spout));
+                        setRouting(boltDeclarer, spoutsList.get(spout), trafficRouting);
                         //System.out.append(spoutsList.get(spout) + " ");
                     }
                     boltID++;
@@ -89,12 +106,12 @@ public class BenchmarkApplication {
                     //System.out.print("\n" + startingIdx);
                     boltName = "bolt_" + boltID;
                     boltsList.add(boltName);
-                    cycles = computeNextProcessing(cycles, balancing);
+                    cycles = computeNextProcessing(cycles, loadBalancing);
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
                     for(int boltCount=0; boltCount<dagLevelsWidth.get(i-1); boltCount++){
                         int parentBoltIdx = startingIdx + boltCount;
-                        boltDeclarer.shuffleGrouping(boltsList.get(parentBoltIdx));
+                        setRouting(boltDeclarer, boltsList.get(parentBoltIdx), trafficRouting);
                         //System.out.append(boltsList.get(parentBoltIdx) + " ");
                     }
                     boltID++;

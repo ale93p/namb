@@ -18,6 +18,7 @@ public class ConfigScheme {
         }
         public static class Connection{
             private ConnectionShape shape = ConfigDefaults.DF_CONNECTION_SHAPE;
+            private TrafficRouting routing = ConfigDefaults.DF_TRAFFIC_ROUTING;
 
             public ConnectionShape getShape() {
                 return shape;
@@ -26,16 +27,24 @@ public class ConfigScheme {
             public void setShape(ConnectionShape shape) {
                 this.shape = shape;
             }
+
+            public TrafficRouting getRouting() {
+                return routing;
+            }
+
+            public void setRouting(TrafficRouting routing) {
+                this.routing = routing;
+            }
         }
         public static class Workload{
             private int processing = ConfigDefaults.DF_WORKLOAD_PROCESSING;
-            private Balancing balancing = ConfigDefaults.DF_WORKLOAD_BALANCING;
+            private LoadBalancing balancing = ConfigDefaults.DF_WORKLOAD_BALANCING;
 
             public int getProcessing() {
                 return processing;
             }
 
-            public Balancing getBalancing() {
+            public LoadBalancing getBalancing() {
                 return balancing;
             }
 
@@ -43,7 +52,7 @@ public class ConfigScheme {
                 this.processing = processing;
             }
 
-            public void setBalancing(Balancing balancing) {
+            public void setBalancing(LoadBalancing balancing) {
                 this.balancing = balancing;
             }
         }
@@ -51,8 +60,7 @@ public class ConfigScheme {
         private int depth = ConfigDefaults.DF_DEPTH;
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
-        private boolean traffic_balancing = ConfigDefaults.DF_TRAFFIC_BALANCING;
-        private boolean message_reliability = ConfigDefaults.DF_MESSAGE_RELIABILITY;
+        private boolean reliable = ConfigDefaults.DF_MESSAGE_RELIABILITY;
         private Workload workload = new Workload();
 
         public int getDepth() {
@@ -79,20 +87,12 @@ public class ConfigScheme {
             this.connection = connection;
         }
 
-        public boolean isTraffic_balancing() {
-            return traffic_balancing;
+        public boolean isReliable() {
+            return reliable;
         }
 
-        public void setTraffic_balancing(boolean traffic_balancing) {
-            this.traffic_balancing = traffic_balancing;
-        }
-
-        public boolean isMessage_reliability() {
-            return message_reliability;
-        }
-
-        public void setMessage_reliability(boolean message_reliability) {
-            this.message_reliability = message_reliability;
+        public void setReliable(boolean message_reliability) {
+            this.reliable = message_reliability;
         }
 
         public Workload getWorkload() {
@@ -103,43 +103,77 @@ public class ConfigScheme {
             this.workload = workload;
         }
     }
+
     public static class DataStream {
         public static class Synthetic {
-            private int data_size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
-            private DataType data_type = ConfigDefaults.DS_SYNTHETIC_DATA_TYPE;
-            private Distribution arrival_distribution = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
-            private int arrival_rate = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_RATE;
+            public static class Data{
 
-            public int getArrival_rate() {
-                return arrival_rate;
+                private int size = ConfigDefaults.DS_SYNTHETIC_DATA_SIZE;
+                private int values = ConfigDefaults.DS_DATA_VALUES;
+                private DataBalancing balancing = ConfigDefaults.DS_DATA_BALANCING;
+
+                public int getSize() {
+                    return size;
+                }
+
+                public void setSize(int size) {
+                    this.size = size;
+                }
+
+                public int getValues() {
+                    return values;
+                }
+
+                public void setValues(int values) {
+                    this.values = values;
+                }
+
+                public DataBalancing getBalancing() {
+                    return balancing;
+                }
+
+                public void setBalancing(DataBalancing balancing) {
+                    this.balancing = balancing;
+                }
+            }
+            public static class Flow{
+                private Distribution distribution = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
+                private int rate = ConfigDefaults.DS_SYNTHETIC_ARRIVAL_RATE;
+
+                public Distribution getDistribution() {
+                    return distribution;
+                }
+
+                public void setDistribution(Distribution distribution) {
+                    this.distribution = distribution;
+                }
+
+                public int getRate() {
+                    return rate;
+                }
+
+                public void setRate(int rate) {
+                    this.rate = rate;
+                }
             }
 
-            public void setArrival_rate(int arrival_rate) {
-                this.arrival_rate = arrival_rate;
+            private Data data = new Data();
+            private Flow flow = new Flow();
+
+            public Data getData() {
+                return data;
             }
 
-            public int getData_size() {
-                return data_size;
+            public void setData(Data data) {
+                this.data = data;
             }
 
-            public void setData_size(int data_size) {
-                this.data_size = data_size;
+            public Flow getFlow() {
+                return flow;
             }
 
-            public DataType getData_type() {
-                return data_type;
-            }
-
-            public void setData_type(DataType data_type) {
-                this.data_type = data_type;
-            }
-
-            public Distribution getArrival_distribution() {
-                return arrival_distribution;
-            }
-
-            public void setArrival_distribution(Distribution arrival_distribution) {
-                this.arrival_distribution = arrival_distribution;
+            public void setFlow(Flow flow) {
+                this.flow = flow;
             }
         }
 
@@ -156,28 +190,21 @@ public class ConfigScheme {
         }
     }
 
-    private int total_test_duration = ConfigDefaults.TOTAL_TEST_DURATION;
     private DataFlow dataflow = new DataFlow();
-    private DataStream data_stream = new DataStream();
+    private DataStream datastream = new DataStream();
 
-    public void setTotal_test_duration(int total_test_duration){
-        this.total_test_duration = total_test_duration;
-    }
     public void setDataflow(DataFlow dataflow){
         this.dataflow = dataflow;
     }
-    public void setData_stream(DataStream data_stream){
-        this.data_stream = data_stream;
+    public void setDatastream(DataStream datastream){
+        this.datastream = datastream;
     }
 
-    public int getTotal_test_duration(){
-        return this.total_test_duration;
-    }
     public DataFlow getDataflow(){
         return this.dataflow;
     }
-    public DataStream getData_stream(){
-        return this.data_stream;
+    public DataStream getDatastream(){
+        return this.datastream;
     }
 
 }

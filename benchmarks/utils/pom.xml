@@ -7,11 +7,11 @@
     <parent>
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
-        <version>${revision}</version>
+        <version>0.1.0-alpha</version>
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>utils</artifactId>
-    <version>${utils.version}</version>
+    <version>0.1.0-alpha</version>
     <packaging>jar</packaging>
 
     <properties>
