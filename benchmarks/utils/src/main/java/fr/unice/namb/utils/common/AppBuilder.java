@@ -21,22 +21,24 @@ public class AppBuilder{
 
 
     public AppBuilder(int depth, int parallelism, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
+
         this.depth = depth;
         this.parallelism = parallelism;
         this.shape = shape;
-        this.dagLevelsWidth = computeTopologyShape();
-        this.totalComponents = sumArray(this.dagLevelsWidth);
-        this.componentsParallelism = computeComponentsParallelism();
         this.initialProcessing = processing;
         this.currentProcessing = processing;
         this.loadBalancing = loadBalancing;
+
+        this.dagLevelsWidth = computeTopologyShape();
+        this.totalComponents = sumArray(this.dagLevelsWidth);
+        this.componentsParallelism = computeComponentsParallelism();
 
         this.count = 0;
     }
 
     // just to use utility functions
     public AppBuilder() throws Exception{
-        this(0, 0, null, 0, null);
+
     }
 
     /*

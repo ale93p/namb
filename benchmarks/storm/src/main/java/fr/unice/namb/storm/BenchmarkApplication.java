@@ -20,9 +20,6 @@ import java.util.Iterator;
 
 public class BenchmarkApplication {
 
-    private static String nambConfFileName = "namb.yml";
-    private static String stormConfFileName = "storm-benchmark.yml";
-
     private static void setRouting(BoltDeclarer bolt, String parent, Config.TrafficRouting routing, String field){
         switch(routing){
             case hash:
@@ -127,9 +124,8 @@ public class BenchmarkApplication {
 
     public static void main (String[] args) throws Exception{
 
-        String confPath = args[0];
-        String nambConfFilePath = confPath + "/" + nambConfFileName;
-        String stormConfFilePath = confPath + "/" + stormConfFileName;
+        String nambConfFilePath = args[0];
+        String stormConfFilePath = args[1];
 
         // Obtaining Configurations
         Config confParser = new Config(NambConfigSchema.class, nambConfFilePath);
