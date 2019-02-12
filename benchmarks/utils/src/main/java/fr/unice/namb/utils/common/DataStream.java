@@ -1,6 +1,6 @@
 package fr.unice.namb.utils.common;
 
-import fr.unice.namb.utils.configuration.ConfigDefaults.Distribution;
+import fr.unice.namb.utils.configuration.Config;
 
 public class DataStream {
 
@@ -14,7 +14,7 @@ public class DataStream {
         this.msgCount = 0;
     }
 
-    public long getInterMessageTime(Distribution distribution, long defaultTime) throws Exception{
+    public long getInterMessageTime(Config.Distribution distribution, long defaultTime) throws Exception{
         // elapsed time since last burst end
 
         this.msgCount++;

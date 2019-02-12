@@ -1,8 +1,7 @@
 package fr.unice.namb.storm.spouts;
 
 import fr.unice.namb.utils.common.DataStream;
-import fr.unice.namb.utils.configuration.ConfigDefaults.DataBalancing;
-import fr.unice.namb.utils.configuration.ConfigDefaults.Distribution;
+import fr.unice.namb.utils.configuration.Config;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -21,9 +20,9 @@ public class SyntheticSpout extends BaseRichSpout {
 
     private int dataSize;
     private int dataValues;
-    private DataBalancing dataValuesBalancing;
+    private Config.DataBalancing dataValuesBalancing;
     private long sleepTime;
-    private Distribution distribution;
+    private Config.Distribution distribution;
     private DataStream dataStream;
 
 
@@ -31,7 +30,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private Random index;
     private long count;
 
-    public SyntheticSpout(int dataSize, int dataValues, DataBalancing dataValuesBalancing, Distribution flowDistribution, int flowRate) {
+    public SyntheticSpout(int dataSize, int dataValues, Config.DataBalancing dataValuesBalancing, Config.Distribution flowDistribution, int flowRate) {
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
@@ -43,14 +42,14 @@ public class SyntheticSpout extends BaseRichSpout {
         return 1000/msgPerSec; // Interval in ms
     }
 
-    private ArrayList<byte[]> generatePayload(int size, DataBalancing balancing){
+    private ArrayList<byte[]> generatePayload(int size, Config.DataBalancing balancing){
         String nextString;
         ArrayList<byte[]> payloadArray = new ArrayList<>();
         StringGenerator generator = new StringGenerator(size);
         for(int i=0; i<this.dataValues; i++) { //can this be optimized?
             nextString = generator.next();
             payloadArray.add(nextString.getBytes());
-            if(balancing == DataBalancing.unbalanced){
+            if(balancing == Config.DataBalancing.unbalanced){
                 for(int j=1; i<Math.pow(2,i); i++){
                     payloadArray.add(nextString.getBytes());
                 }

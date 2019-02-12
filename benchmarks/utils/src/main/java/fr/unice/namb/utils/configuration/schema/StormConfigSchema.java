@@ -1,6 +1,8 @@
-package fr.unice.namb.utils.configuration;
+package fr.unice.namb.utils.configuration.schema;
 
-public class StormConfigScheme {
+import fr.unice.namb.utils.configuration.schema.ConfigSchema;
+
+public class StormConfigSchema extends ConfigSchema {
     public enum StormDeployment{
         local, cluster
     }

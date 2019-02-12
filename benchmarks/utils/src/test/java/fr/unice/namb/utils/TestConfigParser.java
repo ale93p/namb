@@ -1,24 +1,25 @@
 package fr.unice.namb.utils;
 
-import fr.unice.namb.utils.configuration.ConfigParser;
+import fr.unice.namb.utils.configuration.Config;
+import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
+import fr.unice.namb.utils.configuration.schema.StormConfigSchema;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
-
-import java.io.File;
 
 public class TestConfigParser {
 
     @Test
     public void testNambConfigParser(){
-        File defaultConf = new File("../../conf/default.yml");
-        assertNotNull(ConfigParser.parseNambConfigurationFile(defaultConf));
+        String defaultConf = "../../conf/default.yml";
+        Config conf = new Config(NambConfigSchema.class, defaultConf);
+        assertNotNull(conf.getConfigSchema());
     }
 
     @Test
     public void testStormConfigParser(){
-        File stormDefaultConf = new File("../../conf/storm-benchmark.yml");
-        assertNotNull(ConfigParser.parseStormConfigurationFile(stormDefaultConf));
+        String stormDefaultConf = "../../conf/storm-benchmark.yml";
+        Config conf = new Config(StormConfigSchema.class, stormDefaultConf);
+        assertNotNull(conf.getConfigSchema());
     }
 
 }
