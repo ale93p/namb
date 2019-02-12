@@ -1,6 +1,6 @@
 package fr.unice.namb.utils.common;
 
-import fr.unice.namb.utils.configuration.ConfigDefaults;
+import fr.unice.namb.utils.configuration.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,18 +9,18 @@ public class AppBuilder{
 
     private int depth;
     private int parallelism;
-    private ConfigDefaults.ConnectionShape shape;
+    private Config.ConnectionShape shape;
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
     private ArrayList<Integer> componentsParallelism;
     private int initialProcessing;
     private int currentProcessing;
-    private ConfigDefaults.LoadBalancing loadBalancing;
+    private Config.LoadBalancing loadBalancing;
 
     private int count;
 
 
-    public AppBuilder(int depth, int parallelism, ConfigDefaults.ConnectionShape shape, int processing, ConfigDefaults.LoadBalancing loadBalancing) throws Exception{
+    public AppBuilder(int depth, int parallelism, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
         this.depth = depth;
         this.parallelism = parallelism;
         this.shape = shape;
@@ -89,7 +89,7 @@ public class AppBuilder{
         return componentsParallelism;
     }
 
-    private ArrayList<Integer> computeTopologyShape(ConfigDefaults.ConnectionShape shape, int depth) throws Exception{
+    private ArrayList<Integer> computeTopologyShape(Config.ConnectionShape shape, int depth) throws Exception{
         ArrayList<Integer> dagLevelsWidth;
         switch(shape){
             case linear:
@@ -117,7 +117,7 @@ public class AppBuilder{
         return computeTopologyShape(this.shape, this.depth);
     }
 
-    public ArrayList<Integer> getTopologyShape(ConfigDefaults.ConnectionShape shape, int depth) throws Exception{
+    public ArrayList<Integer> getTopologyShape(Config.ConnectionShape shape, int depth) throws Exception{
         return computeTopologyShape(shape, depth);
     }
 

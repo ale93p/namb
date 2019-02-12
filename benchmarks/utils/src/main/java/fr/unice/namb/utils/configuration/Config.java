@@ -11,12 +11,50 @@ import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
 
 public class Config {
 
+    public enum ConnectionShape{
+        linear, diamond, star
+    }
+
+    public enum TrafficRouting{
+        shuffle, hash, broadcast
+    }
+
+    public enum LoadBalancing {
+        balanced, increasing, decresing, pyramid
+    }
+
+    public enum DataBalancing{
+        balanced, unbalanced
+    }
+
+    public enum Distribution{
+        uniform, burst //TODO: add normal, saw-tooth, bimodal
+    }
+
+    public static final int DF_DEPTH = 3;
+    public static final int DF_SCALABILITY_PARALLELISM = 10;
+    public static final ConnectionShape DF_CONNECTION_SHAPE = ConnectionShape.linear;
+    public static final TrafficRouting DF_TRAFFIC_ROUTING = TrafficRouting.shuffle;
+    public static final boolean DF_MESSAGE_RELIABILITY = true;
+    public static final int DF_WORKLOAD_PROCESSING = 300;
+    public static final LoadBalancing DF_WORKLOAD_BALANCING = LoadBalancing.balanced;
+    public static final int DS_SYNTHETIC_DATA_SIZE = 8;
+    public static final int DS_DATA_VALUES = 100;
+    public static final DataBalancing DS_DATA_BALANCING = DataBalancing.balanced;
+    public static final Distribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION = Distribution.uniform;
+    public static final int DS_SYNTHETIC_ARRIVAL_RATE = 1000;
+
+
     ConfigSchema configSchema;
     Class configSchemaClass;
 
     public Config(Class configSchemaClass, String configFile){
         this.configSchemaClass = configSchemaClass;
         this.configSchema = this.parseConfigurationFile(new File(configFile));
+    }
+
+    public Config(){
+        this(null, null);
     }
 
     public ConfigSchema getConfigSchema(){
@@ -43,7 +81,7 @@ public class Config {
 
         int parallelism = conf.getDataflow().getScalability().getParallelism();
         int depth = conf.getDataflow().getDepth();
-        ConfigDefaults.ConnectionShape shape = conf.getDataflow().getConnection().getShape();
+        ConnectionShape shape = conf.getDataflow().getConnection().getShape();
 
         AppBuilder app = new AppBuilder();
         int totalComponents = app.sumArray(app.getTopologyShape(shape, depth));

@@ -2,7 +2,6 @@ package fr.unice.namb.storm;
 
 
 import fr.unice.namb.utils.common.AppBuilder;
-import fr.unice.namb.utils.configuration.ConfigDefaults.*;
 import fr.unice.namb.utils.configuration.Config;
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
 import fr.unice.namb.utils.configuration.schema.StormConfigSchema;
@@ -24,7 +23,7 @@ public class BenchmarkApplication {
     private static String nambConfFileName = "namb.yml";
     private static String stormConfFileName = "storm-benchmark.yml";
 
-    private static void setRouting(BoltDeclarer bolt, String parent, TrafficRouting routing, String field){
+    private static void setRouting(BoltDeclarer bolt, String parent, Config.TrafficRouting routing, String field){
         switch(routing){
             case hash:
                 bolt.partialKeyGrouping(parent, new Fields(field));
@@ -36,7 +35,7 @@ public class BenchmarkApplication {
         }
     }
 
-    private static void setRouting(BoltDeclarer bolt, String parent, TrafficRouting routing){
+    private static void setRouting(BoltDeclarer bolt, String parent, Config.TrafficRouting routing){
         setRouting(bolt, parent, routing, "value");
     }
 
@@ -46,10 +45,10 @@ public class BenchmarkApplication {
         // General configurations
         int depth = conf.getDataflow().getDepth();
         int totalParallelism = conf.getDataflow().getScalability().getParallelism();
-        ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
-        TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
+        Config.ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
+        Config.TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
         int processingLoad = conf.getDataflow().getWorkload().getProcessing();
-        LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+        Config.LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
 
         // Generating app builder
         AppBuilder app = new AppBuilder(depth, totalParallelism, topologyShape, processingLoad, loadBalancing);
@@ -60,8 +59,8 @@ public class BenchmarkApplication {
         int numberOfSpouts = dagLevelsWidth.get(0);
         int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
         int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
-        DataBalancing dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
-        Distribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+        Config.DataBalancing dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
+        Config.Distribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
         int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Bolts configurations
