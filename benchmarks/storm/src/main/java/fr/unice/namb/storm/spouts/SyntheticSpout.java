@@ -1,5 +1,6 @@
 package fr.unice.namb.storm.spouts;
 
+import fr.unice.namb.utils.common.DataStream;
 import fr.unice.namb.utils.configuration.ConfigDefaults.DataBalancing;
 import fr.unice.namb.utils.configuration.ConfigDefaults.Distribution;
 import org.apache.storm.spout.SpoutOutputCollector;
@@ -23,6 +24,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private DataBalancing dataValuesBalancing;
     private long sleepTime;
     private Distribution distribution;
+    private DataStream dataStream;
 
 
     private ArrayList<byte[]> payloadArray;
@@ -60,6 +62,7 @@ public class SyntheticSpout extends BaseRichSpout {
 
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
         this.payloadArray = generatePayload(this.dataSize, this.dataValuesBalancing);
+        this.dataStream = new DataStream();
         this.count = 0;
         this.index = new Random();
         this._collector = collector;
@@ -67,19 +70,15 @@ public class SyntheticSpout extends BaseRichSpout {
 
     public void nextTuple(){
         byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
-        switch(this.distribution){
-            case uniform:
-                Utils.sleep(this.sleepTime);
-                _collector.emit(new Values(nextValue), count++);
-                break;
-            case burst:
-                //TODO: find a way to generate bursts from time to time
-                //Utils.sleep(this.sleepTime);
-                //_collector.emit(new Values(this.payload), count++);
-                break;
+        try {
+            Utils.sleep(
+                    dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
+            );
+            _collector.emit(new Values(nextValue), count++);
+            this.count++;
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        this.count++;
-
     }
 
     public void ack(Object msgId){ super.ack(msgId); }
