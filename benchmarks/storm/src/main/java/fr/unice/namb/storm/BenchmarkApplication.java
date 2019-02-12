@@ -2,24 +2,20 @@ package fr.unice.namb.storm;
 
 
 import fr.unice.namb.utils.common.AppBuilder;
-import fr.unice.namb.utils.configuration.ConfigChecker;
 import fr.unice.namb.utils.configuration.ConfigDefaults.*;
-import fr.unice.namb.utils.configuration.ConfigParser;
-import fr.unice.namb.utils.configuration.ConfigScheme;
-import fr.unice.namb.utils.configuration.StormConfigScheme;
-import fr.unice.namb.utils.configuration.StormConfigScheme.StormDeployment;
-import static fr.unice.namb.utils.common.AppBuilder.*;
+import fr.unice.namb.utils.configuration.Config;
+import fr.unice.namb.utils.configuration.NambConfigSchema;
+import fr.unice.namb.utils.configuration.StormConfigSchema;
+import fr.unice.namb.utils.configuration.StormConfigSchema.StormDeployment;
 import fr.unice.namb.storm.bolts.BusyWaitBolt;
 import fr.unice.namb.storm.spouts.SyntheticSpout;
 
-import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -44,7 +40,7 @@ public class BenchmarkApplication {
         setRouting(bolt, parent, routing, "value");
     }
 
-    private static TopologyBuilder buildBenchmarkTopology(ConfigScheme conf) throws Exception{
+    private static TopologyBuilder buildBenchmarkTopology(NambConfigSchema conf) throws Exception{
 
 
         // General configurations
@@ -137,17 +133,20 @@ public class BenchmarkApplication {
         String stormConfFilePath = confPath + "/" + stormConfFileName;
 
         // Obtaining Configurations
-        ConfigScheme benchConf = ConfigParser.parseNambConfigurationFile(new File(nambConfFilePath));
-        // Check configuration validity, if something wrong it throws exception
-        if(benchConf != null) {
-            ConfigChecker.validateConf(benchConf);
+        Config confParser = new Config(NambConfigSchema.class, nambConfFilePath);
+        NambConfigSchema nambConf = (NambConfigSchema) confParser.getConfigSchema();
 
-            TopologyBuilder builder = buildBenchmarkTopology(benchConf);
+        // Check configuration validity, if something wrong it throws exception
+        if(nambConf != null) {
+            confParser.validateConf(nambConf);
+
+            TopologyBuilder builder = buildBenchmarkTopology(nambConf);
             if (builder != null) {
-                StormConfigScheme stormConf = ConfigParser.parseStormConfigurationFile(new File(stormConfFilePath));
+                Config stormConfigParser = new Config(StormConfigSchema.class, stormConfFilePath);
+                StormConfigSchema stormConf = (StormConfigSchema) stormConfigParser.getConfigSchema();
 
                 if(stormConf != null) {
-                    Config conf = new Config();
+                    org.apache.storm.Config conf = new org.apache.storm.Config();
                     conf.setNumWorkers(stormConf.getWorkers());
 
                     if (stormConf.getDeployment() == StormDeployment.local) {

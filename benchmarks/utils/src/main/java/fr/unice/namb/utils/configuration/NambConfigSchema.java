@@ -2,7 +2,7 @@ package fr.unice.namb.utils.configuration;
 
 import fr.unice.namb.utils.configuration.ConfigDefaults.*;
 
-public class ConfigScheme {
+public class NambConfigSchema extends ConfigSchema{
 
     public static class DataFlow {
         public static class Scalability{
