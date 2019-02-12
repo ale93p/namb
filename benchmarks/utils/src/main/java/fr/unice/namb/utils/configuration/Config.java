@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.unice.namb.utils.common.AppBuilder;
+import fr.unice.namb.utils.configuration.schema.ConfigSchema;
+import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
 
 public class Config {
 

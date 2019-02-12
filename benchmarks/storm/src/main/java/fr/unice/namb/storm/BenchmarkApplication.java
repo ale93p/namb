@@ -4,9 +4,9 @@ package fr.unice.namb.storm;
 import fr.unice.namb.utils.common.AppBuilder;
 import fr.unice.namb.utils.configuration.ConfigDefaults.*;
 import fr.unice.namb.utils.configuration.Config;
-import fr.unice.namb.utils.configuration.NambConfigSchema;
-import fr.unice.namb.utils.configuration.StormConfigSchema;
-import fr.unice.namb.utils.configuration.StormConfigSchema.StormDeployment;
+import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
+import fr.unice.namb.utils.configuration.schema.StormConfigSchema;
+import fr.unice.namb.utils.configuration.schema.StormConfigSchema.StormDeployment;
 import fr.unice.namb.storm.bolts.BusyWaitBolt;
 import fr.unice.namb.storm.spouts.SyntheticSpout;
 

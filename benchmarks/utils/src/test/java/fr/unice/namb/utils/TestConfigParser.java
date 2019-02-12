@@ -1,8 +1,8 @@
 package fr.unice.namb.utils;
 
 import fr.unice.namb.utils.configuration.Config;
-import fr.unice.namb.utils.configuration.NambConfigSchema;
-import fr.unice.namb.utils.configuration.StormConfigSchema;
+import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
+import fr.unice.namb.utils.configuration.schema.StormConfigSchema;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
