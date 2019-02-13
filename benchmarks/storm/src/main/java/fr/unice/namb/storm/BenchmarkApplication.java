@@ -40,35 +40,34 @@ public class BenchmarkApplication {
 
 
         // General configurations
-        int depth = conf.getDataflow().getDepth();
-        int totalParallelism = conf.getDataflow().getScalability().getParallelism();
-        Config.ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
-        Config.TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
-        int processingLoad = conf.getDataflow().getWorkload().getProcessing();
-        Config.LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+        int                     depth               = conf.getDataflow().getDepth();
+        int                     totalParallelism    = conf.getDataflow().getScalability().getParallelism();
+        Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
+        Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
+        int                     processingLoad      = conf.getDataflow().getWorkload().getProcessing();
+        Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
         // Generating app builder
-        AppBuilder app = new AppBuilder(depth, totalParallelism, topologyShape, processingLoad, loadBalancing);
-        ArrayList<Integer> dagLevelsWidth =  app.getDagLevelsWidth();
-        ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
+        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, topologyShape, processingLoad, loadBalancing);
+        ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
+        ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
-        // Spout configurations
-        int numberOfSpouts = dagLevelsWidth.get(0);
-        int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
-        int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
-        Config.DataBalancing dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
-        Config.Distribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
-        int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
+        // Spout-specific configurations
+        int                     numberOfSpouts      = dagLevelsWidth.get(0);
+        int                     dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
+        int                     dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
+        Config.DataBalancing    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
+        Config.Distribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+        int                     rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
 
-        // Bolts configurations
-        int numberOfBolts = app.getTotalComponents() - numberOfSpouts;
-        int cycles = conf.getDataflow().getWorkload().getProcessing();
-        boolean reliability = conf.getDataflow().isReliable();
+        // Bolt-specific configurations
+        int     numberOfBolts   = app.getTotalComponents() - numberOfSpouts;
+        boolean reliability     = conf.getDataflow().isReliable();
 
 
-        Iterator<Integer> cpIterator = componentsParallelism.iterator();
-        ArrayList<String> spoutsList = new ArrayList<>();
-        ArrayList<String> boltsList = new ArrayList<>();
+        Iterator<Integer> cpIterator    = componentsParallelism.iterator();
+        ArrayList<String> spoutsList    = new ArrayList<>();
+        ArrayList<String> boltsList     = new ArrayList<>();
 
         TopologyBuilder builder = new TopologyBuilder();
 
@@ -81,6 +80,7 @@ public class BenchmarkApplication {
         }
 
         int boltID = 1;
+        int cycles;
         String boltName;
         //System.out.println("Topology shape: " + dagLevelsWidth.toString());
         // int i: represent the tree level
