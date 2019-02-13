@@ -42,13 +42,14 @@ public class BenchmarkApplication {
         // General configurations
         int                     depth               = conf.getDataflow().getDepth();
         int                     totalParallelism    = conf.getDataflow().getScalability().getParallelism();
+        Config.ParaBalancing    paraBalancing       = conf.getDataflow().getScalability().getBalancing();
         Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
         Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
         int                     processingLoad      = conf.getDataflow().getWorkload().getProcessing();
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
         // Generating app builder
-        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, topologyShape, processingLoad, loadBalancing);
+        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
         ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
         ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
