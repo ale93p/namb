@@ -9,6 +9,7 @@ public class AppBuilder{
 
     private int depth;
     private int parallelism;
+    private Config.ParaBalancing paraBalancing;
     private Config.ConnectionShape shape;
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
@@ -20,10 +21,11 @@ public class AppBuilder{
     private int count;
 
 
-    public AppBuilder(int depth, int parallelism, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
+    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
 
         this.depth = depth;
         this.parallelism = parallelism;
+        this.paraBalancing = paraBalancing;
         this.shape = shape;
         this.initialProcessing = processing;
         this.currentProcessing = processing;
@@ -52,7 +54,7 @@ public class AppBuilder{
             case increasing:
                 this.currentProcessing = (int)(this.currentProcessing * 1.2);
                 break;
-            case decresing:
+            case decreasing:
                 this.currentProcessing = (int)(this.currentProcessing * 0.8);
             case pyramid:
                 this.currentProcessing = (this.count <= this.totalComponents/2) ? (int) (this.currentProcessing * 1.2) : (int) (this.currentProcessing * 0.8);
@@ -71,23 +73,109 @@ public class AppBuilder{
         return this.componentsParallelism;
     }
 
-    /*
-    this is basic implementation
-    TODO: to be improved after implementing balancing on scalability configuration
-    */
+    //TODO
     private ArrayList<Integer> computeComponentsParallelism() throws ArithmeticException{
-        ArrayList<Integer> componentsParallelism = new ArrayList<>();
-        int totComponents = sumArray(this.dagLevelsWidth);
-        int remainingExecutors = this.parallelism%totComponents;
-        int basePar = this.parallelism / totComponents;
 
-        for(int i=0; i<totComponents; i++){
-            componentsParallelism.add( (remainingExecutors==0) ? basePar : basePar + 1 );
-            remainingExecutors--;
+        ArrayList<Integer> componentsParallelism = new ArrayList<>();
+        int remainingExecutors;
+        int basePar;
+
+        switch(this.paraBalancing){
+            case balanced:{
+                remainingExecutors = this.parallelism%this.totalComponents;
+                basePar = this.parallelism / this.totalComponents;
+                for(int i=0; i<this.totalComponents; i++){
+                    componentsParallelism.add( (remainingExecutors<=0) ? basePar : basePar + 1 );
+                    remainingExecutors--;
+                }
+                break;
+            }
+
+            case increasing: {
+                double variability = 0.5; //50%
+                basePar = this.parallelism / this.totalComponents;
+
+                // initialize array already
+                for (int i = 0; i < this.totalComponents; i++) componentsParallelism.add(i, basePar);
+
+                remainingExecutors = 0;
+                int avgRemainingExecutors = 0;
+
+                for (int j = 0; j < this.totalComponents; j++) {
+                    //remove variability
+                    for (int i = j; i < this.totalComponents; i++) {
+                        int value = componentsParallelism.get(i);
+                        //add avg remaining executor
+                        value = value + avgRemainingExecutors;
+                        //remove variability
+                        value = (int) (value * (1. - variability));
+                        componentsParallelism.set(i, value);
+                    }
+                    //check remainings
+                    remainingExecutors = this.parallelism - sumArray(componentsParallelism);
+                    avgRemainingExecutors = (remainingExecutors == 0 || j == this.totalComponents - 1) ? 0 : (int) (remainingExecutors / (this.totalComponents - (j + 1)));
+                    variability = variability * .7;
+                }
+
+                if (remainingExecutors > 0) {
+                    int value = componentsParallelism.get(componentsParallelism.size() - 1);
+                    value = value + remainingExecutors;
+                    componentsParallelism.set(componentsParallelism.size() - 1, value);
+                }
+
+                break;
+            }
+
+            case decreasing: {
+                double variability = 0.5; //50%
+                basePar = this.parallelism / this.totalComponents;
+
+                // initialize array already
+                for (int i = 0; i < this.totalComponents; i++) componentsParallelism.add(i, basePar);
+
+                remainingExecutors = 0;
+                int avgRemainingExecutors = 0;
+
+                for (int j = this.totalComponents - 1; j >= 0; j--) {
+                    //remove variability
+                    for (int i = j; i >=0; i--) {
+                        int value = componentsParallelism.get(i);
+                        //add avg remaining executor
+                        value = value + avgRemainingExecutors;
+                        //remove variability
+                        value = (int) (value * (1. - variability));
+                        componentsParallelism.set(i, value);
+                    }
+                    //check remainings
+                    remainingExecutors = this.parallelism - sumArray(componentsParallelism);
+                    avgRemainingExecutors = (remainingExecutors == 0 || j== 0) ? 0 : (int) (remainingExecutors / (j));
+                    variability = variability * .7;
+                }
+
+
+                if (remainingExecutors > 0) {
+                    int value = componentsParallelism.get(0);
+                    value = value + remainingExecutors;
+                    componentsParallelism.set(0, value);
+                }
+
+                break;
+
+            }
+
+            case pyramid: {
+                break;
+            }
         }
-        if (componentsParallelism.size() != totComponents){
-            throw new ArithmeticException("Error computing components parallelism: final array length mismatch");
+
+        if (componentsParallelism.size() != this.totalComponents){
+            throw new ArithmeticException("Error computing components parallelism: final array length mismatch (array:" + componentsParallelism.size() + " != components:" + this.totalComponents + ")");
         }
+        int placedExecutors = sumArray(componentsParallelism);
+        if(placedExecutors != this.parallelism){
+            throw new ArithmeticException("Error computing components parallelism: final placed executors mismatch (placed:" + placedExecutors + " != executors:" + this.parallelism + ")");
+        }
+
         return componentsParallelism;
     }
 
