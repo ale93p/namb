@@ -16,7 +16,7 @@ public class Config {
     }
 
     public enum ParaBalancing {
-        balanced, increasing, decresing, pyramid
+        balanced, increasing, decreasing, pyramid
     }
 
     public enum TrafficRouting{
@@ -24,7 +24,7 @@ public class Config {
     }
 
     public enum LoadBalancing {
-        balanced, increasing, decresing, pyramid
+        balanced, increasing, decreasing, pyramid
     }
 
     public enum DataBalancing{
