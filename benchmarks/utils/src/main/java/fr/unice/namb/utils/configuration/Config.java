@@ -15,6 +15,10 @@ public class Config {
         linear, diamond, star
     }
 
+    public enum ParaBalancing {
+        balanced, increasing, decresing, pyramid
+    }
+
     public enum TrafficRouting{
         shuffle, hash, broadcast
     }
@@ -33,6 +37,7 @@ public class Config {
 
     public static final int DF_DEPTH = 3;
     public static final int DF_SCALABILITY_PARALLELISM = 10;
+    public static final ParaBalancing DF_SCALABILITY_BALANCING = ParaBalancing.balanced;
     public static final ConnectionShape DF_CONNECTION_SHAPE = ConnectionShape.linear;
     public static final TrafficRouting DF_TRAFFIC_ROUTING = TrafficRouting.shuffle;
     public static final boolean DF_MESSAGE_RELIABILITY = true;

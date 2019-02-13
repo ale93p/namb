@@ -7,6 +7,7 @@ public class NambConfigSchema extends ConfigSchema {
     public static class DataFlow {
         public static class Scalability{
             private int parallelism = Config.DF_SCALABILITY_PARALLELISM;
+            private Config.ParaBalancing balancing = Config.DF_SCALABILITY_BALANCING;
 
             public int getParallelism() {
                 return parallelism;
@@ -14,6 +15,14 @@ public class NambConfigSchema extends ConfigSchema {
 
             public void setParallelism(int parallelism) {
                 this.parallelism = parallelism;
+            }
+
+            public Config.ParaBalancing getBalancing() {
+                return balancing;
+            }
+
+            public void setBalancing(Config.ParaBalancing balancing) {
+                this.balancing = balancing;
             }
         }
         public static class Connection{
