@@ -2,6 +2,7 @@ package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.Config;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,6 +10,7 @@ public class AppBuilder{
 
     private int depth;
     private int parallelism;
+    private Config.ParaBalancing paraBalancing;
     private Config.ConnectionShape shape;
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
@@ -20,10 +22,11 @@ public class AppBuilder{
     private int count;
 
 
-    public AppBuilder(int depth, int parallelism, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
+    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
 
         this.depth = depth;
         this.parallelism = parallelism;
+        this.paraBalancing = paraBalancing;
         this.shape = shape;
         this.initialProcessing = processing;
         this.currentProcessing = processing;
@@ -52,7 +55,7 @@ public class AppBuilder{
             case increasing:
                 this.currentProcessing = (int)(this.currentProcessing * 1.2);
                 break;
-            case decresing:
+            case decreasing:
                 this.currentProcessing = (int)(this.currentProcessing * 0.8);
             case pyramid:
                 this.currentProcessing = (this.count <= this.totalComponents/2) ? (int) (this.currentProcessing * 1.2) : (int) (this.currentProcessing * 0.8);
@@ -71,23 +74,133 @@ public class AppBuilder{
         return this.componentsParallelism;
     }
 
-    /*
-    this is basic implementation
-    TODO: to be improved after implementing balancing on scalability configuration
-    */
-    private ArrayList<Integer> computeComponentsParallelism() throws ArithmeticException{
-        ArrayList<Integer> componentsParallelism = new ArrayList<>();
-        int totComponents = sumArray(this.dagLevelsWidth);
-        int remainingExecutors = this.parallelism%totComponents;
-        int basePar = this.parallelism / totComponents;
 
-        for(int i=0; i<totComponents; i++){
-            componentsParallelism.add( (remainingExecutors==0) ? basePar : basePar + 1 );
-            remainingExecutors--;
+    private ArrayList<Integer> generateBalancedArray(int slots, int elements){
+        ArrayList<Integer> arr = new ArrayList<>();
+        int remainingElements = elements % slots;
+        int basePar = elements / slots;
+        for(int i=0; i<slots; i++){
+            arr.add( (remainingElements<=0) ? basePar : basePar + 1 );
+            remainingElements--;
         }
-        if (componentsParallelism.size() != totComponents){
-            throw new ArithmeticException("Error computing components parallelism: final array length mismatch");
+        return arr;
+    }
+
+    private ArrayList<Integer> generateIncreasingArray(int slots, int elements){
+        ArrayList<Integer> arr = new ArrayList<>();
+        double variability = 0.5; //50%
+        int remainingElements = 0;
+        int avgRemainingElements = 0;
+        int basePar = elements / slots;
+
+        // initialize array
+        for (int i = 0; i < slots; i++) arr.add(i, basePar);
+
+        for (int j = 0; j < slots; j++) {
+            //remove variability
+            for (int i = j; i < slots; i++) {
+                int value = arr.get(i);
+                //add avg remaining executor
+                value = value + avgRemainingElements;
+                //remove variability
+                value = (int) Math.ceil(value * (1. - variability));
+                if(value < 1) value = 1;
+                arr.set(i, value);
+            }
+            //check remainings
+            remainingElements = elements - sumArray(arr);
+            avgRemainingElements = (remainingElements == 0 || j == slots - 1) ? 0 : remainingElements / (slots - (j + 1));
+            variability = variability * .7;
         }
+
+        if (remainingElements > 0) {
+            int value = arr.get(arr.size() - 1);
+            value = value + remainingElements;
+            arr.set(arr.size() - 1, value);
+        }
+
+        return arr;
+    }
+
+    private ArrayList<Integer> generateDecreasingArray(int slots, int elements){
+        ArrayList<Integer> arr = generateIncreasingArray(slots, elements);
+        Collections.reverse(arr);
+        return arr;
+    }
+
+    //TODO
+    private ArrayList<Integer> computeComponentsParallelism() throws ArithmeticException{
+
+        ArrayList<Integer> componentsParallelism = new ArrayList<>();
+
+        switch(this.paraBalancing){
+            case balanced:{
+                componentsParallelism = generateBalancedArray(this.totalComponents, this.parallelism);
+                break;
+            }
+
+            case increasing: {
+                componentsParallelism = generateIncreasingArray(this.totalComponents, this.parallelism);
+                break;
+            }
+
+            case decreasing: {
+                componentsParallelism = generateDecreasingArray(this.totalComponents, this.parallelism);
+                break;
+
+            }
+
+            case pyramid: {
+
+                // initialize array
+                int basePar = this.parallelism / this.totalComponents;
+                int pivot = (int) Math.ceil(this.totalComponents / 2);
+
+                int componentsPartitionA = pivot + 1;
+                int parallelismPartitionA = basePar * componentsPartitionA;
+                int componentsPartitionB = this.totalComponents - componentsPartitionA;
+                int parallelismPartitionB = this.parallelism - parallelismPartitionA;
+
+                // fix parallelism partition
+                if (parallelismPartitionB > parallelismPartitionA){
+                    int temp = parallelismPartitionA;
+                    parallelismPartitionA = parallelismPartitionB;
+                    parallelismPartitionB = temp;
+                }
+                else if(parallelismPartitionA == parallelismPartitionB){
+                    parallelismPartitionA++;
+                    parallelismPartitionB--;
+                }
+
+                // generate increasing partition A [0:pivot]
+                ArrayList<Integer> partitionA = generateIncreasingArray(componentsPartitionA, parallelismPartitionA);
+                // generate decreasing partition B [pivot:end]
+                ArrayList<Integer> partitionB = generateDecreasingArray(componentsPartitionB, parallelismPartitionB);
+                // concatenate arrays
+                componentsParallelism.addAll(partitionA);
+                componentsParallelism.addAll(partitionB);
+
+                for (int i=pivot; i<componentsParallelism.size()-1; i++){
+                    int curr = componentsParallelism.get(i);
+                    int succ = componentsParallelism.get(i+1);
+                    if (curr < succ){
+                        componentsParallelism.set(i, succ);
+                        componentsParallelism.set(i+1, curr);
+                    }
+                    else break;
+                }
+                break;
+            }
+        }
+
+        if (componentsParallelism.size() != this.totalComponents){
+            throw new ArithmeticException("Error computing components parallelism: final array length mismatch (array:" + componentsParallelism.size() + " != components:" + this.totalComponents + ")");
+        }
+        int placedExecutors = sumArray(componentsParallelism);
+        if(placedExecutors != this.parallelism){
+            throw new ArithmeticException("Error computing components parallelism: final placed executors mismatch (placed:" + placedExecutors + " != executors:" + this.parallelism + ")");
+        }
+
         return componentsParallelism;
     }
 
