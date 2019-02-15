@@ -39,33 +39,46 @@ public class TestAppBuilder {
     @Parameters(name = "Run {index}: depth={0}, parallelism={1}, paraBalancing={2}, shape={3}")
     public static Iterable<Object[]> data() throws Throwable{
         return Arrays.asList(new Object[][]{
-                {10, 17, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
+                // balanced
                 {5, 10, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
                 {5, 13, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
                 {5, 13, Config.ParaBalancing.balanced, Config.ConnectionShape.star},
                 {5, 13, Config.ParaBalancing.balanced, Config.ConnectionShape.diamond},
+                {10, 17, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
+                {100, 1000000, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
+                // increasing
+                {3, 6, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
+                {5, 5, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {5, 10, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {5, 19, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {5, 19, Config.ParaBalancing.increasing, Config.ConnectionShape.star},
                 {5, 19, Config.ParaBalancing.increasing, Config.ConnectionShape.diamond},
-                {5, 50, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {10, 150, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {10, 300, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {7, 1000, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {100, 1000000, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
+                //decreasing
+                {5, 5, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
                 {5, 10, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
                 {5, 19, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
                 {5, 19, Config.ParaBalancing.decreasing, Config.ConnectionShape.star},
                 {5, 19, Config.ParaBalancing.decreasing, Config.ConnectionShape.diamond},
-                {5, 50, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
-                {10, 150, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
                 {10, 300, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
                 {7, 1000, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
-                {100, 1000000, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear}
+                {100, 1000000, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
+                // pyramid
+                {5, 5, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
+                {5, 10, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.pyramid, Config.ConnectionShape.star},
+                {5, 19, Config.ParaBalancing.pyramid, Config.ConnectionShape.diamond},
+                {10, 300, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
+                {7, 1000, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
+                {100, 1000000, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear}
         });
     }
 
     private boolean checkSequence(ArrayList<Integer> arr){
+        int pivot = (int) Math.ceil(arr.size() / 2);
 
         for(int i=1; i<arr.size(); i++){
             switch(this.paraBalancing){
@@ -79,6 +92,15 @@ public class TestAppBuilder {
                     if(arr.get(i-1)<arr.get(i)) return false;
                     break;
                 case pyramid:
+                    if(i==1) System.out.println("pivot:"+pivot);
+                    if(i <= pivot && arr.get(i-1)>arr.get(i)) {
+                        System.out.println("UP => " + arr.get(i-1) + " " + arr.get(i) + " " + arr.get(i+1));
+                        return false;
+                    }
+                    else if(i > pivot && arr.get(i-1)<arr.get(i)){
+                        System.out.println("UP => " + (i-1) + ":" + arr.get(i-1) + " " + i + ":" + + arr.get(i) + " " + (i+1) + ":" + arr.get(i+1));
+                        return false;
+                    }
                     break;
             }
         }

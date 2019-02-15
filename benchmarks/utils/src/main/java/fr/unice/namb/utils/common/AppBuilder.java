@@ -2,6 +2,7 @@ package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.Config;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -73,97 +74,121 @@ public class AppBuilder{
         return this.componentsParallelism;
     }
 
+
+    private ArrayList<Integer> generateBalancedArray(int slots, int elements){
+        ArrayList<Integer> arr = new ArrayList<>();
+        int remainingElements = elements % slots;
+        int basePar = elements / slots;
+        for(int i=0; i<slots; i++){
+            arr.add( (remainingElements<=0) ? basePar : basePar + 1 );
+            remainingElements--;
+        }
+        return arr;
+    }
+
+    private ArrayList<Integer> generateIncreasingArray(int slots, int elements){
+        ArrayList<Integer> arr = new ArrayList<>();
+        double variability = 0.5; //50%
+        int remainingElements = 0;
+        int avgRemainingElements = 0;
+        int basePar = elements / slots;
+
+        // initialize array
+        for (int i = 0; i < slots; i++) arr.add(i, basePar);
+
+        for (int j = 0; j < slots; j++) {
+            //remove variability
+            for (int i = j; i < slots; i++) {
+                int value = arr.get(i);
+                //add avg remaining executor
+                value = value + avgRemainingElements;
+                //remove variability
+                value = (int) Math.ceil(value * (1. - variability));
+                if(value < 1) value = 1;
+                arr.set(i, value);
+            }
+            //check remainings
+            remainingElements = elements - sumArray(arr);
+            avgRemainingElements = (remainingElements == 0 || j == slots - 1) ? 0 : remainingElements / (slots - (j + 1));
+            variability = variability * .7;
+        }
+
+        if (remainingElements > 0) {
+            int value = arr.get(arr.size() - 1);
+            value = value + remainingElements;
+            arr.set(arr.size() - 1, value);
+        }
+
+        return arr;
+    }
+
+    private ArrayList<Integer> generateDecreasingArray(int slots, int elements){
+        ArrayList<Integer> arr = generateIncreasingArray(slots, elements);
+        Collections.reverse(arr);
+        return arr;
+    }
+
     //TODO
     private ArrayList<Integer> computeComponentsParallelism() throws ArithmeticException{
 
         ArrayList<Integer> componentsParallelism = new ArrayList<>();
-        int remainingExecutors;
-        int basePar;
 
         switch(this.paraBalancing){
             case balanced:{
-                remainingExecutors = this.parallelism%this.totalComponents;
-                basePar = this.parallelism / this.totalComponents;
-                for(int i=0; i<this.totalComponents; i++){
-                    componentsParallelism.add( (remainingExecutors<=0) ? basePar : basePar + 1 );
-                    remainingExecutors--;
-                }
+                componentsParallelism = generateBalancedArray(this.totalComponents, this.parallelism);
                 break;
             }
 
             case increasing: {
-                double variability = 0.5; //50%
-                basePar = this.parallelism / this.totalComponents;
-
-                // initialize array already
-                for (int i = 0; i < this.totalComponents; i++) componentsParallelism.add(i, basePar);
-
-                remainingExecutors = 0;
-                int avgRemainingExecutors = 0;
-
-                for (int j = 0; j < this.totalComponents; j++) {
-                    //remove variability
-                    for (int i = j; i < this.totalComponents; i++) {
-                        int value = componentsParallelism.get(i);
-                        //add avg remaining executor
-                        value = value + avgRemainingExecutors;
-                        //remove variability
-                        value = (int) (value * (1. - variability));
-                        componentsParallelism.set(i, value);
-                    }
-                    //check remainings
-                    remainingExecutors = this.parallelism - sumArray(componentsParallelism);
-                    avgRemainingExecutors = (remainingExecutors == 0 || j == this.totalComponents - 1) ? 0 : (int) (remainingExecutors / (this.totalComponents - (j + 1)));
-                    variability = variability * .7;
-                }
-
-                if (remainingExecutors > 0) {
-                    int value = componentsParallelism.get(componentsParallelism.size() - 1);
-                    value = value + remainingExecutors;
-                    componentsParallelism.set(componentsParallelism.size() - 1, value);
-                }
-
+                componentsParallelism = generateIncreasingArray(this.totalComponents, this.parallelism);
                 break;
             }
 
             case decreasing: {
-                double variability = 0.5; //50%
-                basePar = this.parallelism / this.totalComponents;
-
-                // initialize array already
-                for (int i = 0; i < this.totalComponents; i++) componentsParallelism.add(i, basePar);
-
-                remainingExecutors = 0;
-                int avgRemainingExecutors = 0;
-
-                for (int j = this.totalComponents - 1; j >= 0; j--) {
-                    //remove variability
-                    for (int i = j; i >=0; i--) {
-                        int value = componentsParallelism.get(i);
-                        //add avg remaining executor
-                        value = value + avgRemainingExecutors;
-                        //remove variability
-                        value = (int) (value * (1. - variability));
-                        componentsParallelism.set(i, value);
-                    }
-                    //check remainings
-                    remainingExecutors = this.parallelism - sumArray(componentsParallelism);
-                    avgRemainingExecutors = (remainingExecutors == 0 || j== 0) ? 0 : (int) (remainingExecutors / (j));
-                    variability = variability * .7;
-                }
-
-
-                if (remainingExecutors > 0) {
-                    int value = componentsParallelism.get(0);
-                    value = value + remainingExecutors;
-                    componentsParallelism.set(0, value);
-                }
-
+                componentsParallelism = generateDecreasingArray(this.totalComponents, this.parallelism);
                 break;
 
             }
 
             case pyramid: {
+
+                // initialize array
+                int basePar = this.parallelism / this.totalComponents;
+                int pivot = (int) Math.ceil(this.totalComponents / 2);
+
+                int componentsPartitionA = pivot + 1;
+                int parallelismPartitionA = basePar * componentsPartitionA;
+                int componentsPartitionB = this.totalComponents - componentsPartitionA;
+                int parallelismPartitionB = this.parallelism - parallelismPartitionA;
+
+                // fix parallelism partition
+                if (parallelismPartitionB > parallelismPartitionA){
+                    int temp = parallelismPartitionA;
+                    parallelismPartitionA = parallelismPartitionB;
+                    parallelismPartitionB = temp;
+                }
+                else if(parallelismPartitionA == parallelismPartitionB){
+                    parallelismPartitionA++;
+                    parallelismPartitionB--;
+                }
+
+                // generate increasing partition A [0:pivot]
+                ArrayList<Integer> partitionA = generateIncreasingArray(componentsPartitionA, parallelismPartitionA);
+                // generate decreasing partition B [pivot:end]
+                ArrayList<Integer> partitionB = generateDecreasingArray(componentsPartitionB, parallelismPartitionB);
+                // concatenate arrays
+                componentsParallelism.addAll(partitionA);
+                componentsParallelism.addAll(partitionB);
+
+                for (int i=pivot; i<componentsParallelism.size()-1; i++){
+                    int curr = componentsParallelism.get(i);
+                    int succ = componentsParallelism.get(i+1);
+                    if (curr < succ){
+                        componentsParallelism.set(i, succ);
+                        componentsParallelism.set(i+1, curr);
+                    }
+                    else break;
+                }
                 break;
             }
         }
