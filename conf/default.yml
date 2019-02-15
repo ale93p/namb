@@ -9,6 +9,7 @@ dataflow:
   ## Scalability
   scalability:
     parallelism: 10 # Total number of executors
+    balancing: balanced # [balanced, increasing, decreasing, pyramid]
   
   ## Connection and Dependency
   connection: 
@@ -22,7 +23,7 @@ dataflow:
   ## Processing
   workload:
     processing: 300 # CPU load value (may be implemented by keywoards (low, medium, high... pre-defined functions))
-    balancing: balanced # [balanced, increasing, decreasing, bell]
+    balancing: balanced # [balanced, increasing, decreasing, pyramid]
 
 
 ###############################################
