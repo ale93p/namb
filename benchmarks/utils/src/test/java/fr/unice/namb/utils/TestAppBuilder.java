@@ -92,7 +92,6 @@ public class TestAppBuilder {
                     if(arr.get(i-1)<arr.get(i)) return false;
                     break;
                 case pyramid:
-                    if(i==1) System.out.println("pivot:"+pivot);
                     if(i <= pivot && arr.get(i-1)>arr.get(i)) {
                         System.out.println("UP => " + arr.get(i-1) + " " + arr.get(i) + " " + arr.get(i+1));
                         return false;
