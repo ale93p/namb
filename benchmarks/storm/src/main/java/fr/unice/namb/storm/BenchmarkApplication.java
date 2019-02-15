@@ -110,12 +110,19 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     //System.out.print("\n" + boltName + " connects to: ");
-                    for(int boltCount=0; boltCount<dagLevelsWidth.get(i-1); boltCount++){
-                        int parentBoltIdx = startingIdx + boltCount;
+                    if (topologyShape == Config.ConnectionShape.diamond) {
+                        for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {
+                            int parentBoltIdx = startingIdx + boltCount;
+                            setRouting(boltDeclarer, boltsList.get(parentBoltIdx), trafficRouting);
+                            //System.out.append(boltsList.get(parentBoltIdx) + " ");
+                        }
+                    }
+                    else{
+                        int parentBoltIdx = boltsList.size() - dagLevelsWidth.get(i-1);
                         setRouting(boltDeclarer, boltsList.get(parentBoltIdx), trafficRouting);
-                        //System.out.append(boltsList.get(parentBoltIdx) + " ");
                     }
                     boltID++;
+
                 }
             }
         }
