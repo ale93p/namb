@@ -2,6 +2,8 @@
 - [ ] Add a `platform` label: _what does this issue impact?_
 - [ ] Add a `type` label: _are you proposing a new feature, an enhancement for an existing one, or you encountered a bug?_
 
+_Please, delete this section before publishing the issue (and, of course, after completing the simple forementioned tasks)._
+
 #### Issue Description ####
 
 _Please explain what is the problem you encountered, or the missing feature you are proposing._
