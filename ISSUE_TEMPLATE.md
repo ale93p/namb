@@ -8,4 +8,4 @@ _Please explain what is the problem you encountered, or the missing feature you 
 
 #### Proposed Solution (if you have any) ####
 
-_How would you solve it?_
+_Please briefly describe how your ideas on how you would solve the problem, if you have any, even with an high level description_
