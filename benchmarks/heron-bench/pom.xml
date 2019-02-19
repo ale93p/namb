@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
+        <groupId>fr.unice</groupId>
         <version>0.1.0-beta</version>
     </parent>
-    <artifactId>tests</artifactId>
-    <version>${tests.version}</version>
+    <groupId>fr.unice.namb</groupId>
+    <artifactId>heron-bench</artifactId>
+    <version>${heron.benchmark.version}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,19 +21,19 @@
     <dependencies>
 
         <dependency>
+            <groupId>fr.unice.namb</groupId>
+            <artifactId>utils</artifactId>
+            <version>${utils.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-            <version>${storm.version}</version>
+            <artifactId>heron-api</artifactId>
+            <version>${heron.version}</version>
             <scope>provided</scope>
         </dependency>
 
     </dependencies>
-
-    <build>
-
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-
-    </build>
 
 </project>

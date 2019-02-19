@@ -9,6 +9,24 @@
     <packaging>pom</packaging>
     <version>0.1.0-beta</version>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <!-- Modules versions -->
+        <heron.benchmark.version>0.1.0-SNAPSHOT</heron.benchmark.version>
+        <storm.benchmark.version>0.1.0</storm.benchmark.version>
+        <tests.version>0.1.0</tests.version>
+        <utils.version>0.1.0</utils.version>
+        <!-- Dependencies versions -->
+        <jackson.version>2.9.4</jackson.version>
+        <junit.version>4.12</junit.version>
+        <!-- Platforms API versions -->
+        <heron.version>0.17.5</heron.version>
+        <storm.version>1.2.2</storm.version>
+        <!-- Plugins versions -->
+        <maven.shade.version>3.2.1</maven.shade.version>
+        <maven.surefire.version>3.0.0-M3</maven.surefire.version>
+    </properties>
+
     <modules>
         <module>utils</module>
         <module>storm</module>
@@ -16,6 +34,7 @@
         <!--<module>flink</module>-->
         <!--<module>spark</module>-->
         <module>tests</module>
+        <module>heron-bench</module>
     </modules>
 
     <dependencyManagement>
@@ -23,7 +42,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>${junit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -35,14 +54,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>${maven.surefire.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
