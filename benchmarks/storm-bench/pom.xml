@@ -10,7 +10,7 @@
         <version>0.1.0-beta</version>
     </parent>
     <groupId>fr.unice.namb</groupId>
-    <artifactId>storm</artifactId>
+    <artifactId>storm-bench</artifactId>
     <version>${storm.benchmark.version}</version>
     <packaging>jar</packaging>
 

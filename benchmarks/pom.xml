@@ -29,12 +29,11 @@
 
     <modules>
         <module>utils</module>
-        <module>storm</module>
-        <!--<module>heron</module>-->
+        <module>storm-bench</module>
+        <module>heron-bench</module>
         <!--<module>flink</module>-->
         <!--<module>spark</module>-->
         <module>tests</module>
-        <module>heron-bench</module>
     </modules>
 
     <dependencyManagement>
