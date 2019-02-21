@@ -1,9 +1,15 @@
 import os
-
-STORM_BENCHMARK_VERSION='0.1.0'
-HERON_BENCHMARK_VERSION='0.1.0-SNAPSHOT'
+import xml.etree.ElementTree as xml_parser
 
 CWD = os.path.dirname(os.path.realpath(__file__)).replace('/modules','')
+NAMB_POM = "{}/benchmarks/pom.xml".format(CWD)
+
+pom = xml_parser.parse(NAMB_POM)
+
+STORM_BENCHMARK_VERSION = pom.getroot().find("{http://maven.apache.org/POM/4.0.0}properties").find("{http://maven.apache.org/POM/4.0.0}storm.benchmark.version").text
+HERON_BENCHMARK_VERSION = pom.getroot().find("{http://maven.apache.org/POM/4.0.0}properties").find("{http://maven.apache.org/POM/4.0.0}heron.benchmark.version").text
+
+
 CONF_PATH = "{}/conf".format(CWD)
 
 NAMB_CONF = "{}/namb.yml".format(CONF_PATH)
