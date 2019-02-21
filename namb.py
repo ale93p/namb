@@ -25,10 +25,7 @@ def run_heron(custom_bin_path=None, namb_conf=vars.NAMB_CONF, heron_conf=vars.HE
     heron_bin = custom_bin_path if custom_bin_path else 'heron'
     conf = configparser.ConfigParser()
     conf.read(heron_conf)
-    if conf["deployment"] == "local":
-        heron_command = [heron_bin, "submit", "local", vars.HERON_CONF, vars.HERON_CLASS, namb_conf]
-    else:
-        raise Exception("Deployment on cluster not yet implemented")
+    heron_command = [heron_bin, "submit", conf["deployment"], vars.HERON_CONF, vars.HERON_CLASS, namb_conf]
     if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
         subprocess.run(heron_command)
         return
