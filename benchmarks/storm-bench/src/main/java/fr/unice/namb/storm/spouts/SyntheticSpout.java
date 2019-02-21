@@ -1,5 +1,6 @@
 package fr.unice.namb.storm.spouts;
 
+import fr.unice.namb.utils.common.StringGenerator;
 import fr.unice.namb.utils.common.DataStream;
 import fr.unice.namb.utils.configuration.Config;
 import org.apache.storm.spout.SpoutOutputCollector;
