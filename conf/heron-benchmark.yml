@@ -1,1 +1,1 @@
-deployment: local # [local, cluster]
+deployment: local # (local | cluster/[role]/[env]) 
