@@ -1,7 +1,8 @@
-package fr.unice.namb.utils.common;
+package fr.unice.namb.storm.spouts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class StringGenerator {
 
