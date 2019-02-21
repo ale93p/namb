@@ -7,7 +7,7 @@
     <parent>
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
-        <version>0.1.0-beta</version>
+        <version>${revision}</version>
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>utils</artifactId>
@@ -16,7 +16,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aaa>1</aaa>
     </properties>
 
     <dependencies>

@@ -40,6 +40,8 @@ public class BusyWaitBolt extends BaseRichBolt {
         _collector.emit(new Values(payload));
         if (this._reliable){ _collector.ack(tuple); }
 
+        System.out.println("Hello!");
+
     }
 
     public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value"));}

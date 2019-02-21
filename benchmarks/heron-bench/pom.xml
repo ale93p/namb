@@ -7,7 +7,7 @@
     <parent>
         <artifactId>namb</artifactId>
         <groupId>fr.unice</groupId>
-        <version>0.1.0-beta</version>
+        <version>${revision}</version>
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>heron-bench</artifactId>
@@ -42,23 +42,6 @@
         <testSourceDirectory>src/test/java</testSourceDirectory>
 
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven.shade.version}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
         </plugins>
 

@@ -7,7 +7,7 @@
     <parent>
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
-        <version>0.1.0-beta</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>tests</artifactId>
     <version>${tests.version}</version>
