@@ -7,10 +7,9 @@
     <parent>
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
-        <version>${revision}</version>
+        <version>0.1.0-beta</version>
     </parent>
     <artifactId>tests</artifactId>
-    <version>${tests.version}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -22,7 +21,7 @@
         <dependency>
             <groupId>org.apache.storm</groupId>
             <artifactId>storm-core</artifactId>
-            <version>${storm.version}</version>
+            <version>1.2.1</version>
             <scope>provided</scope>
         </dependency>
 

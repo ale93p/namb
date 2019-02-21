@@ -2,7 +2,6 @@
 
 import argparse
 import subprocess
-import configparser
 import modules.namb_variables as vars
 
 class CommandNotFound(Exception):
@@ -21,49 +20,30 @@ def run_storm(custom_bin_path=None, namb_conf=vars.NAMB_CONF, storm_conf=vars.ST
     else:
         raise CommandNotFound(storm_bin)
 
-def run_heron(custom_bin_path=None, namb_conf=vars.NAMB_CONF, heron_conf=vars.HERON_CONF):
-    heron_bin = custom_bin_path if custom_bin_path else 'heron'
-    conf = configparser.ConfigParser()
-    conf.read(heron_conf)
-    heron_command = [heron_bin, "submit", conf["deployment"], vars.HERON_CONF, vars.HERON_CLASS, namb_conf]
-    if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
-        subprocess.run(heron_command)
-        return
-    else:
-        raise CommandNotFound(heron_command)
-
 def run(cmd, **kwargs):
     if cmd == 'storm':
         run_storm(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_storm_conf"])
-        return
-    if cmd == 'heron':
-        run_heron(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_heron_conf"])
-
     else:
         print("Oh my gosh. You shall not be here... Run fool!")
 
 if __name__ == "__main__":
     # main parser
     main_parser = argparse.ArgumentParser(prog="namb.py")
-    main_parser.add_argument("-c", "--conf", dest="namb_conf", metavar="NAMB_CONF", help="Specify custom NAMB configuration file", default=vars.NAMB_CONF)
+    main_parser.add_argument("-c", "--conf", dest="namb_conf", help="Specify custom NAMB configuration file", default=vars.NAMB_CONF)
 
     # subparsers definition
-    subparsers = main_parser.add_subparsers(dest="command", metavar="Platforms")
+    subparsers = main_parser.add_subparsers(dest="command", metavar="Commands")
     subparsers.required = True
 
     # storm subparser
-    storm_parser = subparsers.add_parser('storm', help='Run Apache Storm benchmark')
-    storm_parser.add_argument("-p","--path", dest="exec_path", metavar="STORM_EXECUTABLE", help="Path to Storm executable", default="storm")
-    storm_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="STORM_CONF", help="Specify custom Storm benchmark configuration file", default=vars.STORM_CONF)
-
-    heron_parser = subparsers.add_parser('heron', help='Run Apache Heron benchmark')
-    heron_parser.add_argument("-p","--path", dest="exec_path", metavar="HERON_EXECUTABLE", help="Path to Heron executable", default="heron")
-    heron_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="HERON_CONF", help="Specify custom Heron benchmark configuration file", default=vars.HERON_CONF)
+    storm_parser = subparsers.add_parser('storm', help='Run Storm benchmark')
+    storm_parser.add_argument("-p","--path", dest="exec_path", help="Specify the executable path for the middleware", default="storm")
+    storm_parser.add_argument("-c", "--conf", dest="storm_conf", help="Specify custom Storm benchmark configuration file", default=vars.STORM_CONF)
 
     args = main_parser.parse_args()
 
     try:
-        run(args.command, **{"custom_bin_path":args.exec_path, "custom_namb_conf":args.namb_conf, "custom_platform_conf":args.platform_conf})
+        run(args.command, **{"custom_bin_path":args.exec_path, "custom_namb_conf":args.namb_conf, "custom_storm_conf":args.storm_conf})
     except CommandNotFound as c:
         print(c)
 

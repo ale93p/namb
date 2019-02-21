@@ -7,11 +7,10 @@
     <parent>
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
-        <version>${revision}</version>
+        <version>0.1.0-beta</version>
     </parent>
     <groupId>fr.unice.namb</groupId>
-    <artifactId>storm-bench</artifactId>
-    <version>${storm.benchmark.version}</version>
+    <artifactId>storm</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -23,14 +22,14 @@
         <dependency>
             <groupId>fr.unice.namb</groupId>
             <artifactId>utils</artifactId>
-            <version>${utils.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.storm</groupId>
             <artifactId>storm-core</artifactId>
-            <version>${storm.version}</version>
+            <version>1.2.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -44,6 +43,24 @@
         <testSourceDirectory>src/test/java</testSourceDirectory>
 
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
     </build>
