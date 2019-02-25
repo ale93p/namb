@@ -42,4 +42,8 @@ public class DataStream {
         }
     }
 
+    public long convertToInterval(int msgPerSec){
+        return 1000/msgPerSec; // Interval in ms
+    }
+
 }

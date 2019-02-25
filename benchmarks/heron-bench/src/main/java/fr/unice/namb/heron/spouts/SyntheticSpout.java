@@ -22,6 +22,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private int dataSize;
     private int dataValues;
     private Config.DataBalancing dataValuesBalancing;
+    private int flowRate;
     private long sleepTime;
     private Config.Distribution distribution;
     private DataStream dataStream;
@@ -36,17 +37,14 @@ public class SyntheticSpout extends BaseRichSpout {
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
-        this.sleepTime = convertToInterval(flowRate);
-    }
-
-    private long convertToInterval(int msgPerSec){
-        return 1000/msgPerSec; // Interval in ms
+        this.flowRate = flowRate;
     }
 
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
         StringGenerator generator = new StringGenerator(this.dataSize);
         this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
+        this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
         this.index = new Random();
         this._collector = collector;
