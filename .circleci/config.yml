@@ -8,7 +8,7 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk
 
-    working_directory: ~/namb/benchmarks
+    working_directory: ~/namb
 
     environment:
       # Customize the JVM maximum heap limit
@@ -17,7 +17,5 @@ jobs:
     steps:
       - checkout:
           path: ~/namb
-
-      - run: mvn --version
 
       - run: mvn clean install
