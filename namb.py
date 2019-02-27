@@ -34,10 +34,10 @@ def run_heron(custom_bin_path=None, namb_conf=vars.NAMB_CONF, heron_conf=vars.HE
 
 def run(cmd, **kwargs):
     if cmd == 'storm':
-        run_storm(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_storm_conf"])
+        run_storm(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_platform_conf"])
         return
     if cmd == 'heron':
-        run_heron(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_heron_conf"])
+        run_heron(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_platform_conf"])
 
     else:
         print("Oh my gosh. You shall not be here... Run fool!")
@@ -45,7 +45,7 @@ def run(cmd, **kwargs):
 if __name__ == "__main__":
     # main parser
     main_parser = argparse.ArgumentParser(prog="namb.py")
-    main_parser.add_argument("-c", "--conf", dest="namb_conf", metavar="NAMB_CONF", help="Specify custom NAMB configuration file", default=vars.NAMB_CONF)
+    main_parser.add_argument("-c", "--conf", dest="namb_conf", metavar="<namb_conf>", help="Specify custom NAMB configuration file", default=vars.NAMB_CONF)
 
     # subparsers definition
     subparsers = main_parser.add_subparsers(dest="command", metavar="Platforms")
@@ -53,12 +53,12 @@ if __name__ == "__main__":
 
     # storm subparser
     storm_parser = subparsers.add_parser('storm', help='Run Apache Storm benchmark')
-    storm_parser.add_argument("-p","--path", dest="exec_path", metavar="STORM_EXECUTABLE", help="Path to Storm executable", default="storm")
-    storm_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="STORM_CONF", help="Specify custom Storm benchmark configuration file", default=vars.STORM_CONF)
+    storm_parser.add_argument("-p","--path", dest="exec_path", metavar="<storm_executable>", help="Path to Storm executable", default="storm")
+    storm_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<storm_conf>", help="Specify custom Storm benchmark configuration file", default=vars.STORM_CONF)
 
     heron_parser = subparsers.add_parser('heron', help='Run Apache Heron benchmark')
-    heron_parser.add_argument("-p","--path", dest="exec_path", metavar="HERON_EXECUTABLE", help="Path to Heron executable", default="heron")
-    heron_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="HERON_CONF", help="Specify custom Heron benchmark configuration file", default=vars.HERON_CONF)
+    heron_parser.add_argument("-p","--path", dest="exec_path", metavar="<heron_executable>", help="Path to Heron executable", default="heron")
+    heron_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<heron_conf>", help="Specify custom Heron benchmark configuration file", default=vars.HERON_CONF)
 
     args = main_parser.parse_args()
 
