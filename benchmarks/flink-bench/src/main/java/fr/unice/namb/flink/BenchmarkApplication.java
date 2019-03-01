@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class BenchmarkApplication {
 
-
     private static StreamExecutionEnvironment buildBenchmarkEnvironment(NambConfigSchema conf) throws Exception{
 
         // General configurations
@@ -34,7 +33,7 @@ public class BenchmarkApplication {
         ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
         // Spout-specific configurations
-        int                     numberOfSources      = dagLevelsWidth.get(0);
+        int                     numberOfSources     = dagLevelsWidth.get(0);
         int                     dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
         int                     dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
         Config.DataBalancing    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
@@ -46,39 +45,56 @@ public class BenchmarkApplication {
         boolean reliability         = conf.getDataflow().isReliable();
 
         Iterator<Integer> cpIterator    = componentsParallelism.iterator();
-        ArrayList<MutablePair<String, SingleOutputStreamOperator>> sourcesList = new ArrayList<>();
-        ArrayList<MutablePair<String, SingleOutputStreamOperator>> operatorsList = new ArrayList<>();
+        ArrayList<MutablePair<String, DataStream<String>>> sourcesList = new ArrayList<>();
+        ArrayList<MutablePair<String, SingleOutputStreamOperator<String>>> operatorsList = new ArrayList<>();
 
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        String sourceName = "source";
-        DataStream<String> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate))
-                                        .setParallelism(cpIterator.next())
-                                        .name("source1");
+        String sourceName;
+
+        for(int s=1; s<=numberOfSources; s++){
+            sourceName = "source_" + s;
+            DataStream<String> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate))
+                    .setParallelism(cpIterator.next())
+                    .name(sourceName);
+            sourcesList.add(new MutablePair<>(sourceName, source));
+
+        }
+
+        if (numberOfSources > 1){
+            sourceName = "unified_source";
+            DataStream<String> unifiedSource = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
+            for(int i=2; i<numberOfSources; i++){
+                unifiedSource.union(sourcesList.get(i).getRight());
+            }
+            sourcesList.add(new MutablePair<>(sourceName, unifiedSource));
+        }
+
 
         int operatorID = 1;
         int cycles;
         String operatorName;
 
         for(int i = 1; i<depth; i++){
-            SingleOutputStreamOperator op = null;
+            SingleOutputStreamOperator<String> op = null;
             operatorName = "op_" + operatorID;
             cycles = app.getNextProcessing();
             if(i==1) {
-                 op = source
-                         .map(new BusyWaitMap(cycles))
-                         .setParallelism(cpIterator.next())
-                         .name(operatorName);
+                op = sourcesList.get(sourcesList.size() - 1).getRight()
+                        .map(new BusyWaitMap(cycles))
+                        .setParallelism(cpIterator.next())
+                        .name(operatorName);
             }
             else{
-                 op = operatorsList.get(i-2).getRight()
-                         .map(new BusyWaitMap(cycles))
-                         .setParallelism(cpIterator.next())
-                         .name(operatorName);
+                SingleOutputStreamOperator<String> parent = operatorsList.get(i-2).getRight();
+                op = parent
+                        .map(new BusyWaitMap(cycles))
+                        .setParallelism(cpIterator.next())
+                        .name(operatorName);
 
             }
-            operatorsList.add(new MutablePair<String, SingleOutputStreamOperator>(operatorName, op));
+            operatorsList.add(new MutablePair<>(operatorName, op));
             operatorID++;
         }
 
