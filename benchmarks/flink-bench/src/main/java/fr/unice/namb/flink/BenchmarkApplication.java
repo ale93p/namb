@@ -12,9 +12,32 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 public class BenchmarkApplication {
+
+    private static void setRouting(SingleOutputStreamOperator<String> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException{
+        switch(routing){
+            case hash:
+                if (field instanceof Integer)
+                    operator.keyBy( (int) field);
+                else if (field instanceof String)
+                    operator.keyBy( (String) field);
+                else
+                    throw new IllegalArgumentException("Filed must be int or String instead it is " + field.getClass().getName());
+                break;
+            case shuffle:
+                operator.rebalance();
+                break;
+            case broadcast:
+                operator.broadcast();
+                break;
+        }
+    }
+
+    private static void setRouting(SingleOutputStreamOperator<String> operator, Config.TrafficRouting routing) throws IllegalArgumentException{
+        setRouting(operator, routing, 0);
+    }
+
 
     private static StreamExecutionEnvironment buildBenchmarkEnvironment(NambConfigSchema conf) throws Exception{
 
@@ -28,9 +51,9 @@ public class BenchmarkApplication {
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
         // Generating app builder
-        AppBuilder app                                  = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
-        ArrayList<Integer> dagLevelsWidth               = app.getDagLevelsWidth();
-        ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
+        AppBuilder app                              = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
+        ArrayList<Integer> dagLevelsWidth           = app.getDagLevelsWidth();
+        ArrayList<Integer> componentsParallelism    = app.getComponentsParallelism();
 
         // Spout-specific configurations
         int                     numberOfSources     = dagLevelsWidth.get(0);
@@ -87,6 +110,7 @@ public class BenchmarkApplication {
                             .map(new BusyWaitMap(cycles))
                             .setParallelism(cpIterator.next())
                             .name(operatorName);
+                    setRouting(op, trafficRouting);
                     operatorsList.add(new MutablePair<>(operatorName, op));
                     operatorID++;
                 }
@@ -94,6 +118,7 @@ public class BenchmarkApplication {
             else{
                 if(topologyShape == Config.ConnectionShape.diamond && dagLevelsWidth.get(i-1) > 1){ // diamond shape union
                     DataStream<String> diamondUnion = operatorsList.get(operatorID - 2).getRight().union(operatorsList.get(operatorID - 3).getRight());
+                    //TODO: maybe this can be optimized?
                     for(int o=2; o<dagLevelsWidth.get(i-1); o++){
                         diamondUnion.union(operatorsList.get(o).getRight());
                     }
@@ -103,6 +128,7 @@ public class BenchmarkApplication {
                             .map(new BusyWaitMap(cycles))
                             .setParallelism(cpIterator.next())
                             .name(operatorName);
+                    setRouting(op, trafficRouting);
                     operatorsList.add(new MutablePair<>(operatorName, op));
                     operatorID++;
                 }
@@ -117,6 +143,7 @@ public class BenchmarkApplication {
                                 .map(new BusyWaitMap(cycles))
                                 .setParallelism(cpIterator.next())
                                 .name(operatorName);
+                        setRouting(op, trafficRouting);
                         operatorsList.add(new MutablePair<>(operatorName, op));
                         operatorID++;
                     }
