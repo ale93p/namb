@@ -23,7 +23,7 @@ public class BenchmarkApplication {
                 else if (field instanceof String)
                     operator.keyBy( (String) field);
                 else
-                    throw new IllegalArgumentException("Filed must be int or String instead it is " + field.getClass().getName());
+                    throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
                 break;
             case shuffle:
                 operator.rebalance();
