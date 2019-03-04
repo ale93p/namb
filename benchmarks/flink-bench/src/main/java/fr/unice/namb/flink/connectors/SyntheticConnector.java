@@ -3,13 +3,15 @@ package fr.unice.namb.flink.connectors;
 import fr.unice.namb.utils.common.DataStream;
 import fr.unice.namb.utils.common.StringGenerator;
 import fr.unice.namb.utils.configuration.Config;
+import org.apache.flink.api.java.tuple.Tuple1;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class SyntheticConnector extends RichParallelSourceFunction<String> {
+public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String>> {
 
     private volatile boolean isRunning;
 
@@ -48,14 +50,14 @@ public class SyntheticConnector extends RichParallelSourceFunction<String> {
     }
 
     @Override
-    public void run(SourceContext<String> sourceContext){
+    public void run(SourceContext<Tuple1<String>> sourceContext){
         while(isRunning){
             byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
             try {
                 Thread.sleep(
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                 );
-                sourceContext.collect(new String(nextValue));
+                sourceContext.collect(new Tuple1<>(new String(nextValue)));
                 this.count++;
             } catch (Exception e){
                 e.printStackTrace();

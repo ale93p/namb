@@ -6,6 +6,7 @@ import fr.unice.namb.utils.common.AppBuilder;
 import fr.unice.namb.utils.configuration.Config;
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -15,7 +16,7 @@ import java.util.Iterator;
 
 public class BenchmarkApplication {
 
-    private static void setRouting(SingleOutputStreamOperator<String> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException{
+    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException{
         switch(routing){
             case hash:
                 if (field instanceof Integer)
@@ -34,7 +35,7 @@ public class BenchmarkApplication {
         }
     }
 
-    private static void setRouting(SingleOutputStreamOperator<String> operator, Config.TrafficRouting routing) throws IllegalArgumentException{
+    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing) throws IllegalArgumentException{
         setRouting(operator, routing, 0);
     }
 
@@ -68,8 +69,8 @@ public class BenchmarkApplication {
         boolean reliability         = conf.getDataflow().isReliable();
 
         Iterator<Integer> cpIterator    = componentsParallelism.iterator();
-        ArrayList<MutablePair<String, DataStream<String>>> sourcesList = new ArrayList<>();
-        ArrayList<MutablePair<String, SingleOutputStreamOperator<String>>> operatorsList = new ArrayList<>();
+        ArrayList<MutablePair<String, DataStream<Tuple1<String>>>> sourcesList = new ArrayList<>();
+        ArrayList<MutablePair<String, SingleOutputStreamOperator<Tuple1<String>>>> operatorsList = new ArrayList<>();
 
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -78,7 +79,7 @@ public class BenchmarkApplication {
 
         for(int s=1; s<=numberOfSources; s++){
             sourceName = "source_" + s;
-            DataStream<String> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate))
+            DataStream<Tuple1<String>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate))
                     .setParallelism(cpIterator.next())
                     .name(sourceName);
             sourcesList.add(new MutablePair<>(sourceName, source));
@@ -87,7 +88,7 @@ public class BenchmarkApplication {
 
         if (numberOfSources > 1){
             sourceName = "unified_source";
-            DataStream<String> unifiedSource = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
+            DataStream<Tuple1<String>> unifiedSource = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
             for(int s=2; s<numberOfSources; s++){
                 unifiedSource.union(sourcesList.get(s).getRight());
             }
@@ -101,7 +102,7 @@ public class BenchmarkApplication {
 
         for(int i = 1; i<depth; i++){
             int levelWidth = dagLevelsWidth.get(i);
-            SingleOutputStreamOperator<String> op = null;
+            SingleOutputStreamOperator<Tuple1<String>> op = null;
             if(i==1) {
                 for(int opCount=0; opCount<levelWidth; opCount++) {
                     operatorName = "op_" + operatorID;
@@ -117,7 +118,7 @@ public class BenchmarkApplication {
             }
             else{
                 if(topologyShape == Config.ConnectionShape.diamond && dagLevelsWidth.get(i-1) > 1){ // diamond shape union
-                    DataStream<String> diamondUnion = operatorsList.get(operatorID - 2).getRight().union(operatorsList.get(operatorID - 3).getRight());
+                    DataStream<Tuple1<String>> diamondUnion = operatorsList.get(operatorID - 2).getRight().union(operatorsList.get(operatorID - 3).getRight());
                     //TODO: maybe this can be optimized?
                     for(int o=2; o<dagLevelsWidth.get(i-1); o++){
                         diamondUnion.union(operatorsList.get(o).getRight());
@@ -135,7 +136,7 @@ public class BenchmarkApplication {
                 else{
                     int parentOperatorIdx = (topologyShape == Config.ConnectionShape.diamond ||
                             (topologyShape == Config.ConnectionShape.star && i>3)) ? i - 1 : i - 2;
-                    SingleOutputStreamOperator<String> parent = operatorsList.get(parentOperatorIdx).getRight();
+                    SingleOutputStreamOperator<Tuple1<String>> parent = operatorsList.get(parentOperatorIdx).getRight();
                     for(int opCount = 0; opCount<levelWidth; opCount++){
                         operatorName = "op_" + operatorID;
                         cycles = app.getNextProcessing();
