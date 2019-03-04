@@ -8,6 +8,7 @@
         <groupId>fr.unice</groupId>
         <artifactId>namb</artifactId>
         <version>${revision}</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>storm-bench</artifactId>
@@ -44,6 +45,10 @@
         <testSourceDirectory>src/test/java</testSourceDirectory>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
         </plugins>
 
     </build>

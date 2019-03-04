@@ -22,6 +22,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private int dataSize;
     private int dataValues;
     private Config.DataBalancing dataValuesBalancing;
+    private int flowRate;
     private long sleepTime;
     private Config.Distribution distribution;
     private DataStream dataStream;
@@ -36,33 +37,14 @@ public class SyntheticSpout extends BaseRichSpout {
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
-        this.sleepTime = convertToInterval(flowRate);
-    }
-
-    private long convertToInterval(int msgPerSec){
-        return 1000/msgPerSec; // Interval in ms
-    }
-
-    private ArrayList<byte[]> generatePayload(int size, Config.DataBalancing balancing){
-        String nextString;
-        ArrayList<byte[]> payloadArray = new ArrayList<>();
-        StringGenerator generator = new StringGenerator(size);
-        for(int i=0; i<this.dataValues; i++) { //can this be optimized?
-            nextString = generator.next();
-            payloadArray.add(nextString.getBytes());
-            if(balancing == Config.DataBalancing.unbalanced){
-                for(int j=1; i<Math.pow(2,i); i++){
-                    payloadArray.add(nextString.getBytes());
-                }
-            }
-
-        }
-        return payloadArray;
+        this.flowRate = flowRate;
     }
 
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
-        this.payloadArray = generatePayload(this.dataSize, this.dataValuesBalancing);
+        StringGenerator generator = new StringGenerator(this.dataSize);
+        this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
+        this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
         this.index = new Random();
         this._collector = collector;

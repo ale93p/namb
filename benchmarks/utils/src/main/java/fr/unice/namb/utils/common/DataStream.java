@@ -14,6 +14,14 @@ public class DataStream {
         this.msgCount = 0;
     }
 
+    /**
+     * Returns the value in ms of the next inter-message interval
+     *
+     * @param distribution data rate distribution
+     * @param defaultTime default interval time defined by the user
+     * @return milliseconds
+     * @throws Exception if unkwown distribution type is given
+     */
     public long getInterMessageTime(Config.Distribution distribution, long defaultTime) throws Exception{
         // elapsed time since last burst end
 
@@ -40,6 +48,16 @@ public class DataStream {
                 throw new Exception("Unknown Distribution Type <" + distribution + ">");
 
         }
+    }
+
+    /**
+     * Returns the value in <i>ms</i> of the inter-message interval given the <i>msg/s</i> rate
+     *
+     * @param msgPerSec value of the rate in messages per second
+     * @return milliseconds
+     */
+    public long convertToInterval(int msgPerSec){
+        return 1000/msgPerSec; // Interval in ms
     }
 
 }

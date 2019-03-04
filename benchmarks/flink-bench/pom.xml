@@ -2,17 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>namb</artifactId>
         <groupId>fr.unice</groupId>
         <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
     <groupId>fr.unice.namb</groupId>
-    <artifactId>heron-bench</artifactId>
-    <version>${heron.benchmark.version}</version>
+    <artifactId>flink-bench</artifactId>
+    <version>${flink.benchmark.version}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -29,13 +28,22 @@
         </dependency>
 
         <dependency>
-            <groupId>com.twitter.heron</groupId>
-            <artifactId>heron-api</artifactId>
-            <version>${heron.version}</version>
-            <scope>compile</scope>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java_2.11</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
+
+
 
     <build>
 
@@ -45,10 +53,21 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>fr.unice.namb.flink.BenchmarkApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
             </plugin>
         </plugins>
 
     </build>
-
 </project>

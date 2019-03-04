@@ -27,8 +27,10 @@ public class BenchmarkApplication {
                 break;
             case shuffle:
                 bolt.shuffleGrouping(parent);
+                break;
             case broadcast:
                 bolt.allGrouping(parent);
+                break;
         }
     }
 

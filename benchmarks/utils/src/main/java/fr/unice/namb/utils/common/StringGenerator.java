@@ -1,5 +1,7 @@
 package fr.unice.namb.utils.common;
 
+import fr.unice.namb.utils.configuration.Config;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -31,7 +33,7 @@ public class StringGenerator {
         return array;
     }
 
-    public String next(){
+    private String next(){
         String returnString = new String(this.currentString);
         this.pivot = 0;
         for(int i=0; i<this.length; i++){
@@ -45,5 +47,20 @@ public class StringGenerator {
 
         this.count++;
         return returnString;
+    }
+
+    public ArrayList<byte[]> generatePayload(int dataValues, Config.DataBalancing balancing){
+        String nextString;
+        ArrayList<byte[]> payloadArray = new ArrayList<>();
+        for(int i=0; i< dataValues; i++) { //can this be optimized?
+            nextString = this.next();
+            payloadArray.add(nextString.getBytes());
+            if(balancing == Config.DataBalancing.unbalanced){
+                for(int j=1; i<Math.pow(2,i); i++){
+                    payloadArray.add(nextString.getBytes());
+                }
+            }
+        }
+        return payloadArray;
     }
 }
