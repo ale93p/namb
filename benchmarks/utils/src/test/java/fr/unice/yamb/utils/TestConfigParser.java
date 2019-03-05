@@ -1,6 +1,7 @@
 package fr.unice.yamb.utils;
 
 import fr.unice.yamb.utils.configuration.Config;
+import fr.unice.yamb.utils.configuration.schema.HeronConfigSchema;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import fr.unice.yamb.utils.configuration.schema.StormConfigSchema;
 import org.junit.Test;
@@ -19,6 +20,13 @@ public class TestConfigParser {
     public void testStormConfigParser(){
         String stormDefaultConf = "../../conf/storm-benchmark.yml";
         Config conf = new Config(StormConfigSchema.class, stormDefaultConf);
+        assertNotNull(conf.getConfigSchema());
+    }
+
+    @Test
+    public void testHeronConfigParser(){
+        String heronDefaultConf = "../../conf/heron-benchmark.yml";
+        Config conf = new Config(HeronConfigSchema.class, heronDefaultConf);
         assertNotNull(conf.getConfigSchema());
     }
 
