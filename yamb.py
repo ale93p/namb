@@ -16,8 +16,9 @@ class CommandNotFound(Exception):
 
 def run_storm(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, storm_conf=vars.STORM_CONF):
     storm_bin = custom_bin_path if custom_bin_path else 'storm'
-    storm_command = [storm_bin, 'jar', vars.STORM_JAR, vars.STORM_CLASS, yamb_conf, storm_conf]
-    if subprocess.run([storm_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+
+    if subprocess.run([storm_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        storm_command = [storm_bin, 'jar', vars.STORM_JAR, vars.STORM_CLASS, yamb_conf, storm_conf]
         subprocess.run(storm_command)
         return
     else:
@@ -26,26 +27,31 @@ def run_storm(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, storm_conf=vars.ST
 
 def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HERON_CONF):
     heron_bin = custom_bin_path if custom_bin_path else 'heron'
-    conf = configparser.ConfigParser()
-    conf.read(heron_conf)
-    heron_command = [heron_bin, "submit", conf["deployment"], vars.HERON_JAR, vars.HERON_CLASS, yamb_conf, heron_conf]
-    if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+
+    deployment = "local"
+    with open(heron_conf) as conf:
+        (key, value) = conf.readline().split(":")
+        if key == "deployment":
+            deployment = value.split("#")[0].strip()
+
+    if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        heron_command = [heron_bin, "submit", deployment, vars.HERON_JAR, vars.HERON_CLASS, yamb_conf]
+        print(heron_command)
         subprocess.run(heron_command)
         return
     else:
-        raise CommandNotFound(heron_command)
+        raise CommandNotFound(heron_bin)
 
 
-def run_flink(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.FLINK_CONF):
+def run_flink(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, flink_conf=vars.FLINK_CONF):
     flink_bin = custom_bin_path if custom_bin_path else 'flink'
-    conf = configparser.ConfigParser()
-    conf.read(heron_conf)
-    heron_command = [flink_bin, "run", vars.FLINK_JAR, yamb_conf]
-    if subprocess.run([flink_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
-        subprocess.run(heron_command)
+
+    if subprocess.run([flink_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        flink_command = [flink_bin, "run", vars.FLINK_JAR, yamb_conf]
+        subprocess.run(flink_command)
         return
     else:
-        raise CommandNotFound(heron_command)
+        raise CommandNotFound(flink_bin)
 
 
 def run(cmd, **kwargs):
@@ -84,8 +90,8 @@ if __name__ == "__main__":
 
     # flink subparser
     flink_parser = subparsers.add_parser('flink', help="Run Apache Flink benchmark")
-    storm_parser.add_argument("-p","--path", dest="exec_path", metavar="<flink_executable>", help="Path to Flink executable", default="flink")
-    storm_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<flink_conf>", help="Specify custom Flink benchmark configuration file", default=vars.FLINK_CONF)
+    flink_parser.add_argument("-p","--path", dest="exec_path", metavar="<flink_executable>", help="Path to Flink executable", default="flink")
+    flink_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<flink_conf>", help="Specify custom Flink benchmark configuration file", default=vars.FLINK_CONF)
 
 
     args = main_parser.parse_args()

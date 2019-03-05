@@ -10,12 +10,12 @@
     <version>${revision}</version>
 
     <properties>
-        <revision>0.3.2</revision>
+        <revision>0.3.3</revision>
         <java.version>1.8</java.version>
         <!-- Modules versions -->
         <flink.benchmark.version>0.1.0</flink.benchmark.version>
-        <heron.benchmark.version>0.1.1</heron.benchmark.version>
-        <storm.benchmark.version>0.1.1</storm.benchmark.version>
+        <heron.benchmark.version>0.1.3</heron.benchmark.version>
+        <storm.benchmark.version>0.1.3</storm.benchmark.version>
         <tests.version>0.1.0</tests.version>
         <utils.version>0.1.1</utils.version>
         <!-- Dependencies versions -->

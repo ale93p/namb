@@ -4,7 +4,7 @@ import xml.etree.ElementTree as xml_parser
 CWD = os.path.dirname(os.path.realpath(__file__)).replace('/modules','')
 YAMB_POM = "{}/pom.xml".format(CWD)
 
-pom = xml_parser.parse(yamb_POM)
+pom = xml_parser.parse(YAMB_POM)
 
 STORM_BENCHMARK_VERSION = pom.getroot().find("{http://maven.apache.org/POM/4.0.0}properties").find("{http://maven.apache.org/POM/4.0.0}storm.benchmark.version").text
 HERON_BENCHMARK_VERSION = pom.getroot().find("{http://maven.apache.org/POM/4.0.0}properties").find("{http://maven.apache.org/POM/4.0.0}heron.benchmark.version").text

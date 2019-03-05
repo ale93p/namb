@@ -79,7 +79,7 @@ public class BenchmarkApplication {
         for(int s=1; s<=numberOfSpouts; s++) {
             spoutName = "spout_" + s;
             spoutsList.add(spoutName);
-            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate), cpIterator.next());
+            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability), cpIterator.next());
         }
 
         int boltID = 1;
@@ -92,43 +92,52 @@ public class BenchmarkApplication {
             if (i==1) {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
-                    boltsList.add(boltName);
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
-                    //System.out.print("\n" + boltName + " connects to: ");
+                    System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
                         setRouting(boltDeclarer, spoutsList.get(spout), trafficRouting);
-                        //System.out.append(spoutsList.get(spout) + " ");
+                        System.out.append(spoutsList.get(spout) + " ");
                     }
+                    boltsList.add(boltName);
                     boltID++;
                 }
             }
             else{
                 for (int bolt=0; bolt<levelWidth; bolt++){
                     int startingIdx = app.sumArray(dagLevelsWidth, i-2) - numberOfSpouts;
-                    //System.out.print("\n" + startingIdx);
                     boltName = "bolt_" + boltID;
-                    boltsList.add(boltName);
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
-                    //System.out.print("\n" + boltName + " connects to: ");
+                    System.out.print("\n" + boltName + " connects to: ");
                     if (topologyShape == Config.ConnectionShape.diamond) {
                         for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {
                             int parentBoltIdx = startingIdx + boltCount;
                             setRouting(boltDeclarer, boltsList.get(parentBoltIdx), trafficRouting);
-                            //System.out.append(boltsList.get(parentBoltIdx) + " ");
+                            System.out.append(boltsList.get(parentBoltIdx) + " ");
                         }
                     }
                     else{
-                        int parentBoltIdx = boltsList.size() - dagLevelsWidth.get(i-1);
+                        int parentBoltIdx;
+                        if(topologyShape == Config.ConnectionShape.star && i == 2){ // right side of the star
+                            parentBoltIdx = 0;
+                        }
+                        else if(topologyShape == Config.ConnectionShape.star && i == 3) { // first bolt after star
+                            parentBoltIdx = 1;
+                        }
+                        else{
+                            parentBoltIdx = boltsList.size() - 1;
+                        }
                         setRouting(boltDeclarer, boltsList.get(parentBoltIdx), trafficRouting);
+                        System.out.append(boltsList.get(parentBoltIdx) + " ");
                     }
+                    boltsList.add(boltName);
                     boltID++;
 
                 }
             }
         }
-        //System.exit(0);
+        System.exit(0);
         return builder;
     }
 
