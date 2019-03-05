@@ -6,6 +6,7 @@ import fr.unice.yamb.heron.bolts.BusyWaitBolt;
 import fr.unice.yamb.heron.spouts.SyntheticSpout;
 import fr.unice.yamb.utils.common.AppBuilder;
 import fr.unice.yamb.utils.configuration.Config;
+import fr.unice.yamb.utils.configuration.schema.HeronConfigSchema;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import com.twitter.heron.api.topology.BoltDeclarer;
 import com.twitter.heron.api.topology.TopologyBuilder;
@@ -129,7 +130,7 @@ public class BenchmarkApplication {
     public static void main (String[] args) throws Exception{
 
         String yambConfFilePath = args[0];
-        //String heronConfFilePath = args[1];
+        String heronConfFilePath = args[1];
 
         // Obtaining Configurations
         Config confParser = new Config(YambConfigSchema.class, yambConfFilePath);
@@ -139,12 +140,27 @@ public class BenchmarkApplication {
         if(yambConf != null) {
             confParser.validateConf(yambConf);
 
-            com.twitter.heron.api.Config conf = new com.twitter.heron.api.Config();
-
             TopologyBuilder builder = buildBenchmarkTopology(yambConf);
 
-            String topologyName = "heron_bench_" + System.currentTimeMillis();
-            HeronSubmitter.submitTopology(topologyName, conf, builder.createTopology());
+            if(builder != null){
+                Config heronConfigParser = new Config(HeronConfigSchema.class, heronConfFilePath);
+                HeronConfigSchema heronConf = (HeronConfigSchema) heronConfigParser.getConfigSchema();
+
+                if (heronConf != null){
+                    com.twitter.heron.api.Config conf = new com.twitter.heron.api.Config();
+
+                    if(yambConf.getDataflow().isReliable()){
+                        conf.setMaxSpoutPending(heronConf.getMaxSpoutPending());
+                    }
+
+                    String topologyName = "heron_bench_" + System.currentTimeMillis();
+                    HeronSubmitter.submitTopology(topologyName, conf, builder.createTopology());
+
+                }
+            }
+
+
+
 
         } else {
             throw new Exception("Something went wrong during configuration checking");
