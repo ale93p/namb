@@ -20,7 +20,7 @@ public class Config {
     }
 
     public enum TrafficRouting{
-        shuffle, hash, broadcast
+        balanced, hash, broadcast
     }
 
     public enum LoadBalancing {
@@ -39,7 +39,7 @@ public class Config {
     public static final int DF_SCALABILITY_PARALLELISM = 10;
     public static final ParaBalancing DF_SCALABILITY_BALANCING = ParaBalancing.balanced;
     public static final ConnectionShape DF_CONNECTION_SHAPE = ConnectionShape.linear;
-    public static final TrafficRouting DF_TRAFFIC_ROUTING = TrafficRouting.shuffle;
+    public static final TrafficRouting DF_TRAFFIC_ROUTING = TrafficRouting.balanced;
     public static final boolean DF_MESSAGE_RELIABILITY = true;
     public static final int DF_WORKLOAD_PROCESSING = 300;
     public static final LoadBalancing DF_WORKLOAD_BALANCING = LoadBalancing.balanced;

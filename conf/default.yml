@@ -15,7 +15,7 @@ dataflow:
   connection: 
     shape: linear #[linear, diamond, star]
     ## Traffic Balancing
-    routing: shuffle # [shuffle, hash, broadcast]
+    routing: balanced # [balanced, hash, broadcast]
 
   ## Message Reliability
   reliable: true # Boolean, true to enable "acking-like" mechanism, false otherwise

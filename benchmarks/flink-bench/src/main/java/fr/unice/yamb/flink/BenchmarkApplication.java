@@ -26,7 +26,7 @@ public class BenchmarkApplication {
                 else
                     throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
                 break;
-            case shuffle:
+            case balanced:
                 operator.rebalance();
                 break;
             case broadcast:
