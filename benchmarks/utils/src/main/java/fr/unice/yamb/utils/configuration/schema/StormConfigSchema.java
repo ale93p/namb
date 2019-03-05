@@ -6,6 +6,7 @@ public class StormConfigSchema extends ConfigSchema {
     }
 
     private int workers = 1;
+    private int maxSpoutPending = 5000;
     private StormDeployment deployment = StormDeployment.local;
 
     public int getWorkers() {
@@ -24,5 +25,11 @@ public class StormConfigSchema extends ConfigSchema {
         this.deployment = deployment;
     }
 
+    public int getMaxSpoutPending() {
+        return maxSpoutPending;
+    }
 
+    public void setMaxSpoutPending(int maxSpoutPending) {
+        this.maxSpoutPending = maxSpoutPending;
+    }
 }
