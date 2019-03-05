@@ -25,7 +25,7 @@ public class BenchmarkApplication {
             case hash:
                 bolt.partialKeyGrouping(parent, new Fields(field));
                 break;
-            case shuffle:
+            case balanced:
                 bolt.shuffleGrouping(parent);
                 break;
             case broadcast:
