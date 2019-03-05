@@ -19,7 +19,7 @@ Defined different common CPU-intensive DSP tasks categories[1-5]:
 * Windowing (e.g. Aggregation, Sorting):
   * Aggregation
   * Ranking
-* ~~Join~~ ([merged with Windowing](https://github.com/ale93p/namb/issues/6#issuecomment-456091723))
+* ~~Join~~ ([merged with Windowing](https://github.com/ale93p/yamb/issues/6#issuecomment-456091723))
 * ~~Normalization (?)~~
 
 #### Environment

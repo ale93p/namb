@@ -1,8 +1,8 @@
-# NAMB
+# YAMB
 
-**NAMB** (__N__*ot* __A__ __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark
+**YAMB** (__Y__*et* __A__*nother* __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark
 application for Data Stream Processing Systems (DSP). 
-NAMB aims to be a general and standardized benchmark to generate reproducible results.
+YAMB aims to be a general and standardized benchmark to generate reproducible results.
 
 ## Table of Contents
 
@@ -33,7 +33,7 @@ and which, in our opinion, have an important impact over the characterization of
 We then abstract these characteristics in a set of parameters configurable by the user. 
 
 #### Objectives
-Given these configurations, NAMB will __deterministically__ create a DSP application. 
+Given these configurations, YAMB will __deterministically__ create a DSP application. 
 The challenges the project overcome are:
 * **Ease-of-use**: the configuration given shall not be over-complicated, but give the minimum set of parameters that allows
 the best application definition flexibility.
@@ -121,18 +121,18 @@ is not directly controlled by it._
 
 1. [TODO]: a compile script is missing, for the moment you should do it manually:
  ```
- $ cd {NAMB_DIR}/benchmarks
+ $ cd {YAMB_DIR}/benchmarks
  $ mvn clean install
  $ cd .. #to go back to the main folder and run the benchmark
  ```
 2. Generate configuration file:
  ```
- cp conf/default.yml conf/namb.yml
+ cp conf/default.yml conf/yamb.yml
  ```
- Customize `namb.yml` as you need.
+ Customize `yamb.yml` as you need.
 
-3. Run the benchmarks simply using the script `namb.py`:
+3. Run the benchmarks simply using the script `yamb.py`:
  ```
- python3 namb.py benchmark-suite
+ python3 yamb.py benchmark-suite
  ```
  Use -h for more options and informations

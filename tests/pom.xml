@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>fr.unice</groupId>
-        <artifactId>namb</artifactId>
+        <artifactId>yamb</artifactId>
         <version>${revision}</version>
     </parent>
     <artifactId>tests</artifactId>
