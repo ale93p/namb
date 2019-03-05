@@ -28,7 +28,7 @@ def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HE
     heron_bin = custom_bin_path if custom_bin_path else 'heron'
     conf = configparser.ConfigParser()
     conf.read(heron_conf)
-    heron_command = [heron_bin, "submit", conf["deployment"], vars.HERON_JAR, vars.HERON_CLASS, yamb_conf]
+    heron_command = [heron_bin, "submit", conf["deployment"], vars.HERON_JAR, vars.HERON_CLASS, yamb_conf, heron_conf]
     if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
         subprocess.run(heron_command)
         return
