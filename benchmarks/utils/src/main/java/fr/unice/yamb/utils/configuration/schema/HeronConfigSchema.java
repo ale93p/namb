@@ -1,21 +1,12 @@
 package fr.unice.yamb.utils.configuration.schema;
 
-public class StormConfigSchema extends ConfigSchema {
+public class HeronConfigSchema extends ConfigSchema {
     public enum StormDeployment{
         local, cluster
     }
 
-    private int workers = 1;
     private int maxSpoutPending = 5000;
     private StormDeployment deployment = StormDeployment.local;
-
-    public int getWorkers() {
-        return workers;
-    }
-
-    public void setWorkers(int workers) {
-        this.workers = workers;
-    }
 
     public StormDeployment getDeployment() {
         return deployment;

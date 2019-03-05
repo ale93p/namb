@@ -154,6 +154,10 @@ public class BenchmarkApplication {
                     org.apache.storm.Config conf = new org.apache.storm.Config();
                     conf.setNumWorkers(stormConf.getWorkers());
 
+                    if(yambConf.getDataflow().isReliable()){
+                        conf.setMaxSpoutPending(stormConf.getMaxSpoutPending());
+                    }
+
                     if (stormConf.getDeployment() == StormDeployment.local) {
                         System.out.println("RUNNING IN LOCAL");
                         LocalCluster cluster = new LocalCluster();
