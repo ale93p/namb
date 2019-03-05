@@ -6,11 +6,11 @@
 
     <parent>
         <groupId>fr.unice</groupId>
-        <artifactId>namb</artifactId>
+        <artifactId>yamb</artifactId>
         <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>fr.unice.namb</groupId>
+    <groupId>fr.unice.yamb</groupId>
     <artifactId>storm-bench</artifactId>
     <version>${storm.benchmark.version}</version>
     <packaging>jar</packaging>
@@ -22,7 +22,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>fr.unice.namb</groupId>
+            <groupId>fr.unice.yamb</groupId>
             <artifactId>utils</artifactId>
             <version>${utils.version}</version>
             <scope>compile</scope>

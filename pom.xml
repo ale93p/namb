@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.unice</groupId>
-    <artifactId>namb</artifactId>
+    <artifactId>yamb</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
 
@@ -37,8 +37,7 @@
         <module>benchmarks/flink-bench</module>
         <module>benchmarks/storm-bench</module>
         <module>benchmarks/heron-bench</module>
-        <!--<module>flink-bench</module>-->
-        <!--<module>spark-bench</module>-->
+        <!--<module>benchmarks/spark-bench</module>-->
         <module>tests</module>
     </modules>
 

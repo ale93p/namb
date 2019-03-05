@@ -1,4 +1,4 @@
-# NAMB Abstraction
+# YAMB Abstraction
 
 ## Default Configuration File
 

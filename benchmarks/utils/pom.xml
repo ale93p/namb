@@ -6,11 +6,11 @@
 
     <parent>
         <groupId>fr.unice</groupId>
-        <artifactId>namb</artifactId>
+        <artifactId>yamb</artifactId>
         <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>fr.unice.namb</groupId>
+    <groupId>fr.unice.yamb</groupId>
     <artifactId>utils</artifactId>
     <version>${utils.version}</version>
     <packaging>jar</packaging>
@@ -31,12 +31,14 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
