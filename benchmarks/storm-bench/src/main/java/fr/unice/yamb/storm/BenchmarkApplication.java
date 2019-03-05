@@ -79,7 +79,7 @@ public class BenchmarkApplication {
         for(int s=1; s<=numberOfSpouts; s++) {
             spoutName = "spout_" + s;
             spoutsList.add(spoutName);
-            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate), cpIterator.next());
+            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability), cpIterator.next());
         }
 
         int boltID = 1;

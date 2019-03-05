@@ -26,18 +26,20 @@ public class SyntheticSpout extends BaseRichSpout {
     private long sleepTime;
     private Config.Distribution distribution;
     private DataStream dataStream;
+    private boolean reliable;
 
 
     private ArrayList<byte[]> payloadArray;
     private Random index;
     private long count;
 
-    public SyntheticSpout(int dataSize, int dataValues, Config.DataBalancing dataValuesBalancing, Config.Distribution flowDistribution, int flowRate) {
+    public SyntheticSpout(int dataSize, int dataValues, Config.DataBalancing dataValuesBalancing, Config.Distribution flowDistribution, int flowRate, boolean reliable) {
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
         this.flowRate = flowRate;
+        this.reliable = reliable;
     }
 
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
@@ -56,8 +58,13 @@ public class SyntheticSpout extends BaseRichSpout {
             Utils.sleep(
                     dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
             );
-            _collector.emit(new Values(nextValue), count++);
-            this.count++;
+            if(reliable){
+                _collector.emit(new Values(nextValue), count++);
+                this.count++;
+            }
+            else
+                _collector.emit(new Values(nextValue));
+
         } catch (Exception e){
             e.printStackTrace();
         }
