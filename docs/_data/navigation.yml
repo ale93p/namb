@@ -1,0 +1,4 @@
+- name: Home
+  link: /
+- name: Project
+  link: /project.html

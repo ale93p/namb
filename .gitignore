@@ -42,3 +42,6 @@ venv/
 
 # Apache Storm logs
 */workers-artifacts/*
+
+# Jekyll files
+.sass-cache/

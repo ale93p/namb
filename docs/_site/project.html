@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <title>Project</title>
+  </head>
+  <body>
+    <nav>
+
+<a href="/" >
+    Home
+</a>
+
+<a href="/project.html" class="current">
+    Project
+</a>
+
+</nav>
+    <h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+  <li><a href="#the-idea">The Idea</a>
+    <ul>
+      <li><a href="#why">Why?</a></li>
+      <li><a href="#how">How?</a></li>
+      <li><a href="#objectives">Objectives</a></li>
+    </ul>
+  </li>
+  <li><a href="#fundamental-characteristics">Fundamental Characteristics</a>
+    <ul>
+      <li><a href="#data-stream">Data Stream</a></li>
+      <li><a href="#dataflow">Dataflow</a></li>
+      <li><a href="#others">Others</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation">Implementation</a>
+    <ul>
+      <li><a href="#parameters-abstractions">Parameters Abstractions</a></li>
+      <li><a href="#application-components">Application Components</a></li>
+    </ul>
+  </li>
+  <li><a href="#how-to-run-it">How to Run It</a></li>
+</ul>
+
+<h2 id="the-idea">The Idea</h2>
+
+<h4 id="why">Why?</h4>
+<p>Considering that <em>common</em> industrial benchmarks focus field-specific tasks (such IoT or CEP), they are
+(such it should be) hardly reusable in different contexts; also, the <em>most-used</em> micro-benchmark applications
+are rarely described in literature, so that to leave their implementation totally dependand by the author
+of a benchmark, thus make a comparison between different results very difficult.</p>
+
+<h4 id="how">How?</h4>
+<p>We base our implementation on a definition of several fundamental characteristics common to DSP applications,
+and which, in our opinion, have an important impact over the characterization of an application workload.
+We then abstract these characteristics in a set of parameters configurable by the user.</p>
+
+<h4 id="objectives">Objectives</h4>
+<p>Given these configurations, YAMB will <strong>deterministically</strong> create a DSP application. 
+The challenges the project overcome are:</p>
+<ul>
+  <li><strong>Ease-of-use</strong>: the configuration given shall not be over-complicated, but give the minimum set of parameters that allows
+the best application definition flexibility.</li>
+  <li><strong>Determinism</strong>: given the same set of configurations the application will always be the same, no use of random functions.</li>
+  <li><strong>Standardization</strong>: the definition of the parameters has to make the benchmark results, over different 
+systems/infrastructures, comparable <strong>without the need of reproducing it</strong>.</li>
+  <li><strong>Automation</strong>: the application will be automatically created without the need of the user to <strong>touch</strong> the specific 
+middleware APIs.</li>
+</ul>
+
+<h2 id="fundamental-characteristics">Fundamental Characteristics</h2>
+<p>A DSP application can be seen as composed by two major components: 
+the <strong>data stream</strong> that defines the input flow; 
+and the <strong>Dataflow</strong> that describe the application tasks composition.
+Both of this components has several fundamental characteristics that defines the behaviour of the entire application.</p>
+
+<h3 id="data-stream">Data Stream</h3>
+<ul>
+  <li>
+    <p><strong>Data Characteristics</strong><br />
+The flow of data arriving in input is normally of two kinds: <strong>numerical</strong> or <strong>text</strong>;
+and the size of a single data unit can consequently vary.
+Especially textual flows, where we can find different formats: <em>json</em>, <em>xml</em>, <em>plain text</em>, and so on.</p>
+  </li>
+  <li>
+    <p><strong>Input Ratio</strong><br /> 
+The ratio at which the data arrive isn’t always constant, it may vary depending on the context.
+For example, social network usage is higher in mornings and evenings, sensors-networks may have random peak moments.</p>
+  </li>
+</ul>
+
+<h3 id="dataflow">Dataflow</h3>
+<ul>
+  <li>
+    <p><strong>DAG Depth</strong><br />
+A DSP application can be representes with a Directed Acyclic Graph (DAG), composed by a sequence of tasks.
+This sequence can be seen as a tree, so to give to the application a tree depth.</p>
+  </li>
+  <li>
+    <p><strong>Scalability</strong><br />
+One main characteristic of these middlewares is to perform tasks in a distributed (and parallel) manner.
+For that reason each single task can be parallelized and replicated to scale out the application performances.</p>
+  </li>
+  <li>
+    <p><strong>Connection</strong><br />
+The flow of data between tasks can follow different kinds of topologies. From linear applications that simply execute
+one task after the another, to more complex trees where the data is duplicated between more paths, or different paths
+rejoin to a single one.</p>
+  </li>
+  <li>
+    <p><strong>Traffic Balancing</strong><br />
+When the flow splits in more pathways, or when a single task is parallelized, the balancing of the data over
+the several available paths not always is fully balanced. It may happen that some tasks receives more data than
+the others, that can be cause by a filtering task or by an hash routing.</p>
+  </li>
+  <li>
+    <p><strong>Message Reliability</strong><br />
+Most DSP allow the enabling of a reliability mechanism to ensure message processing.</p>
+  </li>
+  <li>
+    <p><strong>Workload</strong><br />
+Each task by which the DAG is composed has to process the data, based on queries and instruction given at implementation.
+Between these different operations there are some that are more costly than others.
+For that reason, the processing load is not always balanced all over the applications, and we may find a <em>bottleneck</em> task
+that could require more time to execute more complex operations than o``thers.</p>
+  </li>
+</ul>
+
+<h3 id="others">Others</h3>
+<ul>
+  <li>
+    <p><em>Dependency</em><br />
+A task may have to wait data coming from more than one path, like in the case of Complex Event Processing,
+and combine them to generate its output.
+<em>This characteristic is not considered in this first version of the benchmark, as we think the impact it has can be
+alternatively simulated by changing the traffic balancing and so the tuple arrival frequency.</em></p>
+  </li>
+  <li>
+    <p><em>Statefulness</em><br />
+A task may be statuful, keeping stored values to use and compare with future and updated data, normally implemented through windows.
+<em>The state of a task, and how it is implemented, is stricly dependant to the application. For that reason we decide not to implement it in our application, as we wouldn’t be able to give a satisfying abstraction of the property.</em></p>
+  </li>
+  <li>
+    <p><em>IO Operations</em><br />
+A common task in data processing is the interaction with an external database (read or write), these operations will
+consume time and resources. However, considered the <em>real-time</em> objective of data streaming applications, it is common
+practice to use in-memory databases.
+<em>Thus, considering the used time unimportant, we don’t include it in the available parameters.</em></p>
+  </li>
+  <li>
+    <p><em>Fault Tolerance</em><br />
+Most DSP systems are designed to be fault resistant. In case of a node failure or a single task crash, they implements
+mechanisms to automatically restore the previous status, minimizing the damages.
+<em>We don’t take it into account because we considere fault tolerance as an external behavious and not application related. 
+Our objective is to create a benchamark application, Fault Tolerance is something that has impact over the application but
+is not directly controlled by it.</em></p>
+  </li>
+</ul>
+
+<h2 id="implementation">Implementation</h2>
+<h3 id="parameters-abstractions">Parameters Abstractions</h3>
+<p>[TODO]</p>
+<h3 id="application-components">Application Components</h3>
+<p>[TODO]</p>
+
+  </body>
+</html>

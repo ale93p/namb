@@ -1,3 +1,8 @@
+---
+layout: default
+title: Project
+---
+
 ## Table of Contents
 
 * [The Idea](#the-idea)
