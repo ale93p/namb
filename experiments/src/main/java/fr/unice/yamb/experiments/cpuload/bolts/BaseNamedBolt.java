@@ -1,4 +1,4 @@
-package fr.unice.yamb.tests.bolts;
+package fr.unice.yamb.experiments.cpuload.bolts;
 
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -10,7 +10,6 @@ import org.apache.storm.tuple.Values;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Map;
@@ -30,7 +29,7 @@ public abstract class BaseNamedBolt extends BaseRichBolt {
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
-        String outputPath = "/home/sdnuser/yamb/tests/logs/" + System.currentTimeMillis() + "_" + this.name() + "_" + context.getThisTaskId() + "_cpu_load.csv";
+        String outputPath = "/home/sdnuser/yamb/cpu/logs/" + System.currentTimeMillis() + "_" + this.name() + "_" + context.getThisTaskId() + "_cpu_load.csv";
         _collector = collector;
         this.bean = ManagementFactory.getThreadMXBean();
         this.cpuTimeSupported = this.bean.isCurrentThreadCpuTimeSupported();

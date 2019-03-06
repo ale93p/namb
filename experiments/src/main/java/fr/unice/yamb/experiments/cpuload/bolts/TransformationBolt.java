@@ -1,10 +1,9 @@
-package fr.unice.yamb.tests.bolts;
+package fr.unice.yamb.experiments.cpuload.bolts;
 
 import org.apache.storm.tuple.Tuple;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 

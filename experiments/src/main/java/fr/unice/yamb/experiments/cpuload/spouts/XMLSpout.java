@@ -1,4 +1,4 @@
-package fr.unice.yamb.tests.spouts;
+package fr.unice.yamb.experiments.cpuload.spouts;
 
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -114,7 +114,7 @@ public class XMLSpout extends BaseRichSpout {
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
         try {
-            this.exampleXMLFile = new File("/home/sdnuser/yamb/tests/resources/example.xml");
+            this.exampleXMLFile = new File("/home/sdnuser/yamb/cpu/resources/example.xml");
             System.out.println("Looking for file in: " + this.exampleXMLFile);
         } catch(Exception e){
             e.printStackTrace();

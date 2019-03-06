@@ -1,4 +1,4 @@
-package fr.unice.yamb.tests.bolts;
+package fr.unice.yamb.experiments.cpuload.bolts;
 
 import org.apache.storm.tuple.Tuple;
 

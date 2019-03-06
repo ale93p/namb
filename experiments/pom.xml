@@ -9,8 +9,8 @@
         <artifactId>yamb</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>tests</artifactId>
-    <version>${tests.version}</version>
+    <artifactId>experiments</artifactId>
+    <version>${experiments.version}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -25,6 +25,25 @@
             <version>${storm.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.twitter.heron</groupId>
+            <artifactId>heron-api</artifactId>
+            <version>${heron.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java_2.11</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
 

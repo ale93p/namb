@@ -1,8 +1,6 @@
-package fr.unice.yamb.tests.bolts;
+package fr.unice.yamb.experiments.cpuload.bolts;
 
 import org.apache.storm.tuple.Tuple;
-
-import java.util.ArrayList;
 
 
 public abstract class WindowingBolt<T> extends BaseNamedBolt {

@@ -1,8 +1,9 @@
-package fr.unice.yamb.tests;
+package fr.unice.yamb.experiments.cpuload;
 
-import fr.unice.yamb.tests.bolts.*;
+import fr.unice.yamb.cpu.bolts.*;
 // import RandomNumberSpout;
-import fr.unice.yamb.tests.spouts.XMLSpout;
+import fr.unice.yamb.experiments.cpuload.bolts.*;
+import fr.unice.yamb.experiments.cpuload.spouts.XMLSpout;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
