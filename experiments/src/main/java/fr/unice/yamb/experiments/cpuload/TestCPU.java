@@ -1,7 +1,5 @@
 package fr.unice.yamb.experiments.cpuload;
 
-import fr.unice.yamb.cpu.bolts.*;
-// import RandomNumberSpout;
 import fr.unice.yamb.experiments.cpuload.bolts.*;
 import fr.unice.yamb.experiments.cpuload.spouts.XMLSpout;
 import org.apache.storm.Config;
