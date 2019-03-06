@@ -11,21 +11,21 @@ public class TestConfigParser {
 
     @Test
     public void testYambConfigParser(){
-        String defaultConf = "../../conf/default.yml";
+        String defaultConf = "../../conf/defaults/yamb.yml";
         Config conf = new Config(YambConfigSchema.class, defaultConf);
         assertNotNull(conf.getConfigSchema());
     }
 
     @Test
     public void testStormConfigParser(){
-        String stormDefaultConf = "../../conf/storm-benchmark.yml";
+        String stormDefaultConf = "../../conf/defaults/storm-benchmark.yml";
         Config conf = new Config(StormConfigSchema.class, stormDefaultConf);
         assertNotNull(conf.getConfigSchema());
     }
 
     @Test
     public void testHeronConfigParser(){
-        String heronDefaultConf = "../../conf/heron-benchmark.yml";
+        String heronDefaultConf = "../../conf/defaults/heron-benchmark.yml";
         Config conf = new Config(HeronConfigSchema.class, heronDefaultConf);
         assertNotNull(conf.getConfigSchema());
     }
