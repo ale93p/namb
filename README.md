@@ -1,7 +1,7 @@
 # YAMB
 
 [![CircleCI](https://circleci.com/gh/ale93p/yamb.svg?style=shield&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/yamb)
-![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/ale93p/yamb.svg?style=flat-square)
+![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/ale93p/yamb.svg?label=latest)
 
 
 **YAMB** (__Y__*et* __A__*nother* __M__*icro-*__B__*enchmark*) is a *parametrizable* and *automatically generated* benchmark
