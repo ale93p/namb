@@ -1,15 +1,15 @@
 # YAMB
 
-**YAMB** (__Y__*et* __A__*nother* __M__*icro-*__B__*enchmark*) is an *parametrizable* and *automatically generated* benchmark
+**YAMB** (__Y__*et* __A__*nother* __M__*icro-*__B__*enchmark*) is a *parametrizable* and *automatically generated* benchmark
 application for Data Stream Processing Systems (DSP). 
 YAMB aims to be a general and standardized benchmark to generate reproducible results.
 
 ## Features
 
-* Simple YAML-based configuration for application definition
-* Automatic application generation, _no need to manually implement anything_
+* Simple YAML-based configuration for parameters definition
+* Automatic application generation, _no need to manually touch the platform APIs_
 * Ready-to-use python script to deploy the benchmark application
-* Varius platforms supported:
+* Supported platforms:
 
     | platform | version |
     |------|----|
@@ -39,3 +39,7 @@ YAMB aims to be a general and standardized benchmark to generate reproducible re
      python3 yamb.py benchmark-suite
      ```
  Use -h for more options and informations.
+
+## Acknowledgements
+
+--
