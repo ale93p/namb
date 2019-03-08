@@ -21,6 +21,10 @@ jobs:
     steps:
       - checkout:
           path: ~/yamb
+      - run:
+          name: Update bundler
+          command: gem install jekyll bundler
+      - run: bundle -v
       - restore_cache:
           keys:
             - rubygems-v1-{{ checksum "Gemfile.lock" }}
