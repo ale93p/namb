@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-gem "jekyll-theme-primer"
+gem 'html-proofer'
 gem "minima"
