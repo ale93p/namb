@@ -47,7 +47,7 @@ jobs:
         
 workflows:
   version: 2
-  build_and_test:
-    - jobs:
+  build:
+    jobs:
       - build_yamb
       - build_jekyll
