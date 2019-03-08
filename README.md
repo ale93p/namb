@@ -23,7 +23,7 @@ YAMB aims to be a general and standardized benchmark to generate reproducible re
 
 ## Usage
 
-1. Clone the repository in a local folder {YAMB_DIR}
+1. Clone the repository in ./yamb and move in it
 
 2. Compile the project:
      ```bash
