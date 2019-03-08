@@ -1,14 +1,15 @@
-# Preliminary Tests Section
+---
+layout: page
+title: Experiments
+---
 
-Where testing is made
+# CPU Load Abstraction
 
-## CPU Load Abstraction
-
-### Objective
+## Objective
 
 Find the CPU load from different tasks, so to define a load abstraction in the configurations.
 
-### Methodology
+## Methodology
 
 ### Common DSP Tasks
 Defined different common CPU-intensive DSP tasks categories[1-5]:
@@ -22,13 +23,13 @@ Defined different common CPU-intensive DSP tasks categories[1-5]:
 * ~~Join~~ ([merged with Windowing](https://github.com/ale93p/yamb/issues/6#issuecomment-456091723))
 * ~~Normalization (?)~~
 
-#### Environment
+### Environment
 - The tests has been run in a single machine. The version of Storm used is **1.2.2**. 
 - The cluster has been set with ZooKeeper, Nimbus and Supervisor co-existing in a single machine.
 - Each topology has been run over two workers.
 - The base input throughput (Spout generation) is `1000tuples/s`.
 
-#### Step 1
+### Step 1
 The common tasks has been tested one by one in a spout->task topology:
 * Identity: `XMLSpout->IdentityBolt`
 * Transformation: `XMLSpout->TransformationBolt`
@@ -36,7 +37,7 @@ The common tasks has been tested one by one in a spout->task topology:
 * Aggregation: `RandomIntegerSpout->AggregationBolt`
 * Ranking: `RandomIntegerSpout->AggregationBolt`
 
-#### Step 2
+### Step 2
 A sample topology has been built using the implementation of the common tasks, under the form:
 ```
          XMLSpout
@@ -50,10 +51,10 @@ Aggregation     Aggregation
           Ranking
 ```
 
-#### Step 3
+### Step 3
 The BusyWaitBolt has been run with different cycles values to get the CPU Load generated.
 
-#### Step 4
+### Step 4
 Given the results ([BusyWait individual](#busywait-benchmark)) of the previous step,
 has been implemented a topology using only BusyWait bolts, changing the cycles number
 in ordet to simulate the load seen for the topology in [step 2](#step-2).
@@ -75,27 +76,27 @@ Aggregation     Aggregation
            (100)
 ```
 
-#### Step 5
+### Step 5
 
 The two topologies has been then tested with different input throughputs to confirm the consistency on the CPU load.
 
-### Findings
+## Findings
 
 The CPU Load is represented as **ms of CPU time / 1000 tuples**.
 
-#### Common Tasks Benchmarks
+### Common Tasks Benchmarks
 
 | Common tasks individual  | Common tasks topology |
 |-------------------|------------------|
-|![](logs/plots/common_individual_boxplot.png)| ![](logs/plots/common_full_topo_boxplot.png)|
+|![]({{ site.baseurl }}{% link img/plots/common_individual_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/common_full_topo_boxplot.png %})|
 
 Small and not relevant difference when running in full topology.
 
-#### BusyWait Benchmark
+### BusyWait Benchmark
 
 | BusyWait individual | BusyWait simulated topology |
 |-------------------|------------------|
-|![](logs/plots/busywait_individual_boxplot.png)| ![](logs/plots/busywait_full_topo_boxplot.png)|
+|![]({{ site.baseurl }}{% link img/plots/busywait_individual_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_full_topo_boxplot.png %})|
 
 In the figure on the left, the number in the x axis represent the number of thousand of cycles with
 which the BusyWait bolt was configured for the test.
@@ -103,15 +104,15 @@ which the BusyWait bolt was configured for the test.
 In the figure on the right we can see that using the parameters previously described,
 the simulated tasks replicates the same CPU Load than the real tasks.
 
-#### Comparison with different input throughput
+### Comparison with different input throughput
 
 | Input Tput (t/s) | Common Tasks Topology | BusyWait Simulated Topology |
 |------------------|-----------------------|-----------------------------|
-|   10 | ![](logs/plots/common_10_full_topo_boxplot.png)| ![](logs/plots/busywait_10_full_topo_boxplot.png)|
-|  100 | ![](logs/plots/common_100_full_topo_boxplot.png)| ![](logs/plots/busywait_100_full_topo_boxplot.png)|
-| 1000 | ![](logs/plots/common_full_topo_boxplot.png)| ![](logs/plots/busywait_full_topo_boxplot.png)|
+|   10 | ![]({{ site.baseurl }}{% link img/plots/common_10_full_topo_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_10_full_topo_boxplot.png %})|
+|  100 | ![]({{ site.baseurl }}{% link img/plots/common_100_full_topo_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_100_full_topo_boxplot.png %})|
+| 1000 | ![]({{ site.baseurl }}{% link img/plots/common_full_topo_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_full_topo_boxplot.png %})|
 
-### Abstraction
+## Abstraction
 
 A possible abstraction for the CPU load can then be the number of _thousands of cycles_ for the BusyWait. We could also
 define three load values, under a literal form, that correspond to predefined cycles values, so to be directly and easily
@@ -124,7 +125,7 @@ configured by the user:
 | **higher** | 500 | slightly more than _transformation_ |
 
 
-### References
+## References
 
 [1] B. Peng et al., **R-Storm: Resource-Aware Scheduling in Storm**, ACM Middleware 2015
 

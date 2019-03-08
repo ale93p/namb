@@ -1,1 +1,15 @@
+title: yamb
+author: Alessio Pagliari
+description: >
+  Description test
+
+
+minima:
+  date_format: "%b %-d, %Y"
+
+header_pages:
+  - index.html
+  - documentation.md
+
 theme: minima
+
