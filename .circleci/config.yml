@@ -19,27 +19,27 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        keys:
-          - rubygems-v1-{{ checksum "Gemfile.lock" }}
-          - rubygems-v1-fallback
+          keys:
+            - rubygems-v1-{{ checksum "Gemfile.lock" }}
+            - rubygems-v1-fallback
       - run:
-        name: Bundle Install
-        command: bundle check || bundle install
+          name: Bundle Install
+          command: bundle check || bundle install
       - save_cache:
           keys: 
             - rubygems-v1-{{ checksym "Gemfile.lock" }}
             - rubygems-v1-fallback
       - run:
-        name: Jekyll Build
-        command: bundle exec jekyll build
+          name: Jekyll Build
+          command: bundle exec jekyll build
       - run:
-        name: HTMLProofer tests
-        command: |
-          bundle exec htmlproofer ./_site \
-            --allow-hash-href \
-            --check-favicon  \
-            --check-html \
-            --disable-external
+          name: HTMLProofer tests
+          command: |
+            bundle exec htmlproofer ./_site \
+              --allow-hash-href \
+              --check-favicon  \
+              --check-html \
+              --disable-external
       - persist_to_workspace:
           root: ./
           paths:
