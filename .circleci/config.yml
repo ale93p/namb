@@ -19,7 +19,8 @@ jobs:
     environment:
       BUNDLE_PATH: ~/yamb/docs/vendor/bundle
     steps:
-      - checkout
+      - checkout:
+          path: ~/yamb
       - restore_cache:
           keys:
             - rubygems-v1-{{ checksum "Gemfile.lock" }}
