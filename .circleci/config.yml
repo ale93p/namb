@@ -10,13 +10,6 @@ jobs:
       - image: circleci/openjdk:8-jdk  
     steps:
       - checkout
-      - restore_cache:
-          key: yamb-{{ checksum "pom.xml" }}
-      - run: mvn dependency:go-offline
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: yamb-{{ checksum "pom.xml" }}
       - run: mvn clean install
 
   build_jekyll:
