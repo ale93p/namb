@@ -11,6 +11,7 @@ HERON_BENCHMARK_VERSION = pom.getroot().find("{http://maven.apache.org/POM/4.0.0
 FLINK_BENCHMARK_VERSION = pom.getroot().find("{http://maven.apache.org/POM/4.0.0}properties").find("{http://maven.apache.org/POM/4.0.0}flink.benchmark.version").text
 
 CONF_PATH = "{}/conf".format(CWD)
+CONF_PATH_DEFAULTS = "{}/defaults".format(CONF_PATH)
 
 YAMB_CONF = "{}/yamb.yml".format(CONF_PATH)
 
