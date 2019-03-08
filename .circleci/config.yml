@@ -4,18 +4,57 @@
 #
 version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/openjdk:8-jdk
-
+  build_yamb:
     working_directory: ~/yamb
+    docker:
+      - image: circleci/openjdk:8-jdk  
+    steps:
+      - checkout
+      - run: mvn clean install
 
+  build_jekyll:
+    working_directory: ~/yamb/docs
+    docker:
+      - image: circleci/ruby:2.5
     environment:
-      # Customize the JVM maximum heap limit
-      MAVEN_OPTS: -Xmx3200m
-    
+      BUNDLE_PATH: ~/yamb/docs/vendor/bundle
     steps:
       - checkout:
           path: ~/yamb
-
-      - run: mvn clean install
+      - run:
+          name: Update bundler
+          command: gem install jekyll bundler
+      - run: bundle -v
+      - restore_cache:
+          keys:
+            - rubygems-v1-{{ checksum "Gemfile.lock" }}
+            - rubygems-v1-fallback
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - save_cache:
+          key: rubygems-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Jekyll Build
+          command: bundle exec jekyll build
+      - run:
+          name: HTMLProofer tests
+          command: |
+            bundle exec htmlproofer ./_site \
+              --allow-hash-href \
+              --check-favicon  \
+              --check-html \
+              --disable-external
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - _site
+        
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build_yamb
+      - build_jekyll

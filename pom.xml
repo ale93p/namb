@@ -30,6 +30,7 @@
         <maven.flatten.version>1.1.0</maven.flatten.version>
         <maven.shade.version>3.2.1</maven.shade.version>
         <maven.surefire.version>3.0.0-M3</maven.surefire.version>
+        <maven.gooffline.version>1.1.0</maven.gooffline.version>
     </properties>
 
     <modules>
@@ -109,6 +110,22 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>de.qaware.maven</groupId>
+                    <artifactId>go-offline-maven-plugin</artifactId>
+                    <version>${maven.gooffline.version}</version>
+                    <configuration>
+                        <dynamicDependencies>
+                            <DynamicDependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-junit4</artifactId>
+                                <version>${maven.surefire.version}</version>
+                                <repositoryType>PLUGIN</repositoryType>
+                            </DynamicDependency>
+                        </dynamicDependencies>
+                    </configuration>
                 </plugin>
 
             </plugins>
