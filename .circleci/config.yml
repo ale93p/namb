@@ -31,7 +31,7 @@ jobs:
             - rubygems-v1-fallback
       - run:
           name: Bundle Install
-          command: bundle check || bundle install
+          command: bundle install
       - save_cache:
           key: rubygems-v1-{{ checksym "Gemfile.lock" }}
           paths:
