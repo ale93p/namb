@@ -4,6 +4,7 @@ import argparse
 import subprocess
 import shutil
 import os
+import sys
 import modules.yamb_variables as vars
 
 
@@ -87,16 +88,20 @@ def build(test, keep_files):
     if not keep_files:
         initialize_configurations()
 
+def print_version():
+    print("\033[1mYAMB v{}\033[0m".format(vars.YAMB_VERSION))
+    print("This is just Yet Another MicroBenchmark")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
     # main parser
     main_parser = argparse.ArgumentParser(prog="yamb.py")
     main_parser.add_argument("-c", "--conf", dest="yamb_conf", metavar="<yamb_conf>", help="Specify custom YAMB configuration file", default=vars.YAMB_CONF)
+    main_parser.add_argument("-v", "--version", dest="show_version", action="store_true", help="Show tool current version")
 
     # platform subparsers definition
     subparser = main_parser.add_subparsers(dest="command", metavar="Commands")
-    subparser.required = True
 
     build_parser = subparser.add_parser("build", help="Build project")
     build_parser.add_argument("-t", "--test", dest="tests", action="store_true", help="perform maven test when building project")
@@ -120,8 +125,16 @@ if __name__ == "__main__":
 
     args = main_parser.parse_args()
 
-    if args.command == "build":
+    if args.show_version:
+        print_version()
+
+    if not args.command:
+        main_parser.error("you should chose a sub-command to run")
+        sys.exit(1)
+
+    elif args.command == "build":
         build(args.tests, args.keep_files)
+
     else:
         try:
             run(args.command, **{"custom_bin_path":args.exec_path, "custom_yamb_conf":args.yamb_conf, "custom_platform_conf":args.platform_conf})
