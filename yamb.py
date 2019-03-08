@@ -2,7 +2,8 @@
 
 import argparse
 import subprocess
-import configparser
+import shutil
+import os
 import modules.yamb_variables as vars
 
 
@@ -68,36 +69,62 @@ def run(cmd, **kwargs):
     else:
         print("Oh my gosh. You shall not be here... Run fool!")
 
+def initialize_configurations():
+    src = vars.CONF_PATH_DEFAULTS
+    dst = vars.CONF_PATH
+
+    for file in os.listdir(src):
+        shutil.copy(src +"/" + file, dst)
+
+
+def build(test, keep_files):
+    mvn_command = "mvn clean install".split()
+    if not test:
+        mvn_command.append("-Dmaven.test.skip=true")
+
+    subprocess.run(mvn_command)
+
+    if not keep_files:
+        initialize_configurations()
+
+
 
 if __name__ == "__main__":
     # main parser
     main_parser = argparse.ArgumentParser(prog="yamb.py")
     main_parser.add_argument("-c", "--conf", dest="yamb_conf", metavar="<yamb_conf>", help="Specify custom YAMB configuration file", default=vars.YAMB_CONF)
 
-    # subparsers definition
-    subparsers = main_parser.add_subparsers(dest="command", metavar="Platforms")
-    subparsers.required = True
+    # platform subparsers definition
+    subparser = main_parser.add_subparsers(dest="command", metavar="Commands")
+    subparser.required = True
+
+    build_parser = subparser.add_parser("build", help="Build project")
+    build_parser.add_argument("-t", "--test", dest="tests", action="store_true", help="perform maven test when building project")
+    build_parser.add_argument("-k", "--keepfiles", dest="keep_files", action="store_true", help="build project without reneitializing config files")
 
     # storm subparser
-    storm_parser = subparsers.add_parser('storm', help='Run Apache Storm benchmark')
-    storm_parser.add_argument("-p","--path", dest="exec_path", metavar="<storm_executable>", help="Path to Storm executable", default="storm")
-    storm_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<storm_conf>", help="Specify custom Storm benchmark configuration file", default=vars.STORM_CONF)
+    storm_parser = subparser.add_parser('storm', help='Run Apache Storm benchmark')
+    storm_parser.add_argument("-p","--path", dest="exec_path", metavar="<storm_executable>", help="path to Storm executable", default="storm")
+    storm_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<storm_conf>", help="specify custom Storm benchmark configuration file", default=vars.STORM_CONF)
 
     # heron subparser
-    heron_parser = subparsers.add_parser('heron', help='Run Apache Heron benchmark')
-    heron_parser.add_argument("-p","--path", dest="exec_path", metavar="<heron_executable>", help="Path to Heron executable", default="heron")
-    heron_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<heron_conf>", help="Specify custom Heron benchmark configuration file", default=vars.HERON_CONF)
+    heron_parser = subparser.add_parser('heron', help='Run Apache Heron benchmark')
+    heron_parser.add_argument("-p","--path", dest="exec_path", metavar="<heron_executable>", help="path to Heron executable", default="heron")
+    heron_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<heron_conf>", help="specify custom Heron benchmark configuration file", default=vars.HERON_CONF)
 
     # flink subparser
-    flink_parser = subparsers.add_parser('flink', help="Run Apache Flink benchmark")
-    flink_parser.add_argument("-p","--path", dest="exec_path", metavar="<flink_executable>", help="Path to Flink executable", default="flink")
-    flink_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<flink_conf>", help="Specify custom Flink benchmark configuration file", default=vars.FLINK_CONF)
+    flink_parser = subparser.add_parser('flink', help="Run Apache Flink benchmark")
+    flink_parser.add_argument("-p","--path", dest="exec_path", metavar="<flink_executable>", help="path to Flink executable", default="flink")
+    flink_parser.add_argument("-c", "--conf", dest="platform_conf", metavar="<flink_conf>", help="specify custom Flink benchmark configuration file", default=vars.FLINK_CONF)
 
 
     args = main_parser.parse_args()
 
-    try:
-        run(args.command, **{"custom_bin_path":args.exec_path, "custom_yamb_conf":args.yamb_conf, "custom_platform_conf":args.platform_conf})
-    except CommandNotFound as c:
-        print(c)
+    if args.command == "build":
+        build(args.tests, args.keep_files)
+    else:
+        try:
+            run(args.command, **{"custom_bin_path":args.exec_path, "custom_yamb_conf":args.yamb_conf, "custom_platform_conf":args.platform_conf})
+        except CommandNotFound as c:
+            print(c)
 
