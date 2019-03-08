@@ -25,24 +25,16 @@ YAMB aims to be a general and standardized benchmark to generate reproducible re
 
 1. Clone the repository in a local folder {YAMB_DIR}
 
-2. [TODO]: a compile script is missing, for the moment you should do it manually:
+2. Compile the project:
      ```bash
-     cd yamb
-     mvn clean install -Dmaven.test.skip=true
+     python3 yamb.py build
      ```
-3. Generate and customize the yamb configuration file:
+3. Customize the configuration files (see: [doc/configurations](#)): 
+5. Run the benchmark on your platform. e.g. flink:
      ```bash
-     cp conf/defaults/default.yml conf/yamb.yml
+     python3 yamb.py flink
      ```
-4. Generate and customize the platform related configuration file:
-    ```bash
-     cp conf/defaults/{platform}-bench.yml conf/{platform}-bench.yml
-     ```
-5. Run the benchmarks simply using `yamb.py`:
-     ```bash
-     python3 yamb.py benchmark-suite
-     ```
- Use -h for more options and informations.
+    Use -h for more options and informations or visit [doc/benchmarks](#).
 
 ## Acknowledgements
 
