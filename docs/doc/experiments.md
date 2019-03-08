@@ -88,7 +88,7 @@ The CPU Load is represented as **ms of CPU time / 1000 tuples**.
 
 | Common tasks individual  | Common tasks topology |
 |-------------------|------------------|
-|![]({{ site.baseurl }}{% link img/plots/common_individual_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/common_full_topo_boxplot.png %})|
+|![Common individual]({{ site.baseurl }}{% link img/plots/common_individual_boxplot.png %})| ![Common full topology]({{ site.baseurl }}{% link img/plots/common_full_topo_boxplot.png %})|
 
 Small and not relevant difference when running in full topology.
 
@@ -96,7 +96,7 @@ Small and not relevant difference when running in full topology.
 
 | BusyWait individual | BusyWait simulated topology |
 |-------------------|------------------|
-|![]({{ site.baseurl }}{% link img/plots/busywait_individual_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_full_topo_boxplot.png %})|
+|![Busywait individual]({{ site.baseurl }}{% link img/plots/busywait_individual_boxplot.png %})| ![Busywait full topology]({{ site.baseurl }}{% link img/plots/busywait_full_topo_boxplot.png %})|
 
 In the figure on the left, the number in the x axis represent the number of thousand of cycles with
 which the BusyWait bolt was configured for the test.
@@ -108,9 +108,9 @@ the simulated tasks replicates the same CPU Load than the real tasks.
 
 | Input Tput (t/s) | Common Tasks Topology | BusyWait Simulated Topology |
 |------------------|-----------------------|-----------------------------|
-|   10 | ![]({{ site.baseurl }}{% link img/plots/common_10_full_topo_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_10_full_topo_boxplot.png %})|
-|  100 | ![]({{ site.baseurl }}{% link img/plots/common_100_full_topo_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_100_full_topo_boxplot.png %})|
-| 1000 | ![]({{ site.baseurl }}{% link img/plots/common_full_topo_boxplot.png %})| ![]({{ site.baseurl }}{% link img/plots/busywait_full_topo_boxplot.png %})|
+|   10 | ![Common full topology 10]({{ site.baseurl }}{% link img/plots/common_10_full_topo_boxplot.png %})| ![Busywait full topology 10]({{ site.baseurl }}{% link img/plots/busywait_10_full_topo_boxplot.png %})|
+|  100 | ![Common full topology 100]({{ site.baseurl }}{% link img/plots/common_100_full_topo_boxplot.png %})| ![Busywait full topology 10]({{ site.baseurl }}{% link img/plots/busywait_100_full_topo_boxplot.png %})|
+| 1000 | ![Common full topology 1000]({{ site.baseurl }}{% link img/plots/common_full_topo_boxplot.png %})| ![Busywait full topology 10]({{ site.baseurl }}{% link img/plots/busywait_full_topo_boxplot.png %})|
 
 ## Abstraction
 
