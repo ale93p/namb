@@ -26,9 +26,9 @@ jobs:
         name: Bundle Install
         command: bundle check || bundle install
       - save_cache:
-        keys: 
-          - rubygems-v1-{{ checksym "Gemfile.lock" }}
-          - rubygems-v1-fallback
+          keys: 
+            - rubygems-v1-{{ checksym "Gemfile.lock" }}
+            - rubygems-v1-fallback
       - run:
         name: Jekyll Build
         command: bundle exec jekyll build
