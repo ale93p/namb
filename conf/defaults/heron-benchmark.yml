@@ -1,0 +1,2 @@
+deployment: local # (local | cluster/[role]/[env])
+maxSpoutPending: 5000
