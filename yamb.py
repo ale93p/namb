@@ -90,7 +90,7 @@ def build(test, keep_files):
 
 def print_version():
     print("\033[1mYAMB v{}\033[0m".format(vars.YAMB_VERSION))
-    print("This is just Yet Another MicroBenchmark")
+    print("This is Yet Another MicroBenchmark")
     sys.exit(0)
 
 

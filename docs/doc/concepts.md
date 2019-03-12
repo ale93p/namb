@@ -1,9 +1,21 @@
 ---
-layout: page
+layout: default
 title: Concepts
+parent: Documentation
+nav_order: 1
 ---
-  
+# Concepts
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
 ## The Idea
+
+
 
 ### Why?
 Considering that _common_ industrial benchmarks focus field-specific tasks (such IoT or CEP), they are

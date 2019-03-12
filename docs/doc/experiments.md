@@ -1,6 +1,8 @@
 ---
-layout: page
+layout: default
 title: Experiments
+parent: Documentation
+nav_order: 4
 ---
 
 # CPU Load Abstraction

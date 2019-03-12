@@ -1,6 +1,8 @@
 ---
-layout: page
+layout: default
 title: Configurations
+parent: Documentation
+nav_order: 2
 ---
 
 ## YAMB Abstraction

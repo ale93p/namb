@@ -1,6 +1,7 @@
 ---
-layout: page
+layout: default
 title: Home
+nav_order: 1
 ---
 
 **YAMB** (Yet Another Micro-Benchmark) is a parametrizable and automatically generated benchmark
