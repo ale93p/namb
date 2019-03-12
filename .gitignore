@@ -8,7 +8,6 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 dependency-reduced-pom.xml
-.flattened-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
@@ -26,9 +25,8 @@ buildNumber.properties
 __pycache__/
 *.py[cod]
 *$py.class
-venv/
 
-# Package files 
+# Package files #
 *.jar
 *.war
 *.nar
@@ -39,15 +37,3 @@ venv/
 
 # MacOS files
 .DS_Store
-
-# Apache Storm logs
-*/workers-artifacts/*
-
-# Jekyll files
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata 
-
-# Custom configurations files
-conf/*.yml

@@ -1,0 +1,12 @@
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/spouts/RandomNumberSpout.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/TransformationBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/RankingBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/FilterBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/TestCPU.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/BaseNamedBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/spouts/XMLSpout.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/AggregationBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/IdentityBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/spouts/TextSpout.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/BusyWaitBolt.java
+/Users/alessiopagliari/OneDrive - Université Nice Sophia Antipolis/phd/namb/tests/src/main/java/fr/unice/namb/tests/bolts/WindowingBolt.java
