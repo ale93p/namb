@@ -7,11 +7,6 @@ description: >
 #minima:
 #  date_format: "%b %-d, %Y"
 
-header_pages:
-  - index.md
-  - documentation.md
-
-theme: just-the-docs
 
 # just-the-docs config
 # search_enabled: false
