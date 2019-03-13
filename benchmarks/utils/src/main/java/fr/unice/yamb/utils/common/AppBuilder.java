@@ -14,21 +14,19 @@ public class AppBuilder{
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
     private ArrayList<Integer> componentsParallelism;
-    private int initialProcessing;
-    private int currentProcessing;
+    private int proccessing;
     private Config.LoadBalancing loadBalancing;
 
     private int count;
+    
 
-
-    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, Config.ConnectionShape shape, int processing, Config.LoadBalancing loadBalancing) throws Exception{
+    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, Config.ConnectionShape shape, float processing, Config.LoadBalancing loadBalancing) throws Exception{
 
         this.depth = depth;
         this.parallelism = parallelism;
         this.paraBalancing = paraBalancing;
         this.shape = shape;
-        this.initialProcessing = processing;
-        this.currentProcessing = processing;
+        this.proccessing = Math.round(processing * 1000);
         this.loadBalancing = loadBalancing;
 
         this.dagLevelsWidth = computeTopologyShape();
@@ -52,17 +50,17 @@ public class AppBuilder{
             case balanced:
                 break;
             case increasing:
-                this.currentProcessing = (int)(this.currentProcessing * 1.2);
+                this.proccessing = (int)(this.proccessing * 1.2);
                 break;
             case decreasing:
-                this.currentProcessing = (int)(this.currentProcessing * 0.8);
+                this.proccessing = (int)(this.proccessing * 0.8);
             case pyramid:
-                this.currentProcessing = (this.count <= this.totalComponents/2) ? (int) (this.currentProcessing * 1.2) : (int) (this.currentProcessing * 0.8);
+                this.proccessing = (this.count <= this.totalComponents/2) ? (int) (this.proccessing * 1.2) : (int) (this.proccessing * 0.8);
                 this.count++;
             default:
                 throw new Exception("case " + this.loadBalancing + " not yet implemented");
         }
-        return this.currentProcessing;
+        return this.proccessing;
     }
 
     public ArrayList<Integer> getDagLevelsWidth(){
