@@ -1,15 +1,9 @@
-title: yamb
+title: YAMB
 author: Alessio Pagliari
-description: >
- YAMB (Yet Another Micro-Benchmark) is a parametrizable and automatically generated benchmark
- application for Data Stream Processing Systems (DSP).
-
-#minima:
-#  date_format: "%b %-d, %Y"
+description: YAMB Documentation
 
 remote_theme: pmarsceill/just-the-docs
 
-# just-the-docs config
 # search_enabled: false
 aux_links:
   "YAMB on GitHub":
