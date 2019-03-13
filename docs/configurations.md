@@ -3,7 +3,6 @@ layout: default
 title: Configurations
 parent: Documentation
 nav_order: 3
-permalink: /docs/configurations
 ---
 
 # Configurations

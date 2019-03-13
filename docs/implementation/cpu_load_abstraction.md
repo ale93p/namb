@@ -3,7 +3,6 @@ layout: default
 title: CPU Load Abstraction
 grand_parent: Documentation
 parent: Implementation
-permalink: /docs/implementation/cpu-load
 ---
 
 # CPU Load Abstraction
