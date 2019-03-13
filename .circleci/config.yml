@@ -5,6 +5,9 @@
 version: 2
 jobs:
   build:
+    branches:
+      ignore:
+        - gh-pages
     working_directory: ~/yamb
     docker:
       - image: circleci/openjdk:8-jdk  
