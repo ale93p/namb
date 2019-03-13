@@ -106,9 +106,3 @@ mechanisms to automatically restore the previous status, minimizing the damages.
 _We don't take it into account because we considere fault tolerance as an external behavious and not application related. 
 Our objective is to create a benchamark application, Fault Tolerance is something that has impact over the application but
 is not directly controlled by it._
-
-## Implementation
-### Parameters Abstractions
-[TODO]
-### Application Components
-[TODO]

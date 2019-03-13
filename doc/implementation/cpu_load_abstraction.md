@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Experiments
-parent: Documentation
-nav_order: 4
+title: CPU Load Abstraction
+grand_parent: Documentation
+parent: Implementation
 ---
 
 # CPU Load Abstraction
