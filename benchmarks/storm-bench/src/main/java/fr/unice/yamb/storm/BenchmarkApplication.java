@@ -47,7 +47,7 @@ public class BenchmarkApplication {
         Config.ParaBalancing    paraBalancing       = conf.getDataflow().getScalability().getBalancing();
         Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
         Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
-        int                     processingLoad      = conf.getDataflow().getWorkload().getProcessing();
+        float processingLoad      = conf.getDataflow().getWorkload().getProcessing();
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
         // Generating app builder

@@ -46,10 +46,10 @@ public class YambConfigSchema extends ConfigSchema {
             }
         }
         public static class Workload{
-            private int processing = Config.DF_WORKLOAD_PROCESSING;
+            private float processing = Config.DF_WORKLOAD_PROCESSING;
             private Config.LoadBalancing balancing = Config.DF_WORKLOAD_BALANCING;
 
-            public int getProcessing() {
+            public float getProcessing() {
                 return processing;
             }
 
@@ -57,7 +57,7 @@ public class YambConfigSchema extends ConfigSchema {
                 return balancing;
             }
 
-            public void setProcessing(int processing) {
+            public void setProcessing(float processing) {
                 this.processing = processing;
             }
 
