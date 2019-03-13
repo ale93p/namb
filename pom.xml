@@ -16,7 +16,6 @@
         <flink.benchmark.version>0.1.0</flink.benchmark.version>
         <heron.benchmark.version>0.1.3</heron.benchmark.version>
         <storm.benchmark.version>0.1.3</storm.benchmark.version>
-        <experiments.version>0.1.0</experiments.version>
         <utils.version>0.1.1</utils.version>
         <!-- Dependencies versions -->
         <jackson.version>2.9.4</jackson.version>
@@ -38,8 +37,6 @@
         <module>benchmarks/flink-bench</module>
         <module>benchmarks/storm-bench</module>
         <module>benchmarks/heron-bench</module>
-        <!--<module>benchmarks/spark-bench</module>-->
-        <module>experiments</module>
     </modules>
 
     <dependencyManagement>
