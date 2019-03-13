@@ -4,14 +4,6 @@
 #
 version: 2
 jobs:
-  build_yamb:
-    working_directory: ~/yamb
-    docker:
-      - image: circleci/openjdk:8-jdk  
-    steps:
-      - checkout
-      - run: mvn clean install
-
   build_jekyll:
     working_directory: ~/yamb/docs
     docker:
@@ -39,22 +31,16 @@ jobs:
       - run:
           name: Jekyll Build
           command: bundle exec jekyll build
-      - run:
-          name: HTMLProofer tests
-          command: |
-            bundle exec htmlproofer ./_site \
-              --allow-hash-href \
-              --check-favicon  \
-              --check-html \
-              --disable-external
+      # - run:
+      #     name: HTMLProofer tests
+      #     command: |
+      #       bundle exec htmlproofer ./_site \
+      #         --allow-hash-href \
+      #         --check-favicon  \
+      #         --check-html \
+      #         --disable-external
       - persist_to_workspace:
           root: ./
           paths:
             - _site
-        
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build_yamb
-      - build_jekyll
+      
