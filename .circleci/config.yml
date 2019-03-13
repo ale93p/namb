@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build_yamb:
+  build:
     working_directory: ~/yamb
     docker:
       - image: circleci/openjdk:8-jdk  
