@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build_jekyll:
+  build:
     working_directory: ~/yamb/docs
     docker:
       - image: circleci/ruby:2.5
