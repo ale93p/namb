@@ -7,7 +7,7 @@ jobs:
   build:
     branches:
       only:
-        - gh.pages
+        - gh-pages
     working_directory: ~/yamb
     docker:
       - image: circleci/ruby:2.5
