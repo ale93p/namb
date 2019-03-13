@@ -3,6 +3,7 @@ layout: default
 title: Concepts
 parent: Documentation
 nav_order: 1
+permalink: /docs/concepts
 ---
 # Concepts
 {: .no_toc }

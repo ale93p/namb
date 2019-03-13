@@ -2,6 +2,7 @@
 layout: default
 title: Home
 nav_order: 1
+permalink: /
 ---
 
 # What is YAMB?
@@ -14,7 +15,7 @@ nav_order: 1
 
 ### YAMB Basics
 
-To understand the basic concepts behind YAMB, why and how it was created, head to the [Concepts](docs/concepts) page.
+To understand the basic concepts behind YAMB, why and how it was created, head to the [Concepts](/docs/concepts) page.
 
 ### Download
 
@@ -28,7 +29,7 @@ YAMB is open source and freely available on [GitHub](github.com/ale93p/yamb). He
      ```bash
      python3 yamb.py build
      ```
-3. Customize the configuration files (check the [configurations doc](docs/configurations))
+3. Customize the configuration files (check the [configurations doc](/docs/configurations))
 4. Run the benchmark on the selected platform. e.g. flink:
      ```bash
      python3 yamb.py flink

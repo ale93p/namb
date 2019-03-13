@@ -3,6 +3,7 @@ layout: default
 title: Configurations
 parent: Documentation
 nav_order: 3
+permalink: /docs/configurations
 ---
 
 # Configurations
@@ -30,7 +31,7 @@ datastream:
     ...
 ```
 
-| Property | Value | [Characteristics](concepts.html#fundamental-characteristics) |
+| Property | Value | [Characteristics](/docs/concepts.html#fundamental-characteristics) |
 |:----|:----|:----|
 | [`depth`](#depth) | integer | DAG Depth |
 | `scalability:` | | |
@@ -135,7 +136,7 @@ It represent the CPU load of the tasks. The integer value represent the number o
 <tr><td> higher </td><td> 500 </td><td> equivalent of a transformation task </td></tr>
 </table>
 
-To better understand how the value has been computed check the section relative to the [cpu load abstraction](implementation/cpu_load_abstraction.html#cpu-load-abstraction).
+To better understand how the value has been computed check the section relative to the [cpu load abstraction](/docs/implementation/cpu-load).
 
 #### balancing (workload)
 {: .no_toc }
@@ -164,7 +165,7 @@ datastream:
         --> here <--
 ```
 
-| Property | Value | [Characteristics](concepts.html#fundamental-characteristics) |
+| Property | Value | [Characteristics](/docs/concepts.html#fundamental-characteristics) |
 |:----|:----|:----|
 | `data:` | | |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`size`](#size) | integer | Data Characteristics |
