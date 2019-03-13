@@ -5,7 +5,10 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/yamb/docs
+    branches:
+      only:
+        - gh.pages
+    working_directory: ~/yamb
     docker:
       - image: circleci/ruby:2.5
     environment:
