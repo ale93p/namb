@@ -19,17 +19,14 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private boolean _reliable;
 
 
-    private Config.WindowingType _windowingType;
 
-
-    public WindowedBusyWaitBolt(long cycles, boolean msgReliability, Config.WindowingType windowType){
+    public WindowedBusyWaitBolt(long cycles, boolean msgReliability){
         this._cycles = cycles;
         this._reliable = msgReliability;
-        this._windowingType = windowType;
     }
 
     public WindowedBusyWaitBolt(long cycles, Config.WindowingType windowType){
-        this(cycles, false, windowType);
+        this(cycles, false);
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
@@ -40,32 +37,13 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
 
         Object payload = null;
 
-        if (_windowingType == Config.WindowingType.thumbling) {
-
-            for (Tuple tuple : inputWindow.get()){
-                payload = tuple.getValue(0);
-                // simulate processing load
-                for(long i = 0; i < _cycles; i++){}
+        for (Tuple tuple : inputWindow.get()) {
+            payload = tuple.getValue(0);
+            // simulate processing load
+            for (long i = 0; i < _cycles; i++) {
             }
-
         }
 
-        else if (_windowingType == Config.WindowingType.sliding) {
-            List<Tuple> newTuples = inputWindow.getNew();
-            List<Tuple> expiredTuples = inputWindow.getExpired();
-
-            for (Tuple tuple : newTuples){
-                payload = tuple.getValue(0);
-                // simulate processing load
-                for(long i = 0; i < _cycles; i++){}
-            }
-
-            for (Tuple tuple : expiredTuples){
-                // simulate processing load
-                for(long i = 0; i < _cycles; i++){}
-            }
-
-        }
 
         _collector.emit(new Values(payload));
 

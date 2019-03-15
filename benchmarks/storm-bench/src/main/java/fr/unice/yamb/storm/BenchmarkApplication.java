@@ -14,12 +14,11 @@ import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
-import org.apache.storm.topology.base.BaseRichBolt;
+import org.apache.storm.topology.base.BaseWindowedBolt.Duration;
 import org.apache.storm.tuple.Fields;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 public class BenchmarkApplication {
 
@@ -41,6 +40,21 @@ public class BenchmarkApplication {
         setRouting(bolt, parent, routing, "value");
     }
 
+    private static void setWindow(WindowedBusyWaitBolt bolt, Config.WindowingType type, int duration, int interval){
+        switch(type){
+            case thumbling:
+                bolt.withWindow(Duration.seconds(duration));
+                break;
+            case sliding:
+                bolt.withWindow(Duration.seconds(duration), Duration.seconds(interval));
+                break;
+        }
+    }
+
+    private static void setWindow(BoltDeclarer bolt, Config.WindowingType type, int duration){
+        setWindow(bolt, type, duration, 0);
+    }
+
     private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf) throws Exception{
 
 
@@ -51,7 +65,6 @@ public class BenchmarkApplication {
         Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
         Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
         boolean                 reliability         = conf.getDataflow().isReliable();
-        Config.WindowingType    windowingType       = conf.getDataflow().getWindowing();
         float                   processingLoad      = conf.getDataflow().getWorkload().getProcessing();
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
@@ -67,11 +80,16 @@ public class BenchmarkApplication {
         ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
         ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
-        int     windowedTasks   = (depth > 3) ? 2 : 1;
+
         int     numberOfSpouts  = dagLevelsWidth.get(0);
         int     numberOfBolts   = app.getTotalComponents() - numberOfSpouts;
 
-
+        // Windowing
+        boolean                 windowingEnabled    = conf.getDataflow().getWindowing().isEnabled();
+        Config.WindowingType    windowingType       = conf.getDataflow().getWindowing().getType();
+        int                     windowDuration      = conf.getDataflow().getWindowing().getDuration();
+        int                     windowInterval      = conf.getDataflow().getWindowing().getInterval();
+        int                     windowedTasks       = (depth > 3) ? 2 : 1;
 
         Iterator<Integer> cpIterator    = componentsParallelism.iterator();
         ArrayList<String> spoutsList    = new ArrayList<>();
@@ -94,15 +112,21 @@ public class BenchmarkApplication {
         // int i: represent the tree level
         for(int i=1; i<depth; i++){ //TODO: document this section
             int levelWidth = dagLevelsWidth.get(i); // how many bolts are in this level
-            boolean isWindowed  = depth - i <= windowedTasks; // this level containts windowed tasks
-
+            boolean isWindowed  = depth - i <= windowedTasks && windowingEnabled; // this level contains windowed tasks
 
             if (i==1) {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
                     cycles = app.getNextProcessing();
-                    BoltDeclarer boltDeclarer = isWindowed  ? builder.setBolt(boltName, new WindowedBusyWaitBolt(cycles, reliability, windowingType), cpIterator.next())
-                                                            : builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                    BoltDeclarer boltDeclarer = null;
+                    if(isWindowed){
+                        WindowedBusyWaitBolt bolt = new WindowedBusyWaitBolt(cycles, reliability);
+                        setWindow(bolt, windowingType, windowDuration, windowInterval);
+                        boltDeclarer = builder.setBolt(boltName, bolt, cpIterator.next());
+                    }
+                    else{
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                    }
                     System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
                         setRouting(boltDeclarer, spoutsList.get(spout), trafficRouting);
@@ -117,8 +141,15 @@ public class BenchmarkApplication {
                     int startingIdx = app.sumArray(dagLevelsWidth, i-2) - numberOfSpouts;
                     boltName = "bolt_" + boltID;
                     cycles = app.getNextProcessing();
-                    BoltDeclarer boltDeclarer = isWindowed  ? builder.setBolt(boltName, new WindowedBusyWaitBolt(cycles, reliability, windowingType), cpIterator.next())
-                                                            : builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                    BoltDeclarer boltDeclarer = null;
+                    if(isWindowed){
+                        WindowedBusyWaitBolt bolt = new WindowedBusyWaitBolt(cycles, reliability);
+                        setWindow(bolt, windowingType, windowDuration, windowInterval);
+                        boltDeclarer = builder.setBolt(boltName, bolt, cpIterator.next());
+                    }
+                    else{
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                    }
                     System.out.print("\n" + boltName + " connects to: ");
                     if (topologyShape == Config.ConnectionShape.diamond) {
                         for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {
