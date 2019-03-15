@@ -80,7 +80,6 @@ public class BenchmarkApplication {
         ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
         ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
-
         int     numberOfSpouts  = dagLevelsWidth.get(0);
         int     numberOfBolts   = app.getTotalComponents() - numberOfSpouts;
 
@@ -120,7 +119,7 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, reliability);
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                         boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
@@ -143,7 +142,7 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, reliability);
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                         boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }

@@ -10,23 +10,15 @@ import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 import org.apache.storm.windowing.TupleWindow;
 
-import java.util.List;
 import java.util.Map;
 
 public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private OutputCollector _collector;
     private long _cycles;
-    private boolean _reliable;
 
 
-
-    public WindowedBusyWaitBolt(long cycles, boolean msgReliability){
+    public WindowedBusyWaitBolt(long cycles){
         this._cycles = cycles;
-        this._reliable = msgReliability;
-    }
-
-    public WindowedBusyWaitBolt(long cycles, Config.WindowingType windowType){
-        this(cycles, false);
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
