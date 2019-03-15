@@ -1,6 +1,7 @@
 package fr.unice.yamb.storm;
 
 
+import fr.unice.yamb.storm.bolts.WindowedBusyWaitBolt;
 import fr.unice.yamb.utils.common.AppBuilder;
 import fr.unice.yamb.utils.configuration.Config;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
@@ -13,10 +14,12 @@ import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 public class BenchmarkApplication {
 
@@ -41,31 +44,33 @@ public class BenchmarkApplication {
     private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf) throws Exception{
 
 
-        // General configurations
+        // DataFlow configurations
         int                     depth               = conf.getDataflow().getDepth();
         int                     totalParallelism    = conf.getDataflow().getScalability().getParallelism();
         Config.ParaBalancing    paraBalancing       = conf.getDataflow().getScalability().getBalancing();
         Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
         Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
-        float processingLoad      = conf.getDataflow().getWorkload().getProcessing();
+        boolean                 reliability         = conf.getDataflow().isReliable();
+        Config.WindowingType    windowingType       = conf.getDataflow().getWindowing();
+        float                   processingLoad      = conf.getDataflow().getWorkload().getProcessing();
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
-        // Generating app builder
-        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
-        ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
-        ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
-
-        // Spout-specific configurations
-        int                     numberOfSpouts      = dagLevelsWidth.get(0);
+        // DataStream configurations
         int                     dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
         int                     dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
         Config.DataBalancing    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
         Config.Distribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
         int                     rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
 
-        // Bolt-specific configurations
+        // Generating app builder
+        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
+        ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
+        ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
+
+        int     windowedTasks   = (depth > 3) ? 2 : 1;
+        int     numberOfSpouts  = dagLevelsWidth.get(0);
         int     numberOfBolts   = app.getTotalComponents() - numberOfSpouts;
-        boolean reliability     = conf.getDataflow().isReliable();
+
 
 
         Iterator<Integer> cpIterator    = componentsParallelism.iterator();
@@ -89,11 +94,15 @@ public class BenchmarkApplication {
         // int i: represent the tree level
         for(int i=1; i<depth; i++){ //TODO: document this section
             int levelWidth = dagLevelsWidth.get(i); // how many bolts are in this level
+            boolean isWindowed  = depth - i <= windowedTasks; // this level containts windowed tasks
+
+
             if (i==1) {
                 for (int boltCount=0; boltCount<levelWidth; boltCount++){
                     boltName = "bolt_" + boltID;
                     cycles = app.getNextProcessing();
-                    BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                    BoltDeclarer boltDeclarer = isWindowed  ? builder.setBolt(boltName, new WindowedBusyWaitBolt(cycles, reliability, windowingType), cpIterator.next())
+                                                            : builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
                         setRouting(boltDeclarer, spoutsList.get(spout), trafficRouting);
@@ -108,7 +117,8 @@ public class BenchmarkApplication {
                     int startingIdx = app.sumArray(dagLevelsWidth, i-2) - numberOfSpouts;
                     boltName = "bolt_" + boltID;
                     cycles = app.getNextProcessing();
-                    BoltDeclarer boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                    BoltDeclarer boltDeclarer = isWindowed  ? builder.setBolt(boltName, new WindowedBusyWaitBolt(cycles, reliability, windowingType), cpIterator.next())
+                                                            : builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
                     System.out.print("\n" + boltName + " connects to: ");
                     if (topologyShape == Config.ConnectionShape.diamond) {
                         for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {
