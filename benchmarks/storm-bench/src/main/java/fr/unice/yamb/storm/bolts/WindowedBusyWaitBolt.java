@@ -1,6 +1,5 @@
 package fr.unice.yamb.storm.bolts;
 
-import fr.unice.yamb.utils.configuration.Config;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;

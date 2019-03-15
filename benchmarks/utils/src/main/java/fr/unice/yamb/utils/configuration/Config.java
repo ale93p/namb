@@ -24,7 +24,7 @@ public class Config {
     }
 
     public enum WindowingType{
-        thumbling, sliding
+        tumbling, sliding
     }
 
     public enum LoadBalancing {
@@ -46,7 +46,7 @@ public class Config {
     public static final TrafficRouting      DF_TRAFFIC_ROUTING                  = TrafficRouting.balanced;
     public static final boolean             DF_MESSAGE_RELIABILITY              = true;
     public static final boolean             DF_WINDOWING_ENABLED                = false;
-    public static final WindowingType       DF_WINDOWING_TYPE                   = WindowingType.thumbling;
+    public static final WindowingType       DF_WINDOWING_TYPE                   = WindowingType.tumbling;
     public static final int                 DF_WINDOW_DURATION                  = 30;
     public static final int                 DF_WINDOW_INTERVAL                  = 10;
     public static final int                 DF_WORKLOAD_PROCESSING              = 300;

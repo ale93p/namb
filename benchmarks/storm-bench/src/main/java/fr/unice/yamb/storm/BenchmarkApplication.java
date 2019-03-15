@@ -42,8 +42,8 @@ public class BenchmarkApplication {
 
     private static void setWindow(WindowedBusyWaitBolt bolt, Config.WindowingType type, int duration, int interval){
         switch(type){
-            case thumbling:
-                bolt.withWindow(Duration.seconds(duration));
+            case tumbling:
+                bolt.withTumblingWindow(Duration.seconds(duration));
                 break;
             case sliding:
                 bolt.withWindow(Duration.seconds(duration), Duration.seconds(interval));
