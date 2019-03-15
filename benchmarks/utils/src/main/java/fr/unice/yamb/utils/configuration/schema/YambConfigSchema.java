@@ -70,6 +70,7 @@ public class YambConfigSchema extends ConfigSchema {
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
         private boolean reliable = Config.DF_MESSAGE_RELIABILITY;
+        private Config.WindowingType windowing = Config.DF_WINDOWING_TYPE;
         private Workload workload = new Workload();
 
         public int getDepth() {
@@ -102,6 +103,14 @@ public class YambConfigSchema extends ConfigSchema {
 
         public void setReliable(boolean message_reliability) {
             this.reliable = message_reliability;
+        }
+
+        public Config.WindowingType getWindowing() {
+            return windowing;
+        }
+
+        public void setWindowing(Config.WindowingType windowing) {
+            this.windowing = windowing;
         }
 
         public Workload getWorkload() {

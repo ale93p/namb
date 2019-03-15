@@ -23,6 +23,10 @@ public class Config {
         balanced, hash, broadcast
     }
 
+    public enum WindowingType{
+        none, thumbling, sliding
+    }
+
     public enum LoadBalancing {
         balanced, increasing, decreasing, pyramid
     }
@@ -41,6 +45,7 @@ public class Config {
     public static final ConnectionShape DF_CONNECTION_SHAPE = ConnectionShape.linear;
     public static final TrafficRouting DF_TRAFFIC_ROUTING = TrafficRouting.balanced;
     public static final boolean DF_MESSAGE_RELIABILITY = true;
+    public static final WindowingType DF_WINDOWING_TYPE = WindowingType.none;
     public static final int DF_WORKLOAD_PROCESSING = 300;
     public static final LoadBalancing DF_WORKLOAD_BALANCING = LoadBalancing.balanced;
     public static final int DS_SYNTHETIC_DATA_SIZE = 8;
