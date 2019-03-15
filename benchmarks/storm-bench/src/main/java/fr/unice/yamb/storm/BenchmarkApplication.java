@@ -51,7 +51,7 @@ public class BenchmarkApplication {
         }
     }
 
-    private static void setWindow(BoltDeclarer bolt, Config.WindowingType type, int duration){
+    private static void setWindow(WindowedBusyWaitBolt bolt, Config.WindowingType type, int duration){
         setWindow(bolt, type, duration, 0);
     }
 
@@ -120,9 +120,9 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt bolt = new WindowedBusyWaitBolt(cycles, reliability);
-                        setWindow(bolt, windowingType, windowDuration, windowInterval);
-                        boltDeclarer = builder.setBolt(boltName, bolt, cpIterator.next());
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, reliability);
+                        setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
+                        boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
                     else{
                         boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
@@ -143,9 +143,9 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt bolt = new WindowedBusyWaitBolt(cycles, reliability);
-                        setWindow(bolt, windowingType, windowDuration, windowInterval);
-                        boltDeclarer = builder.setBolt(boltName, bolt, cpIterator.next());
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, reliability);
+                        setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
+                        boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
                     else{
                         boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
