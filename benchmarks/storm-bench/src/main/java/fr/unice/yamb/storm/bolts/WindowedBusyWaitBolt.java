@@ -1,5 +1,6 @@
 package fr.unice.yamb.storm.bolts;
 
+import fr.unice.yamb.utils.configuration.Config;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -18,17 +19,16 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private boolean _reliable;
 
 
-    public enum WindowType { thumbling, sliding }
-    private WindowType _windowingType;
+    private Config.WindowingType _windowingType;
 
 
-    public WindowedBusyWaitBolt(long cycles, boolean msgReliability, WindowType windowType){
+    public WindowedBusyWaitBolt(long cycles, boolean msgReliability, Config.WindowingType windowType){
         this._cycles = cycles;
         this._reliable = msgReliability;
         this._windowingType = windowType;
     }
 
-    public WindowedBusyWaitBolt(long cycles, WindowType windowType){
+    public WindowedBusyWaitBolt(long cycles, Config.WindowingType windowType){
         this(cycles, false, windowType);
     }
 
@@ -40,7 +40,7 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
 
         Object payload = null;
 
-        if (_windowingType == WindowType.thumbling) {
+        if (_windowingType == Config.WindowingType.thumbling) {
 
             for (Tuple tuple : inputWindow.get()){
                 payload = tuple.getValue(0);
@@ -50,7 +50,7 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
 
         }
 
-        else if (_windowingType == WindowType.sliding) {
+        else if (_windowingType == Config.WindowingType.sliding) {
             List<Tuple> newTuples = inputWindow.getNew();
             List<Tuple> expiredTuples = inputWindow.getExpired();
 
