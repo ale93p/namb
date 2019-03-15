@@ -22,13 +22,13 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private WindowType _windowingType;
 
 
-    public BusyWaitBolt(long cycles, boolean msgReliability, WindowType windowType){
+    public WindowedBusyWaitBolt(long cycles, boolean msgReliability, WindowType windowType){
         this._cycles = cycles;
         this._reliable = msgReliability;
         this._windowingType = windowType;
     }
 
-    public BusyWaitBolt(long cycles, WindowType windowType){
+    public WindowedBusyWaitBolt(long cycles, WindowType windowType){
         this(cycles, false, windowType);
     }
 
