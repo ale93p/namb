@@ -31,11 +31,11 @@ public class Config {
         balanced, increasing, decreasing, pyramid
     }
 
-    public enum DataBalancing{
-        balanced, unbalanced
+    public enum DataDistribution{
+        uniform, nonuniform
     }
 
-    public enum Distribution{
+    public enum ArrivalDistribution{
         uniform, burst //TODO: add normal, saw-tooth, bimodal
     }
 
@@ -53,8 +53,8 @@ public class Config {
     public static final LoadBalancing       DF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
     public static final int                 DS_SYNTHETIC_DATA_SIZE              = 8;
     public static final int                 DS_DATA_VALUES                      = 100;
-    public static final DataBalancing       DS_DATA_BALANCING                   = DataBalancing.balanced;
-    public static final Distribution        DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = Distribution.uniform;
+    public static final DataDistribution    DS_DATA_DISTRIBUTION                = DataDistribution.uniform;
+    public static final ArrivalDistribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = ArrivalDistribution.uniform;
     public static final int                 DS_SYNTHETIC_ARRIVAL_RATE           = 1000;
 
 

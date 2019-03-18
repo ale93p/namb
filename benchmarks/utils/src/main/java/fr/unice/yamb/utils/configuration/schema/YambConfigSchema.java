@@ -168,7 +168,7 @@ public class YambConfigSchema extends ConfigSchema {
 
                 private int size = Config.DS_SYNTHETIC_DATA_SIZE;
                 private int values = Config.DS_DATA_VALUES;
-                private Config.DataBalancing balancing = Config.DS_DATA_BALANCING;
+                private Config.DataDistribution distribution = Config.DS_DATA_DISTRIBUTION;
 
                 public int getSize() {
                     return size;
@@ -186,23 +186,23 @@ public class YambConfigSchema extends ConfigSchema {
                     this.values = values;
                 }
 
-                public Config.DataBalancing getBalancing() {
-                    return balancing;
-                }
-
-                public void setBalancing(Config.DataBalancing balancing) {
-                    this.balancing = balancing;
-                }
-            }
-            public static class Flow{
-                private Config.Distribution distribution = Config.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
-                private int rate = Config.DS_SYNTHETIC_ARRIVAL_RATE;
-
-                public Config.Distribution getDistribution() {
+                public Config.DataDistribution getDistribution() {
                     return distribution;
                 }
 
-                public void setDistribution(Config.Distribution distribution) {
+                public void setDistribution(Config.DataDistribution balancing) {
+                    this.distribution = balancing;
+                }
+            }
+            public static class Flow{
+                private Config.ArrivalDistribution distribution = Config.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
+                private int rate = Config.DS_SYNTHETIC_ARRIVAL_RATE;
+
+                public Config.ArrivalDistribution getDistribution() {
+                    return distribution;
+                }
+
+                public void setDistribution(Config.ArrivalDistribution distribution) {
                     this.distribution = distribution;
                 }
 
