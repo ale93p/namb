@@ -2,14 +2,19 @@ package fr.unice.yamb.flink;
 
 import fr.unice.yamb.flink.connectors.SyntheticConnector;
 import fr.unice.yamb.flink.operators.BusyWaitMap;
+import fr.unice.yamb.flink.operators.WindowedBusyWaitFunction;
 import fr.unice.yamb.utils.common.AppBuilder;
 import fr.unice.yamb.utils.configuration.Config;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple1;
+import org.apache.flink.streaming.api.datastream.AllWindowedStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,10 +44,29 @@ public class BenchmarkApplication {
         setRouting(operator, routing, 0);
     }
 
+    private static AllWindowedStream setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
+        switch(type){
+            case tumbling:
+                return parent.timeWindowAll(Time.seconds(duration));
+            case sliding:
+                return parent.timeWindowAll(Time.seconds(duration), Time.seconds(interval));
+        }
+        return null;
+    }
+
+    private static AllWindowedStream setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
+        switch(type){
+            case tumbling:
+                return parent.timeWindowAll(Time.seconds(duration));
+            case sliding:
+                return parent.timeWindowAll(Time.seconds(duration), Time.seconds(interval));
+        }
+        return null;
+    }
 
     private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf) throws Exception{
 
-        // General configurations
+        // DataFlow configurations
         int                     depth               = conf.getDataflow().getDepth();
         int                     totalParallelism    = conf.getDataflow().getScalability().getParallelism();
         Config.ParaBalancing    paraBalancing       = conf.getDataflow().getScalability().getBalancing();
@@ -51,27 +75,33 @@ public class BenchmarkApplication {
         float                   processingLoad      = conf.getDataflow().getWorkload().getProcessing();
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
-        // Generating app builder
-        AppBuilder app                              = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
-        ArrayList<Integer> dagLevelsWidth           = app.getDagLevelsWidth();
-        ArrayList<Integer> componentsParallelism    = app.getComponentsParallelism();
-
-        // Spout-specific configurations
-        int                     numberOfSources     = dagLevelsWidth.get(0);
+        // DataStream configurations
         int                     dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
         int                     dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
         Config.DataBalancing    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
         Config.Distribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
         int                     rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
 
+        // Generating app builder
+        AppBuilder app                              = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
+        ArrayList<Integer> dagLevelsWidth           = app.getDagLevelsWidth();
+        ArrayList<Integer> componentsParallelism    = app.getComponentsParallelism();
+
+
         // Bolt-specific configurations
+        int     numberOfSources     = dagLevelsWidth.get(0);
         int     numberOfOperators   = app.getTotalComponents() - numberOfSources;
-        boolean reliability         = conf.getDataflow().isReliable();
+
+        // Windowing
+        boolean                 windowingEnabled    = conf.getDataflow().getWindowing().isEnabled();
+        Config.WindowingType    windowingType       = conf.getDataflow().getWindowing().getType();
+        int                     windowDuration      = conf.getDataflow().getWindowing().getDuration();
+        int                     windowInterval      = conf.getDataflow().getWindowing().getInterval();
+        int                     windowedTasks       = (depth > 3) ? 2 : 1;
 
         Iterator<Integer> cpIterator    = componentsParallelism.iterator();
         ArrayList<MutablePair<String, DataStream<Tuple1<String>>>> sourcesList = new ArrayList<>();
         ArrayList<MutablePair<String, SingleOutputStreamOperator<Tuple1<String>>>> operatorsList = new ArrayList<>();
-
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -102,15 +132,26 @@ public class BenchmarkApplication {
 
         for(int i = 1; i<depth; i++){
             int levelWidth = dagLevelsWidth.get(i);
+            boolean isWindowed  = depth - i <= windowedTasks && windowingEnabled; // this level contains windowed tasks
             SingleOutputStreamOperator<Tuple1<String>> op = null;
+
             if(i==1) {
                 for(int opCount=0; opCount<levelWidth; opCount++) {
                     operatorName = "op_" + operatorID;
                     cycles = app.getNextProcessing();
-                    op = sourcesList.get(sourcesList.size() - 1).getRight()
-                            .map(new BusyWaitMap(cycles))
-                            .setParallelism(cpIterator.next())
+                    DataStream<Tuple1<String>> parent = sourcesList.get(sourcesList.size() - 1).getRight();
+                    if (isWindowed){
+                        op = setWindow(parent, windowingType, windowDuration, windowInterval)
+                                .apply(new WindowedBusyWaitFunction(cycles));
+                    }
+                    else{
+                        op = sourcesList.get(sourcesList.size() - 1).getRight()
+                                .map(new BusyWaitMap(cycles));
+                    }
+
+                    op.setParallelism(cpIterator.next())
                             .name(operatorName);
+
                     setRouting(op, trafficRouting);
                     operatorsList.add(new MutablePair<>(operatorName, op));
                     operatorID++;
@@ -125,10 +166,23 @@ public class BenchmarkApplication {
                     }
                     operatorName = "op_" + operatorID;
                     cycles = app.getNextProcessing();
-                    op = diamondUnion
-                            .map(new BusyWaitMap(cycles))
-                            .setParallelism(cpIterator.next())
+
+
+                    if (isWindowed){
+                        op = setWindow(diamondUnion, windowingType, windowDuration, windowInterval)
+                                .apply(new WindowedBusyWaitFunction(cycles));
+                    }
+                    else{
+                        op = diamondUnion
+                                .map(new BusyWaitMap(cycles));
+                    }
+
+                    op.setParallelism(cpIterator.next())
                             .name(operatorName);
+
+
+                    op.setParallelism(cpIterator.next())
+                        .name(operatorName);
                     setRouting(op, trafficRouting);
                     operatorsList.add(new MutablePair<>(operatorName, op));
                     operatorID++;
@@ -140,10 +194,19 @@ public class BenchmarkApplication {
                     for(int opCount = 0; opCount<levelWidth; opCount++){
                         operatorName = "op_" + operatorID;
                         cycles = app.getNextProcessing();
-                        op = parent
-                                .map(new BusyWaitMap(cycles))
-                                .setParallelism(cpIterator.next())
+
+                        if (isWindowed){
+                            op = setWindow(parent, windowingType, windowDuration, windowInterval)
+                                    .apply(new WindowedBusyWaitFunction(cycles));
+                        }
+                        else{
+                            op = parent
+                                    .map(new BusyWaitMap(cycles));
+                        }
+
+                        op.setParallelism(cpIterator.next())
                                 .name(operatorName);
+
                         setRouting(op, trafficRouting);
                         operatorsList.add(new MutablePair<>(operatorName, op));
                         operatorID++;
