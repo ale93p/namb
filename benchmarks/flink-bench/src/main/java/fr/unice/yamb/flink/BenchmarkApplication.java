@@ -22,13 +22,13 @@ import java.util.Iterator;
 
 public class BenchmarkApplication {
 
-    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException{
-        switch(routing){
+    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException {
+        switch (routing) {
             case hash:
                 if (field instanceof Integer)
-                    operator.keyBy( (int) field);
+                    operator.keyBy((int) field);
                 else if (field instanceof String)
-                    operator.keyBy( (String) field);
+                    operator.keyBy((String) field);
                 else
                     throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
                 break;
@@ -41,12 +41,12 @@ public class BenchmarkApplication {
         }
     }
 
-    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing) throws IllegalArgumentException{
+    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing) throws IllegalArgumentException {
         setRouting(operator, routing, 0);
     }
 
-    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
-        switch(type){
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval) {
+        switch (type) {
             case tumbling:
                 return parent.timeWindowAll(Time.seconds(duration));
             case sliding:
@@ -55,14 +55,22 @@ public class BenchmarkApplication {
         return null;
     }
 
-    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
-        switch(type){
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval) {
+        switch (type) {
             case tumbling:
                 return parent.timeWindowAll(Time.seconds(duration));
             case sliding:
                 return parent.timeWindowAll(Time.seconds(duration), Time.seconds(interval));
         }
         return null;
+    }
+
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration){
+        return setWindow(parent, type, duration, 0);
+    }
+
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration){
+        return setWindow(parent, type, duration, 0);
     }
 
     private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf) throws Exception{
