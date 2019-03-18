@@ -15,6 +15,7 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ public class BenchmarkApplication {
         setRouting(operator, routing, 0);
     }
 
-    private static AllWindowedStream setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
         switch(type){
             case tumbling:
                 return parent.timeWindowAll(Time.seconds(duration));
@@ -54,7 +55,7 @@ public class BenchmarkApplication {
         return null;
     }
 
-    private static AllWindowedStream setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval){
         switch(type){
             case tumbling:
                 return parent.timeWindowAll(Time.seconds(duration));
