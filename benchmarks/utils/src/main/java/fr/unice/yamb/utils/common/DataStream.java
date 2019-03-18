@@ -22,7 +22,7 @@ public class DataStream {
      * @return milliseconds
      * @throws Exception if unkwown distribution type is given
      */
-    public long getInterMessageTime(Config.Distribution distribution, long defaultTime) throws Exception{
+    public long getInterMessageTime(Config.ArrivalDistribution distribution, long defaultTime) throws Exception{
         // elapsed time since last burst end
 
         this.msgCount++;

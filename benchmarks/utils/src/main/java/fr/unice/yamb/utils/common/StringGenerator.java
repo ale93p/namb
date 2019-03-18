@@ -49,13 +49,13 @@ public class StringGenerator {
         return returnString;
     }
 
-    public ArrayList<byte[]> generatePayload(int dataValues, Config.DataBalancing balancing){
+    public ArrayList<byte[]> generatePayload(int dataValues, Config.DataDistribution balancing){
         String nextString;
         ArrayList<byte[]> payloadArray = new ArrayList<>();
         for(int i=0; i< dataValues; i++) { //can this be optimized?
             nextString = this.next();
             payloadArray.add(nextString.getBytes());
-            if(balancing == Config.DataBalancing.unbalanced){
+            if(balancing == Config.DataDistribution.nonuniform){
                 for(int j=1; i<Math.pow(2,i); i++){
                     payloadArray.add(nextString.getBytes());
                 }

@@ -21,10 +21,10 @@ public class SyntheticSpout extends BaseRichSpout {
 
     private int dataSize;
     private int dataValues;
-    private Config.DataBalancing dataValuesBalancing;
+    private Config.DataDistribution dataValuesBalancing;
     private int flowRate;
     private long sleepTime;
-    private Config.Distribution distribution;
+    private Config.ArrivalDistribution distribution;
     private DataStream dataStream;
     private boolean reliable;
 
@@ -33,7 +33,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private Random index;
     private long count;
 
-    public SyntheticSpout(int dataSize, int dataValues, Config.DataBalancing dataValuesBalancing, Config.Distribution flowDistribution, int flowRate, boolean reliable) {
+    public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable) {
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;

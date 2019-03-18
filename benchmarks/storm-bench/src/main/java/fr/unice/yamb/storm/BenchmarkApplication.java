@@ -71,8 +71,8 @@ public class BenchmarkApplication {
         // DataStream configurations
         int                     dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
         int                     dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
-        Config.DataBalancing    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
-        Config.Distribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+        Config.DataDistribution    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
+        Config.ArrivalDistribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
         int                     rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Generating app builder

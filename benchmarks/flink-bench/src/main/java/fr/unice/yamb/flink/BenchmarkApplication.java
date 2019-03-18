@@ -7,12 +7,10 @@ import fr.unice.yamb.utils.common.AppBuilder;
 import fr.unice.yamb.utils.configuration.Config;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.streaming.api.datastream.AllWindowedStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
@@ -87,8 +85,8 @@ public class BenchmarkApplication {
         // DataStream configurations
         int                     dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
         int                     dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
-        Config.DataBalancing    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getBalancing();
-        Config.Distribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+        Config.DataDistribution    dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
+        Config.ArrivalDistribution     distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
         int                     rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Generating app builder

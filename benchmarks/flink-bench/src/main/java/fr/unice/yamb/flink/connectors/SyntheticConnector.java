@@ -17,17 +17,17 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String
 
     private int dataSize;
     private int dataValues;
-    private Config.DataBalancing dataValuesBalancing;
+    private Config.DataDistribution dataValuesBalancing;
     private int flowRate;
     private long sleepTime;
-    private Config.Distribution distribution;
+    private Config.ArrivalDistribution distribution;
     private DataStream dataStream;
 
     private ArrayList<byte[]> payloadArray;
     private Random index;
     private long count;
 
-    public SyntheticConnector(int dataSize, int dataValues, Config.DataBalancing dataValuesBalancing, Config.Distribution flowDistribution, int flowRate){
+    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate){
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;

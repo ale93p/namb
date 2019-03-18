@@ -20,10 +20,18 @@ dataflow:
   ## Message Reliability
   reliable: true # Boolean, true to enable "acking-like" mechanism, false otherwise
 
+  ## Windowing
+  windowing:
+    enabled: false
+    type: tumbling # [tumbling, sliding]
+    duration: 30 # window duration in seconds
+    interval: 10 # interval between windows, enabled only if sliding
+
   ## Processing
   workload:
-    processing: 300 # CPU load value (may be implemented by keywoards (low, medium, high... pre-defined functions))
+    processing: 300 # CPU load value
     balancing: balanced # [balanced, increasing, decreasing, pyramid]
+
 
 
 ###############################################
@@ -43,7 +51,7 @@ datastream:
     data:
       size: 8 # size of the single data
       values: 100 # different values
-      balancing: balanced # [balanced, unbalanced]
+      distribution: uniform # [uniform, nonuniform]
     ## Input Ratio
     flow:
       distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
