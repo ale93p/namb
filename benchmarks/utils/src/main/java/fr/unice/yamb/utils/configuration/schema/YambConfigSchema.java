@@ -2,6 +2,8 @@ package fr.unice.yamb.utils.configuration.schema;
 
 import fr.unice.yamb.utils.configuration.Config;
 
+import java.awt.*;
+
 public class YambConfigSchema extends ConfigSchema {
 
     public static class DataFlow {
@@ -45,6 +47,44 @@ public class YambConfigSchema extends ConfigSchema {
                 this.routing = routing;
             }
         }
+        public static class Windowing{
+            private boolean enabled = Config.DF_WINDOWING_ENABLED;
+            private Config.WindowingType type = Config.DF_WINDOWING_TYPE;
+            private int duration = Config.DF_WINDOW_DURATION;
+            private int interval = Config.DF_WINDOW_INTERVAL;
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            public Config.WindowingType getType() {
+                return type;
+            }
+
+            public void setType(Config.WindowingType type) {
+                this.type = type;
+            }
+
+            public int getDuration() {
+                return duration;
+            }
+
+            public void setDuration(int duration) {
+                this.duration = duration;
+            }
+
+            public int getInterval() {
+                return interval;
+            }
+
+            public void setInterval(int interval) {
+                this.interval = interval;
+            }
+        }
         public static class Workload{
             private float processing = Config.DF_WORKLOAD_PROCESSING;
             private Config.LoadBalancing balancing = Config.DF_WORKLOAD_BALANCING;
@@ -70,6 +110,7 @@ public class YambConfigSchema extends ConfigSchema {
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
         private boolean reliable = Config.DF_MESSAGE_RELIABILITY;
+        private Windowing windowing = new Windowing();
         private Workload workload = new Workload();
 
         public int getDepth() {
@@ -102,6 +143,14 @@ public class YambConfigSchema extends ConfigSchema {
 
         public void setReliable(boolean message_reliability) {
             this.reliable = message_reliability;
+        }
+
+        public Windowing getWindowing() {
+            return windowing;
+        }
+
+        public void setWindowing(Windowing windowing) {
+            this.windowing = windowing;
         }
 
         public Workload getWorkload() {
