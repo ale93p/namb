@@ -177,7 +177,7 @@ public class BenchmarkApplication {
                 }
             }
         }
-        System.exit(0);
+
         return builder;
     }
 
