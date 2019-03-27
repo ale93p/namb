@@ -7,6 +7,7 @@ import os
 import sys
 import modules.yamb_variables as vars
 
+CMD_NOT_FOUND_CODE = 127
 
 class CommandNotFound(Exception):
     def __init__(self, cmd):
@@ -19,7 +20,7 @@ class CommandNotFound(Exception):
 def run_storm(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, storm_conf=vars.STORM_CONF):
     storm_bin = custom_bin_path if custom_bin_path else 'storm'
 
-    if subprocess.run([storm_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+    if subprocess.run([storm_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
         storm_command = [storm_bin, 'jar', vars.STORM_JAR, vars.STORM_CLASS, yamb_conf, storm_conf]
         subprocess.run(storm_command)
         return
@@ -36,7 +37,7 @@ def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HE
         if key == "deployment":
             deployment = value.split("#")[0].strip()
 
-    if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+    if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
         heron_command = [heron_bin, "submit", deployment, vars.HERON_JAR, vars.HERON_CLASS, yamb_conf]
         print(heron_command)
         subprocess.run(heron_command)
@@ -48,7 +49,7 @@ def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HE
 def run_flink(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, flink_conf=vars.FLINK_CONF):
     flink_bin = custom_bin_path if custom_bin_path else 'flink'
 
-    if subprocess.run([flink_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+    if subprocess.run([flink_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
         flink_command = [flink_bin, "run", vars.FLINK_JAR, yamb_conf]
         subprocess.run(flink_command)
         return
