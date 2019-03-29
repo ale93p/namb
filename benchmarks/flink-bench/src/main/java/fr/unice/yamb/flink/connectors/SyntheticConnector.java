@@ -46,7 +46,6 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String
         this.index = new Random();
         this.isRunning = true;
 
-
     }
 
     @Override

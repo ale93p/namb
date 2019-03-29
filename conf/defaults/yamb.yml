@@ -10,6 +10,7 @@ dataflow:
   scalability:
     parallelism: 10 # Total number of executors
     balancing: balanced # [balanced, increasing, decreasing, pyramid]
+    variability: 0.5 # balancing variability used during load distribution
   
   ## Connection and Dependency
   connection: 

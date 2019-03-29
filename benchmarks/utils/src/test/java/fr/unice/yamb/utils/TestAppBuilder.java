@@ -18,62 +18,64 @@ public class TestAppBuilder {
     int depth;
     int parallelism;
     Config.ParaBalancing paraBalancing;
+    double variability;
     Config.ConnectionShape shape;
     int processing;
     Config.LoadBalancing loadBalancing;
     AppBuilder builder;
 
-    public TestAppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, Config.ConnectionShape shape) throws Throwable{
+    public TestAppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, double variability, Config.ConnectionShape shape) throws Throwable{
         this.depth = depth;
         this.parallelism = parallelism;
         this.paraBalancing = paraBalancing;
+        this.variability = variability;
         this.shape = shape;
 
         //unused values in the test
         this.processing = 1;
         this.loadBalancing = Config.LoadBalancing.balanced;
 
-        this.builder = new AppBuilder(this.depth, this.parallelism, this.paraBalancing, this.shape, this.processing, this.loadBalancing);
+        this.builder = new AppBuilder(this.depth, this.parallelism, this.paraBalancing, this.variability, this.shape, this.processing, this.loadBalancing);
     }
 
     @Parameters(name = "Run {index}: depth={0}, parallelism={1}, paraBalancing={2}, shape={3}")
     public static Iterable<Object[]> data() throws Throwable{
         return Arrays.asList(new Object[][]{
                 // balanced
-                {5, 10, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
-                {5, 13, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
-                {5, 13, Config.ParaBalancing.balanced, Config.ConnectionShape.star},
-                {5, 13, Config.ParaBalancing.balanced, Config.ConnectionShape.diamond},
-                {10, 17, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
-                {100, 1000000, Config.ParaBalancing.balanced, Config.ConnectionShape.linear},
+                {5, 10, Config.ParaBalancing.balanced, 0.5, Config.ConnectionShape.linear},
+                {5, 13, Config.ParaBalancing.balanced, 0.6, Config.ConnectionShape.linear},
+                {5, 13, Config.ParaBalancing.balanced, 0.7, Config.ConnectionShape.star},
+                {5, 13, Config.ParaBalancing.balanced, 0.3, Config.ConnectionShape.diamond},
+                {10, 17, Config.ParaBalancing.balanced, 0.4, Config.ConnectionShape.linear},
+                {100, 1000000, Config.ParaBalancing.balanced, 0.5, Config.ConnectionShape.linear},
                 // increasing
-                {3, 6, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {5, 5, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {5, 10, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {5, 19, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {5, 19, Config.ParaBalancing.increasing, Config.ConnectionShape.star},
-                {5, 19, Config.ParaBalancing.increasing, Config.ConnectionShape.diamond},
-                {10, 300, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {7, 1000, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {100, 1000000, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
+                {3, 6, Config.ParaBalancing.increasing, 0.2, Config.ConnectionShape.linear},
+                {5, 5, Config.ParaBalancing.increasing, 0.3, Config.ConnectionShape.linear},
+                {5, 10, Config.ParaBalancing.increasing, 0.4, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.increasing, 0.5, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.increasing, 0.6, Config.ConnectionShape.star},
+                {5, 19, Config.ParaBalancing.increasing, 0.7, Config.ConnectionShape.diamond},
+                {10, 300, Config.ParaBalancing.increasing, 0.5, Config.ConnectionShape.linear},
+                {7, 1000, Config.ParaBalancing.increasing, 0.5, Config.ConnectionShape.linear},
+                {100, 1000000, Config.ParaBalancing.increasing, 0.5, Config.ConnectionShape.linear},
                 //decreasing
-                {5, 5, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {5, 10, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
-                {5, 19, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
-                {5, 19, Config.ParaBalancing.decreasing, Config.ConnectionShape.star},
-                {5, 19, Config.ParaBalancing.decreasing, Config.ConnectionShape.diamond},
-                {10, 300, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
-                {7, 1000, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
-                {100, 1000000, Config.ParaBalancing.decreasing, Config.ConnectionShape.linear},
+                {5, 5, Config.ParaBalancing.increasing, 0.2, Config.ConnectionShape.linear},
+                {5, 10, Config.ParaBalancing.decreasing, 0.3, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.decreasing, 0.4, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.decreasing, 0.5, Config.ConnectionShape.star},
+                {5, 19, Config.ParaBalancing.decreasing, 0.6, Config.ConnectionShape.diamond},
+                {10, 300, Config.ParaBalancing.decreasing, 0.7, Config.ConnectionShape.linear},
+                {7, 1000, Config.ParaBalancing.decreasing, 0.5, Config.ConnectionShape.linear},
+                {100, 1000000, Config.ParaBalancing.decreasing, 0.5, Config.ConnectionShape.linear},
                 // pyramid
-                {5, 5, Config.ParaBalancing.increasing, Config.ConnectionShape.linear},
-                {5, 10, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
-                {5, 19, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
-                {5, 19, Config.ParaBalancing.pyramid, Config.ConnectionShape.star},
-                {5, 19, Config.ParaBalancing.pyramid, Config.ConnectionShape.diamond},
-                {10, 300, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
-                {7, 1000, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear},
-                {100, 1000000, Config.ParaBalancing.pyramid, Config.ConnectionShape.linear}
+                {5, 5, Config.ParaBalancing.increasing, 0.2, Config.ConnectionShape.linear},
+                {5, 10, Config.ParaBalancing.pyramid, 0.3, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.pyramid, 0.4, Config.ConnectionShape.linear},
+                {5, 19, Config.ParaBalancing.pyramid, 0.5, Config.ConnectionShape.star},
+                {5, 19, Config.ParaBalancing.pyramid, 0.6, Config.ConnectionShape.diamond},
+                {10, 300, Config.ParaBalancing.pyramid, 0.7, Config.ConnectionShape.linear},
+                {7, 1000, Config.ParaBalancing.pyramid, 0.5, Config.ConnectionShape.linear},
+                {100, 1000000, Config.ParaBalancing.pyramid, 0.5, Config.ConnectionShape.linear}
         });
     }
 
