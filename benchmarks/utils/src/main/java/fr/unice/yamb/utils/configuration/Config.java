@@ -42,6 +42,7 @@ public class Config {
     public static final int                 DF_DEPTH                            = 3;
     public static final int                 DF_SCALABILITY_PARALLELISM          = 10;
     public static final ParaBalancing       DF_SCALABILITY_BALANCING            = ParaBalancing.balanced;
+    public static final double              DF_SCALABILITY_VARIABILTY           = 0.5;
     public static final ConnectionShape     DF_CONNECTION_SHAPE                 = ConnectionShape.linear;
     public static final TrafficRouting      DF_TRAFFIC_ROUTING                  = TrafficRouting.balanced;
     public static final boolean             DF_MESSAGE_RELIABILITY              = true;
@@ -49,7 +50,7 @@ public class Config {
     public static final WindowingType       DF_WINDOWING_TYPE                   = WindowingType.tumbling;
     public static final int                 DF_WINDOW_DURATION                  = 30;
     public static final int                 DF_WINDOW_INTERVAL                  = 10;
-    public static final int                 DF_WORKLOAD_PROCESSING              = 300;
+    public static final double              DF_WORKLOAD_PROCESSING              = 10;
     public static final LoadBalancing       DF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
     public static final int                 DS_SYNTHETIC_DATA_SIZE              = 8;
     public static final int                 DS_DATA_VALUES                      = 100;
