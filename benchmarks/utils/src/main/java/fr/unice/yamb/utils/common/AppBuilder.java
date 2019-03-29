@@ -10,6 +10,7 @@ public class AppBuilder{
     private int depth;
     private int parallelism;
     private Config.ParaBalancing paraBalancing;
+    private double variability;
     private Config.ConnectionShape shape;
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
@@ -20,15 +21,15 @@ public class AppBuilder{
     private int count;
     
 
-    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, Config.ConnectionShape shape, float processing, Config.LoadBalancing loadBalancing) throws Exception{
+    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, double variability, Config.ConnectionShape shape, double processing, Config.LoadBalancing loadBalancing) throws Exception{
 
         this.depth = depth;
         this.parallelism = parallelism;
         this.paraBalancing = paraBalancing;
+        this.variability = variability;
         this.shape = shape;
-        this.proccessing = Math.round(processing * 1000);
+        this.proccessing = (int) Math.round(processing * 1000);
         this.loadBalancing = loadBalancing;
-
         this.dagLevelsWidth = computeTopologyShape();
         this.totalComponents = sumArray(this.dagLevelsWidth);
         this.componentsParallelism = computeComponentsParallelism();
@@ -85,7 +86,7 @@ public class AppBuilder{
 
     private ArrayList<Integer> generateIncreasingArray(int slots, int elements){
         ArrayList<Integer> arr = new ArrayList<>();
-        double variability = 0.5; //50%
+        double variability = this.variability; //50%
         int remainingElements = 0;
         int avgRemainingElements = 0;
         int basePar = elements / slots;

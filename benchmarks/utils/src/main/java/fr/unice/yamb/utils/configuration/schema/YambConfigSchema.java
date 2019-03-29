@@ -10,6 +10,7 @@ public class YambConfigSchema extends ConfigSchema {
         public static class Scalability{
             private int parallelism = Config.DF_SCALABILITY_PARALLELISM;
             private Config.ParaBalancing balancing = Config.DF_SCALABILITY_BALANCING;
+            private double variability = Config.DF_SCALABILITY_VARIABILTY;
 
             public int getParallelism() {
                 return parallelism;
@@ -25,6 +26,14 @@ public class YambConfigSchema extends ConfigSchema {
 
             public void setBalancing(Config.ParaBalancing balancing) {
                 this.balancing = balancing;
+            }
+
+            public double getVariability() {
+                return variability;
+            }
+
+            public void setVariability(double variability) {
+                this.variability = variability;
             }
         }
         public static class Connection{
@@ -86,10 +95,10 @@ public class YambConfigSchema extends ConfigSchema {
             }
         }
         public static class Workload{
-            private float processing = Config.DF_WORKLOAD_PROCESSING;
+            private double processing = Config.DF_WORKLOAD_PROCESSING;
             private Config.LoadBalancing balancing = Config.DF_WORKLOAD_BALANCING;
 
-            public float getProcessing() {
+            public double getProcessing() {
                 return processing;
             }
 

@@ -59,10 +59,11 @@ public class BenchmarkApplication {
         int                     depth               = conf.getDataflow().getDepth();
         int                     totalParallelism    = conf.getDataflow().getScalability().getParallelism();
         Config.ParaBalancing    paraBalancing       = conf.getDataflow().getScalability().getBalancing();
+        double                  variability         = conf.getDataflow().getScalability().getVariability();
         Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
         Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
         boolean                 reliability         = conf.getDataflow().isReliable();
-        float                   processingLoad      = conf.getDataflow().getWorkload().getProcessing();
+        double                  processingLoad      = conf.getDataflow().getWorkload().getProcessing();
         Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
 
         // DataStream configurations
@@ -74,7 +75,7 @@ public class BenchmarkApplication {
         int                     rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         // Generating app builder
-        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, paraBalancing, topologyShape, processingLoad, loadBalancing);
+        AppBuilder              app                     = new AppBuilder(depth, totalParallelism, paraBalancing, variability, topologyShape, processingLoad, loadBalancing);
         ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
         ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
