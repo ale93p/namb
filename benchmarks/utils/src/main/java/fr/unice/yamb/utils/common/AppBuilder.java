@@ -55,9 +55,11 @@ public class AppBuilder{
                 break;
             case decreasing:
                 this.proccessing = (int)(this.proccessing * 0.8);
+                break;
             case pyramid:
                 this.proccessing = (this.count <= this.totalComponents/2) ? (int) (this.proccessing * 1.2) : (int) (this.proccessing * 0.8);
                 this.count++;
+                break;
             default:
                 throw new Exception("case " + this.loadBalancing + " not yet implemented");
         }
