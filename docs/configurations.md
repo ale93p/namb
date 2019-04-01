@@ -40,8 +40,13 @@ datastream:
 | &nbsp;&nbsp;&nbsp;&nbsp;[`shape`](#shape) | linear \| diamond \| star | Connection |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`routing`](#routing) | balanced \| hash \| broadcast | Traffic Balancing |
 | [`reliable`](#reliable)| true \| false | Message Reliability |
+| `windowing:` | | |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`enabled`](#windowing-enabled) | true \| false | Windowing |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`type`](#windowing-type) | tumbling \| sliding | Windowing |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`duration`](#windowing-duration) | integer | Windowing |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`interval`](#windowing-interval) | integer | Windowing |
 | `workload:` | | |
-| &nbsp;&nbsp;&nbsp;&nbsp;[`processing`](#processing) | float | Workload |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`processing`](#processing) | double | Workload |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`balancing`](#balancing-workload) | balanced \| increasing \| decreasing \| pyramid | Workload |
 
 #### depth
@@ -118,6 +123,44 @@ A boolean value that enables (if true) the message reliability mechanism of the 
 
 Currently not available in `flink`.
 {: .text-red-000 }
+
+#### windowing enabled
+{: .no_toc}
+
+```yaml
+windowing:
+    enabled: false
+```
+A boolean value that enables (if true) the windowing system in the application. The windowing is implemented in the last two tasks of the topology.
+
+#### windowing type
+{: .no_toc}
+
+```yaml
+windowing:
+    type: tumbling
+```
+The type of the window we want to use:
+* `tumbling`: sequence of windows lasting the specified duration, a new window is created after the previous one ends
+* `sliding`: series of windows lasting the specified duration, a new window is created at the defined interval distance
+
+#### windowing duration
+{: .no_toc}
+
+```yaml
+windowing:
+    duration: 30
+```
+It defines how much the window will last in seconds.
+
+#### windowing interval
+{: .no_toc}
+
+```yaml
+windowing:
+    interval: 10
+```
+It defines the interval between the creation of new windows. It is useful only with sliding windows.
 
 #### processing
 {: .no_toc }
