@@ -46,7 +46,8 @@ public class SyntheticSpout extends BaseRichSpout {
         StringGenerator generator = new StringGenerator(this.dataSize);
         this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
-        this.sleepTime = dataStream.convertToInterval(this.flowRate);
+        if (this.flowRate != 0)
+            this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
         this.index = new Random();
         this._collector = collector;
@@ -55,9 +56,11 @@ public class SyntheticSpout extends BaseRichSpout {
     public void nextTuple(){
         byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
         try {
-            Utils.sleep(
-                    dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
-            );
+            if (this.flowRate != 0) {
+                Utils.sleep(
+                        dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
+                );
+            }
             if(this.reliable) {
                 _collector.emit(new Values(nextValue), count++);
                 this.count++;
