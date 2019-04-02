@@ -41,7 +41,8 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String
         StringGenerator generator = new StringGenerator(this.dataSize);
         this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
-        this.sleepTime = dataStream.convertToInterval(this.flowRate);
+        if (this.flowRate != 0)
+            this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
         this.index = new Random();
         this.isRunning = true;
@@ -53,9 +54,11 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String
         while(isRunning){
             byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
             try {
-                Thread.sleep(
-                        dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
-                );
+                if (this.flowRate != 0) {
+                    Thread.sleep(
+                            dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
+                    );
+                }
                 sourceContext.collect(new Tuple1<>(new String(nextValue)));
                 this.count++;
             } catch (Exception e){
