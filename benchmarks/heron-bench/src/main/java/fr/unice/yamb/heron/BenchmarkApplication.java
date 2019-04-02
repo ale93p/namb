@@ -210,7 +210,7 @@ public class BenchmarkApplication {
 
                     conf.setNumStmgrs(yambConf.getDataflow().getScalability().getParallelism());
 
-                    String topologyName = "heron_bench_" + System.currentTimeMillis();
+                    String topologyName = "yamb_bench_" + System.currentTimeMillis();
                     HeronSubmitter.submitTopology(topologyName, conf, builder.createTopology());
 
                 }

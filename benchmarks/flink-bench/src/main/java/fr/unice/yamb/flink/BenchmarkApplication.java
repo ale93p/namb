@@ -240,7 +240,7 @@ public class BenchmarkApplication {
 
             StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf);
 
-            String executionName = "flink_bench_" + System.currentTimeMillis();
+            String executionName = "yamb_bench_" + System.currentTimeMillis();
             env.execute(executionName);
 
         } else {
