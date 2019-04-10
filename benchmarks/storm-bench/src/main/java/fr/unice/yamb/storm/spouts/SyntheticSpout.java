@@ -32,6 +32,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private ArrayList<byte[]> payloadArray;
     private Random index;
     private long count;
+    private long ts;
 
     public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable) {
         this.dataSize = dataSize;
@@ -56,17 +57,18 @@ public class SyntheticSpout extends BaseRichSpout {
     public void nextTuple(){
         byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
         try {
-            if(this.flowRate != 0) {
+            if (this.flowRate != 0) {
                 Utils.sleep(
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                 );
             }
-            if(reliable){
-                _collector.emit(new Values(nextValue), count++);
-                this.count++;
+            this.ts = System.currentTimeMillis();
+            this.count++;
+            if(this.reliable) {
+                _collector.emit(new Values(nextValue, this.count, this,ts), this.count);
             }
             else
-                _collector.emit(new Values(nextValue));
+                _collector.emit(new Values(nextValue, this.count, this.ts));
 
         } catch (Exception e){
             e.printStackTrace();
@@ -76,6 +78,6 @@ public class SyntheticSpout extends BaseRichSpout {
     public void ack(Object msgId){ super.ack(msgId); }
 
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("value"));
+        declarer.declare(new Fields("value", "id", "timestamp"));
     }
 }
