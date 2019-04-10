@@ -43,7 +43,7 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
 
     }
 
-    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value"));}
+    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "timestamp"));}
 
 
 }

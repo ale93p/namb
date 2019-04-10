@@ -46,6 +46,6 @@ public class BusyWaitBolt extends BaseRichBolt {
 
     }
 
-    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value"));}
+    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "timestamp"));}
 
 }

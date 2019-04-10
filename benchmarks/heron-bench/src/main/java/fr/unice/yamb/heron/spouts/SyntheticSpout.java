@@ -78,6 +78,6 @@ public class SyntheticSpout extends BaseRichSpout {
     public void ack(Object msgId){ super.ack(msgId); }
 
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("value"));
+        declarer.declare(new Fields("value", "id", "timestamp"));
     }
 }
