@@ -27,6 +27,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private Config.ArrivalDistribution distribution;
     private DataStream dataStream;
     private boolean reliable;
+    private long ts;
 
 
     private ArrayList<byte[]> payloadArray;
@@ -61,12 +62,14 @@ public class SyntheticSpout extends BaseRichSpout {
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                 );
             }
+            this.ts = System.currentTimeMillis();
+            this.count++;
             if(this.reliable) {
-                _collector.emit(new Values(nextValue), count++);
-                this.count++;
+                _collector.emit(new Values(nextValue, this.count, this,ts), this.count);
             }
             else
-                _collector.emit(new Values(nextValue));
+                _collector.emit(new Values(nextValue, this.count, this.ts));
+
         } catch (Exception e){
             e.printStackTrace();
         }
