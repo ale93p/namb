@@ -6,6 +6,7 @@ import fr.unice.yamb.flink.operators.WindowedBusyWaitFunction;
 import fr.unice.yamb.utils.common.AppBuilder;
 import fr.unice.yamb.utils.configuration.Config;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.streaming.api.datastream.AllWindowedStream;
@@ -20,55 +21,79 @@ import java.util.Iterator;
 
 public class BenchmarkApplication {
 
-    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException {
+    private static DataStream<Tuple1<String>> setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException {
         switch (routing) {
             case hash:
                 if (field instanceof Integer)
-                    operator.keyBy((int) field);
+                    return operator.keyBy((int) field);
                 else if (field instanceof String)
-                    operator.keyBy((String) field);
+                    return operator.keyBy((String) field);
                 else
                     throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
-                break;
             case balanced:
-                operator.rebalance();
-                break;
+                return operator.rebalance();
             case broadcast:
-                operator.broadcast();
-                break;
+                return operator.broadcast();
+            default:
+                throw new ValueException(routing + " is not a valid routing type");
+
         }
     }
 
-    private static void setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing) throws IllegalArgumentException {
-        setRouting(operator, routing, 0);
+    private static DataStream<Tuple1<String>> setRouting(DataStream<Tuple1<String>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException {
+        switch (routing) {
+            case hash:
+                if (field instanceof Integer)
+                    return operator.keyBy((int) field);
+                else if (field instanceof String)
+                    return operator.keyBy((String) field);
+                else
+                    throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
+            case balanced:
+                return operator.rebalance();
+            case broadcast:
+                return operator.broadcast();
+            default:
+                throw new ValueException(routing + " is not a valid routing type");
+        }
     }
 
-    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval) {
+    private static DataStream<Tuple1<String>> setRouting(SingleOutputStreamOperator<Tuple1<String>> operator, Config.TrafficRouting routing) throws IllegalArgumentException {
+        return setRouting(operator, routing, 0);
+    }
+
+    private static DataStream<Tuple1<String>> setRouting(DataStream<Tuple1<String>> operator, Config.TrafficRouting routing) throws IllegalArgumentException {
+        return setRouting(operator, routing, 0);
+    }
+
+
+
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, int interval) {
         switch (type) {
             case tumbling:
-                return parent.timeWindowAll(Time.seconds(duration));
+                return setRouting(parent, trafficRouting).timeWindowAll(Time.seconds(duration));
             case sliding:
-                return parent.timeWindowAll(Time.seconds(duration), Time.seconds(interval));
+                return setRouting(parent, trafficRouting).timeWindowAll(Time.seconds(duration), Time.seconds(interval));
         }
         return null;
     }
 
-    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration, int interval) {
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, int interval) {
         switch (type) {
             case tumbling:
-                return parent.timeWindowAll(Time.seconds(duration));
+                return setRouting(parent, trafficRouting).timeWindowAll(Time.seconds(duration));
             case sliding:
-                return parent.timeWindowAll(Time.seconds(duration), Time.seconds(interval));
+                return setRouting(parent, trafficRouting).timeWindowAll(Time.seconds(duration), Time.seconds(interval));
         }
         return null;
     }
 
-    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.WindowingType type, int duration){
-        return setWindow(parent, type, duration, 0);
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple1<String>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration){
+        return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
-    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.WindowingType type, int duration){
-        return setWindow(parent, type, duration, 0);
+    private static AllWindowedStream<Tuple1<String>, TimeWindow> setWindow(DataStream<Tuple1<String>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration){
+        return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
     private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf) throws Exception{
@@ -115,6 +140,7 @@ public class BenchmarkApplication {
 
         String sourceName;
 
+
         for(int s=1; s<=numberOfSources; s++){
             sourceName = "source_" + s;
             DataStream<Tuple1<String>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate))
@@ -126,11 +152,11 @@ public class BenchmarkApplication {
 
         if (numberOfSources > 1){
             sourceName = "unified_source";
-            DataStream<Tuple1<String>> unifiedSource = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
+            DataStream<Tuple1<String>> source = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
             for(int s=2; s<numberOfSources; s++){
-                unifiedSource.union(sourcesList.get(s).getRight());
+                source.union(sourcesList.get(s).getRight());
             }
-            sourcesList.add(new MutablePair<>(sourceName, unifiedSource));
+            sourcesList.add(new MutablePair<>(sourceName, source));
         }
 
 
@@ -141,26 +167,28 @@ public class BenchmarkApplication {
         for(int i = 1; i<depth; i++){
             int levelWidth = dagLevelsWidth.get(i);
             boolean isWindowed  = depth - i <= windowedTasks && windowingEnabled; // this level contains windowed tasks
-            SingleOutputStreamOperator<Tuple1<String>> op = null;
 
             if(i==1) {
                 for(int opCount=0; opCount<levelWidth; opCount++) {
                     operatorName = "op_" + operatorID;
                     cycles = app.getNextProcessing();
                     DataStream<Tuple1<String>> parent = sourcesList.get(sourcesList.size() - 1).getRight();
+
+
+
+                    SingleOutputStreamOperator<Tuple1<String>> op = null;
                     if (isWindowed){
-                        op = setWindow(parent, windowingType, windowDuration, windowInterval)
+                        op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
                                 .apply(new WindowedBusyWaitFunction(cycles));
                     }
                     else{
-                        op = sourcesList.get(sourcesList.size() - 1).getRight()
+                        op = setRouting(parent, trafficRouting)
                                 .map(new BusyWaitMap(cycles));
                     }
 
                     op.setParallelism(cpIterator.next())
                             .name(operatorName);
 
-                    setRouting(op, trafficRouting);
                     operatorsList.add(new MutablePair<>(operatorName, op));
                     operatorID++;
                 }
@@ -176,22 +204,19 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
 
 
+                    SingleOutputStreamOperator<Tuple1<String>> op = null;
                     if (isWindowed){
-                        op = setWindow(diamondUnion, windowingType, windowDuration, windowInterval)
+                        op = setWindow(diamondUnion, trafficRouting, windowingType, windowDuration, windowInterval)
                                 .apply(new WindowedBusyWaitFunction(cycles));
                     }
                     else{
-                        op = diamondUnion
+                        op = setRouting(diamondUnion, trafficRouting)
                                 .map(new BusyWaitMap(cycles));
                     }
 
                     op.setParallelism(cpIterator.next())
                             .name(operatorName);
 
-
-                    op.setParallelism(cpIterator.next())
-                        .name(operatorName);
-                    setRouting(op, trafficRouting);
                     operatorsList.add(new MutablePair<>(operatorName, op));
                     operatorID++;
                 }
@@ -203,19 +228,19 @@ public class BenchmarkApplication {
                         operatorName = "op_" + operatorID;
                         cycles = app.getNextProcessing();
 
+                        SingleOutputStreamOperator<Tuple1<String>> op = null;
                         if (isWindowed){
-                            op = setWindow(parent, windowingType, windowDuration, windowInterval)
+                            op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
                                     .apply(new WindowedBusyWaitFunction(cycles));
                         }
                         else{
-                            op = parent
+                            op = setRouting(parent, trafficRouting)
                                     .map(new BusyWaitMap(cycles));
                         }
 
                         op.setParallelism(cpIterator.next())
                                 .name(operatorName);
 
-                        setRouting(op, trafficRouting);
                         operatorsList.add(new MutablePair<>(operatorName, op));
                         operatorID++;
                     }
@@ -240,7 +265,7 @@ public class BenchmarkApplication {
 
             StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf);
 
-            String executionName = "flink_bench_" + System.currentTimeMillis();
+            String executionName = "yamb_bench_" + System.currentTimeMillis();
             env.execute(executionName);
 
         } else {

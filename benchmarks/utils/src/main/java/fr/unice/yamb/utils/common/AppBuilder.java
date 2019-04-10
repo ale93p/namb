@@ -15,7 +15,7 @@ public class AppBuilder{
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
     private ArrayList<Integer> componentsParallelism;
-    private int proccessing;
+    private int processing;
     private Config.LoadBalancing loadBalancing;
 
     private int count;
@@ -28,7 +28,7 @@ public class AppBuilder{
         this.paraBalancing = paraBalancing;
         this.variability = variability;
         this.shape = shape;
-        this.proccessing = (int) Math.round(processing * 1000);
+        this.processing = (int) Math.round(processing * 1000);
         this.loadBalancing = loadBalancing;
         this.dagLevelsWidth = computeTopologyShape();
         this.totalComponents = sumArray(this.dagLevelsWidth);
@@ -47,21 +47,25 @@ public class AppBuilder{
     TODO: it can be improved
     */
     public int getNextProcessing() throws Exception{
+        double modifier = 1;
         switch (this.loadBalancing){
             case balanced:
                 break;
             case increasing:
-                this.proccessing = (int)(this.proccessing * 1.2);
+                modifier = 1.2;
                 break;
             case decreasing:
-                this.proccessing = (int)(this.proccessing * 0.8);
+                modifier = 0.8;
+                break;
             case pyramid:
-                this.proccessing = (this.count <= this.totalComponents/2) ? (int) (this.proccessing * 1.2) : (int) (this.proccessing * 0.8);
+                modifier = (this.count <= this.totalComponents/2) ? 1.2 : 0.8;
                 this.count++;
+                break;
             default:
                 throw new Exception("case " + this.loadBalancing + " not yet implemented");
         }
-        return this.proccessing;
+        this.processing = (int)(this.processing * modifier);
+        return this.processing;
     }
 
     public ArrayList<Integer> getDagLevelsWidth(){
