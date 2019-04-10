@@ -3,9 +3,10 @@ package fr.unice.yamb.flink.operators;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.tuple.Tuple1;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 
-public class BusyWaitMap extends RichMapFunction<Tuple1<String>, Tuple1<String>> {
+public class BusyWaitMap extends RichMapFunction<Tuple3<String, Long, Long>, Tuple3<String, Long, Long>> {
 
     private long _cycles;
     private int pID;
@@ -22,7 +23,7 @@ public class BusyWaitMap extends RichMapFunction<Tuple1<String>, Tuple1<String>>
     }
 
     @Override
-    public Tuple1<String> map(Tuple1<String> tuple) throws Exception{
+    public Tuple3<String, Long, Long> map(Tuple3<String, Long, Long> tuple) throws Exception{
 
         // simulate processing load
         for(long i = 0; i < this._cycles; i++){}
