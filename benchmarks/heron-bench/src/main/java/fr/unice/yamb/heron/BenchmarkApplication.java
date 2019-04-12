@@ -52,7 +52,7 @@ public class BenchmarkApplication {
         setWindow(bolt, type, duration, 0);
     }
 
-    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf) throws Exception{
+    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, int debugFrequence) throws Exception{
 
 
         // DataFlow configurations
@@ -103,7 +103,7 @@ public class BenchmarkApplication {
         for(int s=1; s<=numberOfSpouts; s++) {
             spoutName = "spout_" + s;
             spoutsList.add(spoutName);
-            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability), cpIterator.next());
+            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequence), cpIterator.next());
         }
 
         int boltID = 1;
@@ -121,12 +121,12 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles);
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequence);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                         boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
                     else{
-                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability, debugFrequence), cpIterator.next());
                     }
                     System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
@@ -143,12 +143,12 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles);
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequence);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                         boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
                     else{
-                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability, debugFrequence), cpIterator.next());
                     }System.out.print("\n" + boltName + " connects to: ");
                     if (topologyShape == Config.ConnectionShape.diamond) {
                         for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {
@@ -191,29 +191,29 @@ public class BenchmarkApplication {
         Config confParser = new Config(YambConfigSchema.class, yambConfFilePath);
         YambConfigSchema yambConf = (YambConfigSchema) confParser.getConfigSchema();
 
+        Config heronConfigParser = new Config(HeronConfigSchema.class, heronConfFilePath);
+        HeronConfigSchema heronConf = (HeronConfigSchema) heronConfigParser.getConfigSchema();
+
         // Check configuration validity, if something wrong it throws exception
-        if(yambConf != null) {
+        if(yambConf != null && heronConf != null) {
             confParser.validateConf(yambConf);
 
-            TopologyBuilder builder = buildBenchmarkTopology(yambConf);
+            TopologyBuilder builder = buildBenchmarkTopology(yambConf, heronConf.getDegubFrequency());
 
             if(builder != null){
-                Config heronConfigParser = new Config(HeronConfigSchema.class, heronConfFilePath);
-                HeronConfigSchema heronConf = (HeronConfigSchema) heronConfigParser.getConfigSchema();
 
-                if (heronConf != null){
-                    com.twitter.heron.api.Config conf = new com.twitter.heron.api.Config();
+                com.twitter.heron.api.Config conf = new com.twitter.heron.api.Config();
 
-                    if(yambConf.getDataflow().isReliable()){
-                        conf.setMaxSpoutPending(heronConf.getMaxSpoutPending());
-                    }
-
-                    conf.setNumStmgrs(yambConf.getDataflow().getScalability().getParallelism());
-
-                    String topologyName = "yamb_bench_" + System.currentTimeMillis();
-                    HeronSubmitter.submitTopology(topologyName, conf, builder.createTopology());
-
+                if(yambConf.getDataflow().isReliable()){
+                    conf.setMaxSpoutPending(heronConf.getMaxSpoutPending());
                 }
+
+                conf.setNumStmgrs(yambConf.getDataflow().getScalability().getParallelism());
+
+                String topologyName = "yamb_bench_" + System.currentTimeMillis();
+                HeronSubmitter.submitTopology(topologyName, conf, builder.createTopology());
+
+
             }
 
 
