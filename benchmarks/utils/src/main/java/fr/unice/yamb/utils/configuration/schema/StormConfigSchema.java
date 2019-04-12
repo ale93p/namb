@@ -8,6 +8,7 @@ public class StormConfigSchema extends ConfigSchema {
     private int workers = 1;
     private int maxSpoutPending = 5000;
     private StormDeployment deployment = StormDeployment.local;
+    private boolean debug = false;
 
     public int getWorkers() {
         return workers;
