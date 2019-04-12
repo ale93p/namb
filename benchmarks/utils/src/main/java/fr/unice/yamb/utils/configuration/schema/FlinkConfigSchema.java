@@ -2,13 +2,13 @@ package fr.unice.yamb.utils.configuration.schema;
 
 public class FlinkConfigSchema {
 
-    private boolean debug = false;
+    private int degubFrequency = 0;
 
-    public boolean isDebug() {
-        return debug;
+    public int getDegubFrequency() {
+        return degubFrequency;
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
+    public void setDegubFrequency(int degubFrequency) {
+        this.degubFrequency = degubFrequency;
     }
 }

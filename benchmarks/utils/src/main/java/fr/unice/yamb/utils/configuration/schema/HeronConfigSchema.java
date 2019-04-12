@@ -7,7 +7,7 @@ public class HeronConfigSchema extends ConfigSchema {
 
     private int maxSpoutPending = 5000;
     private StormDeployment deployment = StormDeployment.local;
-    private boolean debug = false;
+    private int degubFrequency = 0;
 
     public StormDeployment getDeployment() {
         return deployment;
@@ -25,11 +25,11 @@ public class HeronConfigSchema extends ConfigSchema {
         this.maxSpoutPending = maxSpoutPending;
     }
 
-    public boolean isDebug() {
-        return debug;
+    public int getDegubFrequency() {
+        return degubFrequency;
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
+    public void setDegubFrequency(int degubFrequency) {
+        this.degubFrequency = degubFrequency;
     }
 }
