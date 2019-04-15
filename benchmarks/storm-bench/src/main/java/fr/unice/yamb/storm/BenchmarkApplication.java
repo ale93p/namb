@@ -198,7 +198,7 @@ public class BenchmarkApplication {
         if(yambConf != null && stormConf != null) {
             confParser.validateConf(yambConf);
 
-            TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDegubFrequency());
+            TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDebugFrequency());
             if (builder != null) {
 
                 org.apache.storm.Config conf = new org.apache.storm.Config();

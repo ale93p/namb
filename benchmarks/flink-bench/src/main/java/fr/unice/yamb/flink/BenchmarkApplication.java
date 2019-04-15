@@ -9,7 +9,6 @@ import fr.unice.yamb.utils.configuration.schema.FlinkConfigSchema;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.streaming.api.datastream.AllWindowedStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -269,7 +268,7 @@ public class BenchmarkApplication {
 
             confParser.validateConf(yambConf);
 
-            StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf, flinkConf.getDegubFrequency());
+            StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf, flinkConf.getDebugFrequency());
 
             if (env != null){
 

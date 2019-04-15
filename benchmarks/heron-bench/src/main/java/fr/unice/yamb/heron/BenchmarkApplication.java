@@ -198,7 +198,7 @@ public class BenchmarkApplication {
         if(yambConf != null && heronConf != null) {
             confParser.validateConf(yambConf);
 
-            TopologyBuilder builder = buildBenchmarkTopology(yambConf, heronConf.getDegubFrequency());
+            TopologyBuilder builder = buildBenchmarkTopology(yambConf, heronConf.getDebugFrequency());
 
             if(builder != null){
 

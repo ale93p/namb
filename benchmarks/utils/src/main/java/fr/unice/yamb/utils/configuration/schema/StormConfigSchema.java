@@ -8,7 +8,7 @@ public class StormConfigSchema extends ConfigSchema {
     private int workers = 1;
     private int maxSpoutPending = 5000;
     private StormDeployment deployment = StormDeployment.local;
-    private int degubFrequency = 0;
+    private int debugFrequency = 0;
 
     public int getWorkers() {
         return workers;
@@ -34,11 +34,11 @@ public class StormConfigSchema extends ConfigSchema {
         this.maxSpoutPending = maxSpoutPending;
     }
 
-    public int getDegubFrequency() {
-        return degubFrequency;
+    public int getDebugFrequency() {
+        return debugFrequency;
     }
 
-    public void setDegubFrequency(int degubFrequency) {
-        this.degubFrequency = degubFrequency;
+    public void setDebugFrequency(int debugFrequency) {
+        this.debugFrequency = debugFrequency;
     }
 }
