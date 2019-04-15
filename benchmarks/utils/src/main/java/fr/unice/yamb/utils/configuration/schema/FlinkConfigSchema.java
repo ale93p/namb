@@ -1,6 +1,6 @@
 package fr.unice.yamb.utils.configuration.schema;
 
-public class FlinkConfigSchema {
+public class FlinkConfigSchema extends ConfigSchema {
 
     private int degubFrequency = 0;
 
