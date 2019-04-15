@@ -48,15 +48,17 @@ public class BusyWaitBolt extends BaseRichBolt {
 
         Object payload = tuple.getValue(0);
         Long id = tuple.getLong(1);
-        Long ts = System.currentTimeMillis();
+
 
         // simulate processing load
         for(long i = 0; i < this._cycles; i++){}
 
+        Long ts = System.currentTimeMillis();
         _collector.emit(new Values(payload, id, ts));
         if (this._reliable){ _collector.ack(tuple); }
 
         if (this._rate > 0 && id % this._rate == 0){
+
             System.out.println("[DEBUG] " + this._me + ": " + id + "," + ts + "," + payload);
         }
 
