@@ -5,13 +5,16 @@ import fr.unice.yamb.utils.common.StringGenerator;
 import fr.unice.yamb.utils.configuration.Config;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
+import scala.Int;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String>> {
+public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String, Long, Long>> {
 
     private volatile boolean isRunning;
 
@@ -26,13 +29,17 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String
     private ArrayList<byte[]> payloadArray;
     private Random index;
     private long count;
+    private int rate;
+    private String me;
 
-    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate){
+    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, int frequency){
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
         this.flowRate = flowRate;
+        if(frequency > 0) this.rate = 1 / frequency;
+        else this.rate = 0;
     }
 
     @Override
@@ -46,21 +53,27 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple1<String
         this.count = 0;
         this.index = new Random();
         this.isRunning = true;
+        this.me = getRuntimeContext().getTaskName() + "_" + getRuntimeContext().getIndexOfThisSubtask();
 
     }
 
     @Override
-    public void run(SourceContext<Tuple1<String>> sourceContext){
+    public void run(SourceContext<Tuple3<String, Long, Long>> sourceContext){
         while(isRunning){
             byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
             try {
                 if (this.flowRate != 0) {
                     Thread.sleep(
-                            dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
+                            this.dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                     );
                 }
-                sourceContext.collect(new Tuple1<>(new String(nextValue)));
                 this.count++;
+                Long ts = System.currentTimeMillis();
+                sourceContext.collect(new Tuple3<>(new String(nextValue), this.count, ts));
+
+                if (this.rate > 0 && this.count % this.rate == 0){
+                    System.out.println("[DEBUG] " + this.me + ": " + this.count + "," + ts + "," + nextValue);
+                }
             } catch (Exception e){
                 e.printStackTrace();
             }

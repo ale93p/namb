@@ -55,7 +55,7 @@ public class BenchmarkApplication {
         setWindow(bolt, type, duration, 0);
     }
 
-    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf) throws Exception{
+    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, int debugFrequency) throws Exception{
 
 
         // DataFlow configurations
@@ -102,7 +102,7 @@ public class BenchmarkApplication {
         for(int s=1; s<=numberOfSpouts; s++) {
             spoutName = "spout_" + s;
             spoutsList.add(spoutName);
-            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability), cpIterator.next());
+            builder.setSpout(spoutName,  new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequency), cpIterator.next());
         }
 
         int boltID = 1;
@@ -120,12 +120,12 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles);
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                         boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
                     else{
-                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability, debugFrequency), cpIterator.next());
                     }
                     System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
@@ -143,12 +143,12 @@ public class BenchmarkApplication {
                     cycles = app.getNextProcessing();
                     BoltDeclarer boltDeclarer = null;
                     if(isWindowed){
-                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles);
+                        WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                         boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
                     }
                     else{
-                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability), cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability, debugFrequency), cpIterator.next());
                     }
                     System.out.print("\n" + boltName + " connects to: ");
                     if (topologyShape == Config.ConnectionShape.diamond) {
@@ -191,37 +191,36 @@ public class BenchmarkApplication {
         Config confParser = new Config(YambConfigSchema.class, yambConfFilePath);
         YambConfigSchema yambConf = (YambConfigSchema) confParser.getConfigSchema();
 
+        Config stormConfigParser = new Config(StormConfigSchema.class, stormConfFilePath);
+        StormConfigSchema stormConf = (StormConfigSchema) stormConfigParser.getConfigSchema();
+
         // Check configuration validity, if something wrong it throws exception
-        if(yambConf != null) {
+        if(yambConf != null && stormConf != null) {
             confParser.validateConf(yambConf);
 
-            TopologyBuilder builder = buildBenchmarkTopology(yambConf);
+            TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDebugFrequency());
             if (builder != null) {
-                Config stormConfigParser = new Config(StormConfigSchema.class, stormConfFilePath);
-                StormConfigSchema stormConf = (StormConfigSchema) stormConfigParser.getConfigSchema();
 
-                if(stormConf != null) {
-                    org.apache.storm.Config conf = new org.apache.storm.Config();
-                    conf.setNumWorkers(stormConf.getWorkers());
+                org.apache.storm.Config conf = new org.apache.storm.Config();
+                conf.setNumWorkers(stormConf.getWorkers());
 
-                    if(yambConf.getDataflow().isReliable()){
-                        conf.setMaxSpoutPending(stormConf.getMaxSpoutPending());
-                    }
+                if (yambConf.getDataflow().isReliable()) {
+                    conf.setMaxSpoutPending(stormConf.getMaxSpoutPending());
+                }
 
-                    if (stormConf.getDeployment() == StormDeployment.local) {
-                        System.out.println("RUNNING IN LOCAL");
-                        LocalCluster cluster = new LocalCluster();
-                        cluster.submitTopology("local-testing", conf, builder.createTopology());
-                        Thread.sleep(100000); //100s of test duration
-                        cluster.shutdown();
-                    } else {
-                        System.out.println("RUNNING IN CLUSTER MODE");
-                        String topologyName = "yamb_bench_" + System.currentTimeMillis();
-                        StormSubmitter.submitTopologyWithProgressBar(topologyName, conf, builder.createTopology());
-                    }
+                if (stormConf.getDeployment() == StormDeployment.local) {
+                    System.out.println("RUNNING IN LOCAL");
+                    LocalCluster cluster = new LocalCluster();
+                    cluster.submitTopology("local-testing", conf, builder.createTopology());
+                    Thread.sleep(100000); //100s of test duration
+                    cluster.shutdown();
+                } else {
+                    System.out.println("RUNNING IN CLUSTER MODE");
+                    String topologyName = "yamb_bench_" + System.currentTimeMillis();
+                    StormSubmitter.submitTopologyWithProgressBar(topologyName, conf, builder.createTopology());
                 }
             } else {
-                throw new Exception("Something went wrong during configuration checking");
+                throw new Exception("Something went wrong during topology building");
             }
         }
     }

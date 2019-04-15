@@ -14,33 +14,47 @@ import java.util.Map;
 public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private OutputCollector _collector;
     private long _cycles;
+    private int _rate;
+    private String _me;
 
-
-    public WindowedBusyWaitBolt(long cycles){
+    public WindowedBusyWaitBolt(long cycles, int frequency){
         this._cycles = cycles;
+        if (frequency > 0) this._rate = 1 / frequency;
+        else this._rate = 0;
     }
 
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
         this._collector = collector;
+
     }
 
     public void execute(TupleWindow inputWindow){
 
         Object payload = null;
+        Long id = null;
+        Long ts = System.currentTimeMillis();;
 
         for (Tuple tuple : inputWindow.get()) {
             payload = tuple.getValue(0);
+            id = tuple.getLong(1);
             // simulate processing load
             for (long i = 0; i < _cycles; i++) {
             }
+            ts = System.currentTimeMillis();
+            if (this._rate > 0 && id % this._rate == 0){
+                System.out.println("[DEBUG] " + this._me + ": " + id + "," + ts + "," + payload);
+            }
+
         }
 
 
-        _collector.emit(new Values(payload));
+        _collector.emit(new Values(payload, id, ts));
+
+
 
     }
 
-    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value"));}
+    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "timestamp"));}
 
 
 }
