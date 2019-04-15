@@ -5,6 +5,7 @@ import fr.unice.yamb.flink.operators.BusyWaitMap;
 import fr.unice.yamb.flink.operators.WindowedBusyWaitFunction;
 import fr.unice.yamb.utils.common.AppBuilder;
 import fr.unice.yamb.utils.configuration.Config;
+import fr.unice.yamb.utils.configuration.schema.FlinkConfigSchema;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -97,7 +98,7 @@ public class BenchmarkApplication {
         return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
-    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf) throws Exception{
+    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, int debugFrequency) throws Exception{
 
         // DataFlow configurations
         int                     depth               = conf.getDataflow().getDepth();
@@ -144,7 +145,7 @@ public class BenchmarkApplication {
 
         for(int s=1; s<=numberOfSources; s++){
             sourceName = "source_" + s;
-            DataStream<Tuple3<String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate))
+            DataStream<Tuple3<String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency))
                     .setParallelism(cpIterator.next())
                     .name(sourceName);
             sourcesList.add(new MutablePair<>(sourceName, source));
@@ -180,11 +181,11 @@ public class BenchmarkApplication {
                     SingleOutputStreamOperator<Tuple3<String, Long, Long>> op = null;
                     if (isWindowed){
                         op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
-                                .apply(new WindowedBusyWaitFunction(cycles));
+                                .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                     }
                     else{
                         op = setRouting(parent, trafficRouting)
-                                .map(new BusyWaitMap(cycles));
+                                .map(new BusyWaitMap(cycles, debugFrequency));
                     }
 
                     op.setParallelism(cpIterator.next())
@@ -208,11 +209,11 @@ public class BenchmarkApplication {
                     SingleOutputStreamOperator<Tuple3<String, Long, Long>> op = null;
                     if (isWindowed){
                         op = setWindow(diamondUnion, trafficRouting, windowingType, windowDuration, windowInterval)
-                                .apply(new WindowedBusyWaitFunction(cycles));
+                                .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                     }
                     else{
                         op = setRouting(diamondUnion, trafficRouting)
-                                .map(new BusyWaitMap(cycles));
+                                .map(new BusyWaitMap(cycles, debugFrequency));
                     }
 
                     op.setParallelism(cpIterator.next())
@@ -232,11 +233,11 @@ public class BenchmarkApplication {
                         SingleOutputStreamOperator<Tuple3<String, Long, Long>> op = null;
                         if (isWindowed){
                             op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
-                                    .apply(new WindowedBusyWaitFunction(cycles));
+                                    .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                         }
                         else{
                             op = setRouting(parent, trafficRouting)
-                                    .map(new BusyWaitMap(cycles));
+                                    .map(new BusyWaitMap(cycles, debugFrequency));
                         }
 
                         op.setParallelism(cpIterator.next())
@@ -255,19 +256,27 @@ public class BenchmarkApplication {
     public static void main(String[] args) throws Exception{
 
         String yambConfFilePath = args[0];
-        //String flinkConfFilePath = args[1];
+        String flinkConfFilePath = args[1];
 
         //Obtaining Configurations
         Config confParser = new Config(YambConfigSchema.class, yambConfFilePath);
         YambConfigSchema yambConf = (YambConfigSchema) confParser.getConfigSchema();
 
-        if(yambConf != null) {
+        Config flinkConfigParser = new Config(FlinkConfigSchema.class, flinkConfFilePath);
+        FlinkConfigSchema flinkConf = (FlinkConfigSchema) flinkConfigParser.getConfigSchema();
+
+        if(yambConf != null && flinkConf != null) {
+
             confParser.validateConf(yambConf);
 
-            StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf);
+            StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf, flinkConf.getDegubFrequency());
 
-            String executionName = "yamb_bench_" + System.currentTimeMillis();
-            env.execute(executionName);
+            if (env != null){
+
+                String executionName = "yamb_bench_" + System.currentTimeMillis();
+                env.execute(executionName);
+            }
+
 
         } else {
             throw new Exception("Something went wrong during configuration loading");

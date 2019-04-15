@@ -29,14 +29,17 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String
     private ArrayList<byte[]> payloadArray;
     private Random index;
     private long count;
-    private long ts;
+    private int rate;
+    private String me;
 
-    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate){
+    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, int frequency){
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
         this.flowRate = flowRate;
+        if(frequency > 0) this.rate = 1 / frequency;
+        else this.rate = 0;
     }
 
     @Override
@@ -50,6 +53,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String
         this.count = 0;
         this.index = new Random();
         this.isRunning = true;
+        this.me = getRuntimeContext().getTaskName() + "_" + getRuntimeContext().getIndexOfThisSubtask();
 
     }
 
@@ -60,10 +64,16 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String
             try {
                 if (this.flowRate != 0) {
                     Thread.sleep(
-                            dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
+                            this.dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                     );
                 }
-                sourceContext.collect(new Tuple3<>(new String(nextValue), ++this.count, System.currentTimeMillis()));
+                this.count++;
+                Long ts = System.currentTimeMillis();
+                sourceContext.collect(new Tuple3<>(new String(nextValue), this.count, ts));
+
+                if (this.rate > 0 && this.count % this.rate == 0){
+                    System.out.println("[DEBUG] " + this.me + ": " + this.count + "," + ts + "," + nextValue);
+                }
             } catch (Exception e){
                 e.printStackTrace();
             }
