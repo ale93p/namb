@@ -22,23 +22,25 @@ import java.util.Iterator;
 
 public class BenchmarkApplication {
 
-    private static DataStream<Tuple3<String, Long, Long>> setRouting(SingleOutputStreamOperator<Tuple3<String, Long, Long>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException {
-        switch (routing) {
-            case hash:
-                if (field instanceof Integer)
-                    return operator.keyBy((int) field);
-                else if (field instanceof String)
-                    return operator.keyBy((String) field);
-                else
-                    throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
-            case balanced:
-                return operator.rebalance();
-            case broadcast:
-                return operator.broadcast();
-            default:
-                throw new ValueException(routing + " is not a valid routing type");
-
+    private static DataStream<Tuple3<String, Long, Long>> setRouting(SingleOutputStreamOperator<Tuple3<String, Long, Long>> operator, Config.TrafficRouting routing, Object field, boolean apply) throws IllegalArgumentException {
+        if (apply){
+            switch (routing) {
+                case hash:
+                    if (field instanceof Integer)
+                        return operator.keyBy((int) field);
+                    else if (field instanceof String)
+                        return operator.keyBy((String) field);
+                    else
+                        throw new IllegalArgumentException("Field must be <int> or <String> instead it is <" + field.getClass().getName() + ">");
+                case balanced:
+                    return operator.rebalance();
+                case broadcast:
+                    return operator.broadcast();
+                default:
+                    throw new ValueException(routing + " is not a valid routing type");
+            }
         }
+        return operator;
     }
 
     private static DataStream<Tuple3<String, Long, Long>> setRouting(DataStream<Tuple3<String, Long, Long>> operator, Config.TrafficRouting routing, Object field) throws IllegalArgumentException {
@@ -59,8 +61,12 @@ public class BenchmarkApplication {
         }
     }
 
+    private static DataStream<Tuple3<String, Long, Long>> setRouting(SingleOutputStreamOperator<Tuple3<String, Long, Long>> operator, Config.TrafficRouting routing, boolean apply) throws IllegalArgumentException {
+        return setRouting(operator, routing, 0, apply);
+    }
+
     private static DataStream<Tuple3<String, Long, Long>> setRouting(SingleOutputStreamOperator<Tuple3<String, Long, Long>> operator, Config.TrafficRouting routing) throws IllegalArgumentException {
-        return setRouting(operator, routing, 0);
+        return setRouting(operator, routing, 0, true);
     }
 
     private static DataStream<Tuple3<String, Long, Long>> setRouting(DataStream<Tuple3<String, Long, Long>> operator, Config.TrafficRouting routing) throws IllegalArgumentException {
@@ -69,12 +75,12 @@ public class BenchmarkApplication {
 
 
 
-    private static AllWindowedStream<Tuple3<String, Long, Long>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple3<String, Long, Long>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, int interval) {
+    private static AllWindowedStream<Tuple3<String, Long, Long>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple3<String, Long, Long>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, int interval, boolean applyRouting) {
         switch (type) {
             case tumbling:
-                return setRouting(parent, trafficRouting).timeWindowAll(Time.seconds(duration));
+                return setRouting(parent, trafficRouting, applyRouting).timeWindowAll(Time.seconds(duration));
             case sliding:
-                return setRouting(parent, trafficRouting).timeWindowAll(Time.seconds(duration), Time.seconds(interval));
+                return setRouting(parent, trafficRouting, applyRouting).timeWindowAll(Time.seconds(duration), Time.seconds(interval));
         }
         return null;
     }
@@ -89,7 +95,7 @@ public class BenchmarkApplication {
         return null;
     }
 
-    private static AllWindowedStream<Tuple3<String, Long, Long>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple3<String, Long, Long>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration){
+    private static AllWindowedStream<Tuple3<String, Long, Long>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple3<String, Long, Long>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, boolean apply){
         return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
@@ -97,7 +103,7 @@ public class BenchmarkApplication {
         return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
-    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, int debugFrequency) throws Exception{
+    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, float debugFrequency) throws Exception{
 
         // DataFlow configurations
         int                     depth               = conf.getDataflow().getDepth();
@@ -231,12 +237,13 @@ public class BenchmarkApplication {
 
                         SingleOutputStreamOperator<Tuple3<String, Long, Long>> op = null;
                         if (isWindowed){
-                            op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
+                            op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval, false)
                                     .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                         }
                         else{
-                            op = setRouting(parent, trafficRouting)
+                            op = setRouting(parent, trafficRouting, false)
                                     .map(new BusyWaitMap(cycles, debugFrequency));
+//                            op = parent.map(new BusyWaitMap(cycles, debugFrequency));
                         }
 
                         op.setParallelism(cpIterator.next())

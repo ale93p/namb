@@ -52,7 +52,7 @@ def run_flink(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, flink_conf=vars.FL
     if subprocess.run([flink_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
         flink_command = [flink_bin, "run",]
         if detached: flink_command.append("-d")
-        flink_command.extend([vars.FLINK_JAR, yamb_conf])
+        flink_command.extend([vars.FLINK_JAR, yamb_conf, flink_conf])
         subprocess.run(flink_command)
         return
     else:

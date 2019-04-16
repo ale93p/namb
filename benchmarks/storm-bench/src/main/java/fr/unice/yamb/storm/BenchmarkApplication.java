@@ -55,7 +55,7 @@ public class BenchmarkApplication {
         setWindow(bolt, type, duration, 0);
     }
 
-    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, int debugFrequency) throws Exception{
+    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, float debugFrequency) throws Exception{
 
 
         // DataFlow configurations
@@ -127,7 +127,6 @@ public class BenchmarkApplication {
                     else{
                         boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability, debugFrequency), cpIterator.next());
                     }
-                    System.out.print("\n" + boltName + " connects to: ");
                     for(int spout=0; spout<numberOfSpouts; spout++){
                         setRouting(boltDeclarer, spoutsList.get(spout), trafficRouting);
                         System.out.append(spoutsList.get(spout) + " ");
@@ -150,7 +149,6 @@ public class BenchmarkApplication {
                     else{
                         boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, reliability, debugFrequency), cpIterator.next());
                     }
-                    System.out.print("\n" + boltName + " connects to: ");
                     if (topologyShape == Config.ConnectionShape.diamond) {
                         for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {
                             int parentBoltIdx = startingIdx + boltCount;
@@ -197,6 +195,7 @@ public class BenchmarkApplication {
         // Check configuration validity, if something wrong it throws exception
         if(yambConf != null && stormConf != null) {
             confParser.validateConf(yambConf);
+
 
             TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDebugFrequency());
             if (builder != null) {

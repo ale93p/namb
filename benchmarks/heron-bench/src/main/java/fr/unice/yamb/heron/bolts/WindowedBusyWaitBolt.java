@@ -17,9 +17,9 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private int _rate;
     private String _me;
 
-    public WindowedBusyWaitBolt(long cycles, int frequency){
+    public WindowedBusyWaitBolt(long cycles, float frequency){
         this._cycles = cycles;
-        if (frequency > 0) this._rate = 1 / frequency;
+        if (frequency > 0) this._rate = (int)(1 / frequency);
         else this._rate = 0;
     }
 
