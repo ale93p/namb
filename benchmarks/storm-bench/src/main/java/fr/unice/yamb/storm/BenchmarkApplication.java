@@ -55,7 +55,7 @@ public class BenchmarkApplication {
         setWindow(bolt, type, duration, 0);
     }
 
-    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, int debugFrequency) throws Exception{
+    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, float debugFrequency) throws Exception{
 
 
         // DataFlow configurations
@@ -198,6 +198,8 @@ public class BenchmarkApplication {
         if(yambConf != null && stormConf != null) {
             confParser.validateConf(yambConf);
 
+
+            System.out.println("debugFrequency: " + stormConf.getDebugFrequency());
             TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDebugFrequency());
             if (builder != null) {
 
