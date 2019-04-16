@@ -52,7 +52,7 @@ public class BenchmarkApplication {
         setWindow(bolt, type, duration, 0);
     }
 
-    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, int debugFrequence) throws Exception{
+    private static TopologyBuilder buildBenchmarkTopology(YambConfigSchema conf, float debugFrequence) throws Exception{
 
 
         // DataFlow configurations

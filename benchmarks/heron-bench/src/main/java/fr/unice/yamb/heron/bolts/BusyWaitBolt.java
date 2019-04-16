@@ -19,10 +19,10 @@ public class BusyWaitBolt extends BaseRichBolt {
     private String _me;
 
 
-    public BusyWaitBolt(long cycles, boolean msg_reliability, int frequency){
+    public BusyWaitBolt(long cycles, boolean msg_reliability, float frequency){
         this._cycles = cycles;
         this._reliable = msg_reliability;
-        if (frequency > 0) this._rate = 1 / frequency;
+        if (frequency > 0) this._rate = (int)(1 / frequency);
         else this._rate = 0;
 
     }
