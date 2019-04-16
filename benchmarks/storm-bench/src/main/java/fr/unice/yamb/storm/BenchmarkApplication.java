@@ -199,7 +199,6 @@ public class BenchmarkApplication {
             confParser.validateConf(yambConf);
 
 
-            System.out.println("debugFrequency: " + stormConf.getDebugFrequency());
             TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDebugFrequency());
             if (builder != null) {
 

@@ -43,7 +43,6 @@ public class SyntheticSpout extends BaseRichSpout {
         this.distribution = flowDistribution;
         this.flowRate = flowRate;
         this.reliable = reliable;
-        System.out.println("frequency received: " + frequency);
         if (frequency > 0) this.rate = (int) (1/ frequency);
         else this.rate = 0;
     }
@@ -58,7 +57,6 @@ public class SyntheticSpout extends BaseRichSpout {
         this.index = new Random();
         this._collector = collector;
         this._me = context.getThisComponentId() + "_" + context.getThisTaskId();
-        System.out.println("rate is: " + this.rate);
     }
 
     public void nextTuple(){
