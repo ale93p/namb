@@ -32,13 +32,13 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String
     private int rate;
     private String me;
 
-    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, int frequency){
+    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, float frequency){
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
         this.flowRate = flowRate;
-        if(frequency > 0) this.rate = 1 / frequency;
+        if(frequency > 0) this.rate = (int)(1 / frequency);
         else this.rate = 0;
     }
 

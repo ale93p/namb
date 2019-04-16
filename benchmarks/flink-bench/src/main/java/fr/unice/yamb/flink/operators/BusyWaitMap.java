@@ -10,9 +10,9 @@ public class BusyWaitMap extends RichMapFunction<Tuple3<String, Long, Long>, Tup
     private int _rate;
     private String _me;
 
-    public BusyWaitMap(long cycles, int frequency){
+    public BusyWaitMap(long cycles, float frequency){
         this._cycles = cycles;
-        if(frequency > 0) this._rate = 1 / frequency;
+        if(frequency > 0) this._rate = (int)(1 / frequency);
         else this._rate = 0;
     }
 

@@ -103,7 +103,7 @@ public class BenchmarkApplication {
         return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
-    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, int debugFrequency) throws Exception{
+    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, float debugFrequency) throws Exception{
 
         // DataFlow configurations
         int                     depth               = conf.getDataflow().getDepth();
