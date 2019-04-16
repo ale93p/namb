@@ -75,12 +75,12 @@ public class BenchmarkApplication {
 
 
 
-    private static AllWindowedStream<Tuple3<String, Long, Long>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple3<String, Long, Long>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, int interval, boolean apply) {
+    private static AllWindowedStream<Tuple3<String, Long, Long>, TimeWindow> setWindow(SingleOutputStreamOperator<Tuple3<String, Long, Long>> parent, Config.TrafficRouting trafficRouting, Config.WindowingType type, int duration, int interval, boolean applyRouting) {
         switch (type) {
             case tumbling:
-                return setRouting(parent, trafficRouting, apply).timeWindowAll(Time.seconds(duration));
+                return setRouting(parent, trafficRouting, applyRouting).timeWindowAll(Time.seconds(duration));
             case sliding:
-                return setRouting(parent, trafficRouting, apply).timeWindowAll(Time.seconds(duration), Time.seconds(interval));
+                return setRouting(parent, trafficRouting, applyRouting).timeWindowAll(Time.seconds(duration), Time.seconds(interval));
         }
         return null;
     }
@@ -243,6 +243,7 @@ public class BenchmarkApplication {
                         else{
                             op = setRouting(parent, trafficRouting, false)
                                     .map(new BusyWaitMap(cycles, debugFrequency));
+//                            op = parent.map(new BusyWaitMap(cycles, debugFrequency));
                         }
 
                         op.setParallelism(cpIterator.next())
