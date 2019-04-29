@@ -1,10 +1,10 @@
 package fr.unice.yamb.flink.operators;
 
 import org.apache.flink.api.common.functions.RichMapFunction;
-import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 
-public class BusyWaitMap extends RichMapFunction<Tuple3<String, Long, Long>, Tuple3<String, Long, Long>> {
+public class BusyWaitMap extends RichMapFunction<Tuple4<String, String, Long, Long>, Tuple4<String, String, Long, Long>> {
 
     private long _cycles;
     private int _rate;
@@ -22,16 +22,18 @@ public class BusyWaitMap extends RichMapFunction<Tuple3<String, Long, Long>, Tup
     }
 
     @Override
-    public Tuple3<String, Long, Long> map(Tuple3<String, Long, Long> tuple) throws Exception{
+    public Tuple4<String, String, Long, Long> map(Tuple4<String, String, Long, Long> tuple) throws Exception{
 
         String nextValue = tuple.f0;
-        Long id = tuple.f1;
+        String tuple_id = tuple.f1;
+        Long tuple_num = tuple.f2;
+
         // simulate processing load
         for(long i = 0; i < this._cycles; i++){}
 
         Long ts = System.currentTimeMillis();
-        if (this._rate > 0 && id % this._rate == 0){
-            System.out.println("[DEBUG] " + this._me + ": " + id + "," + ts + "," + nextValue);
+        if (this._rate > 0 && tuple_num % this._rate == 0){
+            System.out.println("[DEBUG] [" + this._me + "] : " + tuple_id + "," + tuple_num + "," + ts + "," + nextValue);
         }
         return tuple;
     }

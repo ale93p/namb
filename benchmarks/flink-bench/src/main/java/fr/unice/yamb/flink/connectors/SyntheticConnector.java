@@ -6,6 +6,7 @@ import fr.unice.yamb.utils.configuration.Config;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 import scala.Int;
@@ -13,8 +14,9 @@ import scala.Int;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
-public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String, Long, Long>> {
+public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String, String, Long, Long>> {
 
     private volatile boolean isRunning;
 
@@ -58,9 +60,10 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String
     }
 
     @Override
-    public void run(SourceContext<Tuple3<String, Long, Long>> sourceContext){
+    public void run(SourceContext<Tuple4<String, String, Long, Long>> sourceContext){
         while(isRunning){
             byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
+            String tuple_id = UUID.randomUUID().toString();
             try {
                 if (this.flowRate != 0) {
                     Thread.sleep(
@@ -69,10 +72,10 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple3<String
                 }
                 this.count++;
                 Long ts = System.currentTimeMillis();
-                sourceContext.collect(new Tuple3<>(new String(nextValue), this.count, ts));
+                sourceContext.collect(new Tuple4<>(new String(nextValue), tuple_id, this.count, ts));
 
                 if (this.rate > 0 && this.count % this.rate == 0){
-                    System.out.println("[DEBUG] " + this.me + ": " + this.count + "," + ts + "," + nextValue);
+                    System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + nextValue.toString());
                 }
             } catch (Exception e){
                 e.printStackTrace();

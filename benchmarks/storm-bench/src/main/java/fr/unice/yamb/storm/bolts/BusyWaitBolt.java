@@ -41,21 +41,23 @@ public class BusyWaitBolt extends BaseRichBolt {
 
 
         Object payload = tuple.getValue(0);
-        Long id = tuple.getLong(1);
+        String id = tuple.getString(1);
+        Long num = tuple.getLong(2);
+
 
         // simulate processing load
         for(long i = 0; i < this._cycles; i++){}
 
         Long ts = System.currentTimeMillis();
-        _collector.emit(new Values(payload, id, ts));
+        _collector.emit(new Values(payload, id, num, ts));
         if (this._reliable){ _collector.ack(tuple); }
 
-        if (this._rate > 0 && id % this._rate == 0){
-            System.out.println("[DEBUG] " + this._me + ": " + id + "," + ts + "," + payload);
+        if (this._rate > 0 && num % this._rate == 0){
+            System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + num + "," + ts + "," + payload);
         }
 
     }
 
-    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "timestamp"));}
+    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "num", "timestamp"));}
 
 }

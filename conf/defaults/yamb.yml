@@ -34,7 +34,6 @@ dataflow:
     balancing: balanced # [balanced, increasing, decreasing, pyramid]
 
 
-
 ###############################################
 # DATA_STREAM: input data properties          #
 ###############################################

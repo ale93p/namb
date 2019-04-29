@@ -32,27 +32,29 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     public void execute(TupleWindow inputWindow){
 
         Object payload = null;
-        Long id = null;
+        String id = null;
+        Long num = null;
         Long ts = System.currentTimeMillis();
+
 
         for (Tuple tuple : inputWindow.get()) {
             payload = tuple.getValue(0);
-            id = tuple.getLong(1);
+            id = tuple.getString(1);
+            num = tuple.getLong(2);
             // simulate processing load
             for (long i = 0; i < _cycles; i++) {
             }
             ts = System.currentTimeMillis();
-            if (this._rate > 0 && id % this._rate == 0){
-                System.out.println("[DEBUG] " + this._me + ": " + id + "," + ts + "," + payload);
+            if (this._rate > 0 && num % this._rate == 0){
+                System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + num + "," + ts + "," + payload.toString());
             }
         }
 
-
-        _collector.emit(new Values(payload, id, ts));
+        _collector.emit(new Values(payload, id, num, ts));
 
 
     }
 
-    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "timestamp"));}
+    public void declareOutputFields(OutputFieldsDeclarer declarer){ declarer.declare(new Fields("value", "id", "num", "timestamp"));}
 
 }
