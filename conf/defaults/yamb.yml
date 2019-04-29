@@ -59,6 +59,7 @@ dataflow:
     type: task
     parallelism: 2
     processing: 4
+    filtering: 0.2
     parents:
     - second
     - third

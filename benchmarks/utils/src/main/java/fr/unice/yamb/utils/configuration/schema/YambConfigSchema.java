@@ -122,6 +122,7 @@ public class YambConfigSchema extends ConfigSchema {
             private long parallelism = 0;
             private Config.TrafficRouting routing = null;
             private double processing = 0;
+            private double filtering = 0;
             private String[] parents = null;
 
             public String getName() {
@@ -162,6 +163,14 @@ public class YambConfigSchema extends ConfigSchema {
 
             public void setProcessing(double processing) {
                 this.processing = processing;
+            }
+
+            public double getFiltering() {
+                return filtering;
+            }
+
+            public void setFiltering(double filtering) {
+                this.filtering = filtering;
             }
 
             public String[] getParents() {
