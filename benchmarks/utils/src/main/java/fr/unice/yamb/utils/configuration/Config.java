@@ -39,6 +39,10 @@ public class Config {
         uniform, burst //TODO: add normal, saw-tooth, bimodal
     }
 
+    public enum ComponentType{
+        source, task
+    }
+
     public static final int                 DF_DEPTH                            = 3;
     public static final int                 DF_SCALABILITY_PARALLELISM          = 10;
     public static final ParaBalancing       DF_SCALABILITY_BALANCING            = ParaBalancing.balanced;
@@ -53,6 +57,9 @@ public class Config {
     public static final double              DF_WORKLOAD_PROCESSING              = 10;
     public static final LoadBalancing       DF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
     public static final double              DF_FILTERING                        = 0;
+
+
+
     public static final int                 DS_SYNTHETIC_DATA_SIZE              = 8;
     public static final int                 DS_DATA_VALUES                      = 100;
     public static final DataDistribution    DS_DATA_DISTRIBUTION                = DataDistribution.uniform;

@@ -35,6 +35,33 @@ dataflow:
 
   filtering: 0 # percentage of filtered data [0: output=100% input, 0.3: output=70% of input, and so on]
 
+  pipeline:
+  - name: sourcy
+    type: source # [source, task]
+    parallelism: 1
+    routing: balanced
+    processing: 5.5
+  - name: second
+    type: task
+    parallelism: 1
+    routing: hash
+    processing: 6.5
+    parents:
+    - sourcy
+  - name: third
+    type: task
+    parallelism: 1
+    routing: hash
+    processing: 6.5
+    parents:
+    - sourcy
+  - name: last
+    type: task
+    parallelism: 2
+    processing: 4
+    parents:
+    - second
+    - third
 
 
 ###############################################

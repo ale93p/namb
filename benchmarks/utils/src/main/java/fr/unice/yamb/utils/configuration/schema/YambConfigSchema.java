@@ -115,6 +115,64 @@ public class YambConfigSchema extends ConfigSchema {
             }
         }
 
+        public static class Pipeline{
+
+            private String name = null;
+            private Config.ComponentType type = null;
+            private long parallelism = 0;
+            private Config.TrafficRouting routing = null;
+            private double processing = 0;
+            private String[] parents = null;
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public Config.ComponentType getType() {
+                return type;
+            }
+
+            public void setType(Config.ComponentType type) {
+                this.type = type;
+            }
+
+            public long getParallelism() {
+                return parallelism;
+            }
+
+            public void setParallelism(long parallelism) {
+                this.parallelism = parallelism;
+            }
+
+            public Config.TrafficRouting getRouting() {
+                return routing;
+            }
+
+            public void setRouting(Config.TrafficRouting routing) {
+                this.routing = routing;
+            }
+
+            public double getProcessing() {
+                return processing;
+            }
+
+            public void setProcessing(double processing) {
+                this.processing = processing;
+            }
+
+            public String[] getParents() {
+                return parents;
+            }
+
+            public void setParents(String[] parents) {
+                this.parents = parents;
+            }
+        }
+
         private int depth = Config.DF_DEPTH;
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
@@ -122,6 +180,7 @@ public class YambConfigSchema extends ConfigSchema {
         private Windowing windowing = new Windowing();
         private Workload workload = new Workload();
         private double filtering = Config.DF_FILTERING;
+        private Pipeline[] pipeline = null;
 
         public int getDepth() {
             return depth;
@@ -169,6 +228,22 @@ public class YambConfigSchema extends ConfigSchema {
 
         public void setWorkload(Workload workload) {
             this.workload = workload;
+        }
+
+        public double getFiltering() {
+            return filtering;
+        }
+
+        public void setFiltering(double filtering) {
+            this.filtering = filtering;
+        }
+
+        public Pipeline[] getPipeline() {
+            return pipeline;
+        }
+
+        public void setPipeline(Pipeline[] pipeline) {
+            this.pipeline = pipeline;
         }
     }
 
