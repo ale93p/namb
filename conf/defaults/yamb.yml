@@ -33,6 +33,9 @@ dataflow:
     processing: 300 # CPU load value
     balancing: balanced # [balanced, increasing, decreasing, pyramid]
 
+  filtering: 0 # percentage of filtered data [0: output=100% input, 0.3: output=70% of input, and so on]
+
+
 
 ###############################################
 # DATA_STREAM: input data properties          #

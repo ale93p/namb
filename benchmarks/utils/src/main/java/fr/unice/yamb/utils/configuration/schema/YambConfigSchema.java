@@ -121,6 +121,7 @@ public class YambConfigSchema extends ConfigSchema {
         private boolean reliable = Config.DF_MESSAGE_RELIABILITY;
         private Windowing windowing = new Windowing();
         private Workload workload = new Workload();
+        private double filtering = Config.DF_FILTERING;
 
         public int getDepth() {
             return depth;

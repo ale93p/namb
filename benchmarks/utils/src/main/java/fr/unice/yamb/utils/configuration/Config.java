@@ -52,11 +52,13 @@ public class Config {
     public static final int                 DF_WINDOW_INTERVAL                  = 10;
     public static final double              DF_WORKLOAD_PROCESSING              = 10;
     public static final LoadBalancing       DF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
+    public static final double              DF_FILTERING                        = 0;
     public static final int                 DS_SYNTHETIC_DATA_SIZE              = 8;
     public static final int                 DS_DATA_VALUES                      = 100;
     public static final DataDistribution    DS_DATA_DISTRIBUTION                = DataDistribution.uniform;
     public static final ArrivalDistribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = ArrivalDistribution.uniform;
     public static final int                 DS_SYNTHETIC_ARRIVAL_RATE           = 1000;
+
 
 
     ConfigSchema configSchema;
