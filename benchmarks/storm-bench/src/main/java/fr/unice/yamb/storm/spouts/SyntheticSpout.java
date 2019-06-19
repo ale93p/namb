@@ -37,7 +37,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private long ts;
     private String _me;
 
-    public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable, float frequency) {
+    public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable, double frequency) {
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
@@ -68,15 +68,16 @@ public class SyntheticSpout extends BaseRichSpout {
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                 );
             }
-            this.ts = System.currentTimeMillis();
+
             this.count++;
             String tuple_id = UUID.randomUUID().toString();
+            this.ts = System.currentTimeMillis();
             if(this.reliable) {
                 _collector.emit(new Values(nextValue, tuple_id, this.count, this.ts), this.count);
             }
-            else
+            else {
                 _collector.emit(new Values(nextValue, tuple_id, this.count, this.ts));
-
+            }
             if (this.rate > 0 && this.count % this.rate == 0){
                 System.out.println("[DEBUG] [" + this._me + "] : " + tuple_id + "," + this.count + "," + this.ts + "," + nextValue);
             }

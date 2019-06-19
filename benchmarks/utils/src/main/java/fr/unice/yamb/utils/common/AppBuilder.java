@@ -1,9 +1,9 @@
 package fr.unice.yamb.utils.common;
 
 import fr.unice.yamb.utils.configuration.Config;
+import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 public class AppBuilder{
 
@@ -12,40 +12,111 @@ public class AppBuilder{
     private Config.ParaBalancing paraBalancing;
     private double variability;
     private Config.ConnectionShape shape;
+    private Config.TrafficRouting trafficRouting;
     private ArrayList<Integer> dagLevelsWidth;
     private int totalComponents;
     private ArrayList<Integer> componentsParallelism;
     private int processing;
     private Config.LoadBalancing loadBalancing;
+    private double filtering;
+    private int filteringDagLevel;
+
+    private boolean pipelineDefined;
+    private HashMap<String, Task> pipelineTree;
+    private ArrayList<String> pipelineTreeSources;
+
+
 
     private int count;
     
 
-    public AppBuilder(int depth, int parallelism, Config.ParaBalancing paraBalancing, double variability, Config.ConnectionShape shape, double processing, Config.LoadBalancing loadBalancing) throws Exception{
+    public AppBuilder(YambConfigSchema conf) throws Exception{
 
-        this.depth = depth;
-        this.parallelism = parallelism;
-        this.paraBalancing = paraBalancing;
-        this.variability = variability;
-        this.shape = shape;
-        this.processing = (int) Math.round(processing * 1000);
-        this.loadBalancing = loadBalancing;
-        this.dagLevelsWidth = computeTopologyShape();
-        this.totalComponents = sumArray(this.dagLevelsWidth);
-        this.componentsParallelism = computeComponentsParallelism();
+        YambConfigSchema.Tasks pipeline [] = conf.getPipeline().getTasks();
+
+        if(pipeline.length > 0){
+            this.depth = pipeline.length;
+            this.totalComponents = pipeline.length;
+            this.pipelineDefined = true;
+            computePipelineTree(pipeline);
+
+        }
+        else {
+            this.depth = conf.getDataflow().getDepth();
+            this.parallelism = conf.getDataflow().getScalability().getParallelism();
+            this.paraBalancing = conf.getDataflow().getScalability().getBalancing();
+            this.variability = conf.getDataflow().getScalability().getVariability();
+            this.shape = conf.getDataflow().getConnection().getShape();
+            this.trafficRouting = conf.getDataflow().getConnection().getRouting();
+            this.processing = (int) Math.round(conf.getDataflow().getWorkload().getProcessing() * 1000);
+            this.loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+            this.filtering = conf.getDataflow().getFiltering();
+            this.filteringDagLevel = (this.filtering > 0) ? (this.depth / 2) : 0;
+
+
+
+            this.dagLevelsWidth = computeTopologyShape();
+            this.totalComponents = sumArray(this.dagLevelsWidth);
+            //TODO: create processing list
+            this.componentsParallelism = computeComponentsParallelism();
+
+            this.pipelineDefined = false;
+        }
 
         this.count = 0;
     }
+
+    //TODO: create the getters for the values based on the depth/component index
 
     // just to use utility functions
     public AppBuilder() throws Exception{
 
     }
 
+
+    private void computePipelineTree(YambConfigSchema.Tasks[] pipeline){
+        this.pipelineTree = new HashMap<String, Task>();
+        this.pipelineTreeSources = new ArrayList<>();
+
+        for(YambConfigSchema.Tasks p : pipeline ){
+            String name = p.getName();
+            Task newTask = null;
+
+            String parents[] = p.getParents();
+            if(parents == null){ //it's source
+                newTask = new Task(name, p.getParallelism(), p.isReliable(),
+                        p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
+                        p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
+                this.pipelineTreeSources.add(name);
+                this.pipelineTree.put(name, newTask);
+            }
+            else{ //it's a task
+                List<String> parentsList = Arrays.asList(p.getParents());
+                ArrayList<String> taskParents = new ArrayList<>(parentsList);
+                newTask = new Task(name, p.getProcessing(), p.getParallelism(), p.getRouting(), p.isReliable(), p.getFiltering(), p.getResizeddata(), taskParents, new ArrayList<>());
+                for(String parent : taskParents){
+                    Task parentTask = this.pipelineTree.get(parent);
+                    parentTask.addChild(name);
+                }
+
+                this.pipelineTree.put(name, newTask);
+            }
+        }
+
+    }
+
+    public HashMap<String, Task> getPipelineTree() {
+        return pipelineTree;
+    }
+
+    public ArrayList<String> getPipelineTreeSources() {
+        return pipelineTreeSources;
+    }
+
     /*
-    this is just a dummy implementation
-    TODO: it can be improved
-    */
+        this is just a dummy implementation
+        TODO: it can be improved
+        */
     public int getNextProcessing() throws Exception{
         double modifier = 1;
         switch (this.loadBalancing){
@@ -263,4 +334,47 @@ public class AppBuilder{
         return sumArray(arr,0, arr.size());
     }
 
+    public int getDepth() {
+        return depth;
+    }
+
+    public int getParallelism() {
+        return parallelism;
+    }
+
+    public Config.ParaBalancing getParaBalancing() {
+        return paraBalancing;
+    }
+
+    public double getVariability() {
+        return variability;
+    }
+
+    public Config.ConnectionShape getShape() {
+        return shape;
+    }
+
+    public int getProcessing() {
+        return processing;
+    }
+
+    public Config.LoadBalancing getLoadBalancing() {
+        return loadBalancing;
+    }
+
+    public Config.TrafficRouting getTrafficRouting() {
+        return trafficRouting;
+    }
+
+    public boolean isPipelineDefined() {
+        return pipelineDefined;
+    }
+
+    public double getFiltering() {
+        return filtering;
+    }
+
+    public int getFilteringDagLevel() {
+        return filteringDagLevel;
+    }
 }

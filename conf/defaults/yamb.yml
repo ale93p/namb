@@ -3,6 +3,9 @@
 ###############################################
 
 dataflow:
+
+  #### General High Level Configurations
+
   ## DAG Depth
   depth: 3
 
@@ -18,8 +21,16 @@ dataflow:
     ## Traffic Balancing
     routing: balanced # [balanced, hash, broadcast]
 
+  ## Processing
+  workload:
+    processing: 4.5 # CPU load value
+    balancing: balanced # [balanced, increasing, decreasing, pyramid]
+
   ## Message Reliability
   reliable: true # Boolean, true to enable "acking-like" mechanism, false otherwise
+
+  ## Data Filtering
+  filtering: 0 # percentage of filtered data [1: output=100% of input, 0.3: output=30% of input, and so on]
 
   ## Windowing
   windowing:
@@ -27,43 +38,6 @@ dataflow:
     type: tumbling # [tumbling, sliding]
     duration: 30 # window duration in seconds
     interval: 10 # interval between windows, enabled only if sliding
-
-  ## Processing
-  workload:
-    processing: 300 # CPU load value
-    balancing: balanced # [balanced, increasing, decreasing, pyramid]
-
-  filtering: 0 # percentage of filtered data [0: output=100% input, 0.3: output=70% of input, and so on]
-
-  pipeline:
-  - name: sourcy
-    type: source # [source, task]
-    parallelism: 1
-    routing: balanced
-    processing: 5.5
-  - name: second
-    type: task
-    parallelism: 1
-    routing: hash
-    processing: 6.5
-    parents:
-    - sourcy
-  - name: third
-    type: task
-    parallelism: 1
-    routing: hash
-    processing: 6.5
-    parents:
-    - sourcy
-  - name: last
-    type: task
-    parallelism: 2
-    processing: 4
-    filtering: 0.2
-    parents:
-    - second
-    - third
-
 
 ###############################################
 # DATA_STREAM: input data properties          #
@@ -96,3 +70,6 @@ datastream:
   #   topic: test_topic
   #   size: 8 # ??
   #   data_type: text
+
+  #### Specific per-task configurations
+

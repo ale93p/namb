@@ -13,7 +13,7 @@ public class WindowedBusyWaitFunction implements AllWindowFunction<Tuple4<String
     private int _rate;
     private String _me;
 
-    public WindowedBusyWaitFunction(long cycles, float frequency){
+    public WindowedBusyWaitFunction(long cycles, double frequency){
         this._cycles = cycles;
         if(frequency > 0) this._rate = (int)(1 / frequency);
         else this._rate = 0;

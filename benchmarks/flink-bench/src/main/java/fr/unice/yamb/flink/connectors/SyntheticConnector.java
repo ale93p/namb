@@ -34,7 +34,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     private int rate;
     private String me;
 
-    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, float frequency){
+    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, double frequency){
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
@@ -63,6 +63,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     public void run(SourceContext<Tuple4<String, String, Long, Long>> sourceContext){
         while(isRunning){
             byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
+            String tuple = new String(nextValue);
             String tuple_id = UUID.randomUUID().toString();
             try {
                 if (this.flowRate != 0) {
@@ -72,10 +73,10 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
                 }
                 this.count++;
                 Long ts = System.currentTimeMillis();
-                sourceContext.collect(new Tuple4<>(new String(nextValue), tuple_id, this.count, ts));
+                sourceContext.collect(new Tuple4<>(tuple, tuple_id, this.count, ts));
 
                 if (this.rate > 0 && this.count % this.rate == 0){
-                    System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + nextValue.toString());
+                    System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + tuple);
                 }
             } catch (Exception e){
                 e.printStackTrace();

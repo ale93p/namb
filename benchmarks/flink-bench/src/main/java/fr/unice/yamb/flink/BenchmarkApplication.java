@@ -1,15 +1,15 @@
 package fr.unice.yamb.flink;
 
 import fr.unice.yamb.flink.connectors.SyntheticConnector;
-import fr.unice.yamb.flink.operators.BusyWaitMap;
+import fr.unice.yamb.flink.operators.BusyWaitFlatMap;
 import fr.unice.yamb.flink.operators.WindowedBusyWaitFunction;
 import fr.unice.yamb.utils.common.AppBuilder;
+import fr.unice.yamb.utils.common.Task;
 import fr.unice.yamb.utils.configuration.Config;
 import fr.unice.yamb.utils.configuration.schema.FlinkConfigSchema;
 import fr.unice.yamb.utils.configuration.schema.YambConfigSchema;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.streaming.api.datastream.AllWindowedStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -19,6 +19,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class BenchmarkApplication {
@@ -37,6 +38,8 @@ public class BenchmarkApplication {
                     return operator.rebalance();
                 case broadcast:
                     return operator.broadcast();
+                case none:
+                    return operator;
                 default:
                     throw new ValueException(routing + " is not a valid routing type");
             }
@@ -57,6 +60,8 @@ public class BenchmarkApplication {
                 return operator.rebalance();
             case broadcast:
                 return operator.broadcast();
+            case none:
+                return operator;
             default:
                 throw new ValueException(routing + " is not a valid routing type");
         }
@@ -104,147 +109,99 @@ public class BenchmarkApplication {
         return setWindow(parent, trafficRouting, type, duration, 0);
     }
 
-    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, float debugFrequency) throws Exception{
-
-        // DataFlow configurations
-        int                     depth               = conf.getDataflow().getDepth();
-        int                     totalParallelism    = conf.getDataflow().getScalability().getParallelism();
-        Config.ParaBalancing    paraBalancing       = conf.getDataflow().getScalability().getBalancing();
-        double                  variability         = conf.getDataflow().getScalability().getVariability();
-        Config.ConnectionShape  topologyShape       = conf.getDataflow().getConnection().getShape();
-        Config.TrafficRouting   trafficRouting      = conf.getDataflow().getConnection().getRouting();
-        double                  processingLoad      = conf.getDataflow().getWorkload().getProcessing();
-        Config.LoadBalancing    loadBalancing       = conf.getDataflow().getWorkload().getBalancing();
-
-        // DataStream configurations
-        int                         dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
-        int                         dataValues          = conf.getDatastream().getSynthetic().getData().getValues();
-        Config.DataDistribution     dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
-        Config.ArrivalDistribution  distribution        = conf.getDatastream().getSynthetic().getFlow().getDistribution();
-        int                         rate                = conf.getDatastream().getSynthetic().getFlow().getRate();
-
-        // Generating app builder
-        AppBuilder app                              = new AppBuilder(depth, totalParallelism, paraBalancing, variability, topologyShape, processingLoad, loadBalancing);
-        ArrayList<Integer> dagLevelsWidth           = app.getDagLevelsWidth();
-        ArrayList<Integer> componentsParallelism    = app.getComponentsParallelism();
+    private static StreamExecutionEnvironment buildBenchmarkEnvironment(YambConfigSchema conf, double debugFrequency) throws Exception{
 
 
-        // Bolt-specific configurations
-        int     numberOfSources     = dagLevelsWidth.get(0);
-        int     numberOfOperators   = app.getTotalComponents() - numberOfSources;
-
-        // Windowing
-        boolean                 windowingEnabled    = conf.getDataflow().getWindowing().isEnabled();
-        Config.WindowingType    windowingType       = conf.getDataflow().getWindowing().getType();
-        int                     windowDuration      = conf.getDataflow().getWindowing().getDuration();
-        int                     windowInterval      = conf.getDataflow().getWindowing().getInterval();
-        int                     windowedTasks       = (depth > 3) ? 2 : 1;
-
-        Iterator<Integer> cpIterator    = componentsParallelism.iterator();
-        ArrayList<MutablePair<String, DataStream<Tuple4<String, String, Long, Long>>>> sourcesList = new ArrayList<>();
-        ArrayList<MutablePair<String, SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>>> operatorsList = new ArrayList<>();
+        AppBuilder app = new AppBuilder(conf);
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        String sourceName;
+        if(! app.isPipelineDefined()) {
+
+            // DataFlow configurations
+            int depth = conf.getDataflow().getDepth();
+            int totalParallelism = conf.getDataflow().getScalability().getParallelism();
+            Config.ParaBalancing paraBalancing = conf.getDataflow().getScalability().getBalancing();
+            double variability = conf.getDataflow().getScalability().getVariability();
+            Config.ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
+            Config.TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
+            double processingLoad = conf.getDataflow().getWorkload().getProcessing();
+            Config.LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+
+            // DataStream configurations
+            int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
+            int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
+            Config.DataDistribution dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
+            Config.ArrivalDistribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+            int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
+
+            // Generating app builder
+            ArrayList<Integer> dagLevelsWidth = app.getDagLevelsWidth();
+            ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
 
 
-        for(int s=1; s<=numberOfSources; s++){
-            sourceName = "source_" + s;
-            DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency))
-                    .setParallelism(cpIterator.next())
-                    .name(sourceName);
-            sourcesList.add(new MutablePair<>(sourceName, source));
+            // Bolt-specific configurations
+            int numberOfSources = dagLevelsWidth.get(0);
+            int numberOfOperators = app.getTotalComponents() - numberOfSources;
 
-        }
+            // Windowing
+            boolean windowingEnabled = conf.getDataflow().getWindowing().isEnabled();
+            Config.WindowingType windowingType = conf.getDataflow().getWindowing().getType();
+            int windowDuration = conf.getDataflow().getWindowing().getDuration();
+            int windowInterval = conf.getDataflow().getWindowing().getInterval();
+            int windowedTasks = (depth > 3) ? 2 : 1;
 
-        if (numberOfSources > 1){
-            sourceName = "unified_source";
-            DataStream<Tuple4<String, String, Long, Long>> source = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
-            for(int s=2; s<numberOfSources; s++){
-                source.union(sourcesList.get(s).getRight());
+            Iterator<Integer> cpIterator = componentsParallelism.iterator();
+            ArrayList<MutablePair<String, DataStream<Tuple4<String, String, Long, Long>>>> sourcesList = new ArrayList<>();
+            ArrayList<MutablePair<String, SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>>> operatorsList = new ArrayList<>();
+
+
+
+            String sourceName;
+
+
+            for (int s = 1; s <= numberOfSources; s++) {
+                sourceName = "source_" + s;
+                DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency))
+                        .setParallelism(cpIterator.next())
+                        .name(sourceName);
+                sourcesList.add(new MutablePair<>(sourceName, source));
+
             }
-            sourcesList.add(new MutablePair<>(sourceName, source));
-        }
 
-
-        int operatorID = 1;
-        int cycles;
-        String operatorName;
-
-        for(int i = 1; i<depth; i++){
-            int levelWidth = dagLevelsWidth.get(i);
-            boolean isWindowed  = depth - i <= windowedTasks && windowingEnabled; // this level contains windowed tasks
-
-            if(i==1) {
-                for(int opCount=0; opCount<levelWidth; opCount++) {
-                    operatorName = "op_" + operatorID;
-                    cycles = app.getNextProcessing();
-                    DataStream<Tuple4<String, String, Long, Long>> parent = sourcesList.get(sourcesList.size() - 1).getRight();
-
-
-
-                    SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
-                    if (isWindowed){
-                        op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
-                                .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
-                    }
-                    else{
-                        op = setRouting(parent, trafficRouting)
-                                .map(new BusyWaitMap(cycles, debugFrequency));
-                    }
-
-                    op.setParallelism(cpIterator.next())
-                            .name(operatorName);
-
-                    operatorsList.add(new MutablePair<>(operatorName, op));
-                    operatorID++;
+            if (numberOfSources > 1) {
+                sourceName = "unified_source";
+                DataStream<Tuple4<String, String, Long, Long>> source = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
+                for (int s = 2; s < numberOfSources; s++) {
+                    source.union(sourcesList.get(s).getRight());
                 }
+                sourcesList.add(new MutablePair<>(sourceName, source));
             }
-            else{
-                if(topologyShape == Config.ConnectionShape.diamond && dagLevelsWidth.get(i-1) > 1){ // diamond shape union
-                    DataStream<Tuple4<String, String, Long, Long>> diamondUnion = operatorsList.get(operatorID - 2).getRight().union(operatorsList.get(operatorID - 3).getRight());
-                    //TODO: maybe this can be optimized?
-                    for(int o=2; o<dagLevelsWidth.get(i-1); o++){
-                        diamondUnion.union(operatorsList.get(o).getRight());
-                    }
-                    operatorName = "op_" + operatorID;
-                    cycles = app.getNextProcessing();
 
 
-                    SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
-                    if (isWindowed){
-                        op = setWindow(diamondUnion, trafficRouting, windowingType, windowDuration, windowInterval)
-                                .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
-                    }
-                    else{
-                        op = setRouting(diamondUnion, trafficRouting)
-                                .map(new BusyWaitMap(cycles, debugFrequency));
-                    }
+            int operatorID = 1;
+            int cycles;
+            String operatorName;
 
-                    op.setParallelism(cpIterator.next())
-                            .name(operatorName);
+            for (int i = 1; i < depth; i++) {
+                int levelWidth = dagLevelsWidth.get(i);
+                boolean isWindowed = depth - i <= windowedTasks && windowingEnabled; // this level contains windowed tasks
 
-                    operatorsList.add(new MutablePair<>(operatorName, op));
-                    operatorID++;
-                }
-                else{
-                    int parentOperatorIdx = (topologyShape == Config.ConnectionShape.diamond ||
-                            (topologyShape == Config.ConnectionShape.star && i>3)) ? i - 1 : i - 2;
-                    SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> parent = operatorsList.get(parentOperatorIdx).getRight();
-                    for(int opCount = 0; opCount<levelWidth; opCount++){
+                if (i == 1) {
+                    for (int opCount = 0; opCount < levelWidth; opCount++) {
                         operatorName = "op_" + operatorID;
                         cycles = app.getNextProcessing();
+                        DataStream<Tuple4<String, String, Long, Long>> parent = sourcesList.get(sourcesList.size() - 1).getRight();
+
 
                         SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
-                        if (isWindowed){
-                            op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval, false)
+                        if (isWindowed) {
+                            op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
                                     .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
-                        }
-                        else{
-                            op = setRouting(parent, trafficRouting, false)
-                                    .map(new BusyWaitMap(cycles, debugFrequency));
-//                            op = parent.map(new BusyWaitMap(cycles, debugFrequency));
+                        } else {
+                            double filtering = (app.getFilteringDagLevel() == i) ? app.getFiltering() : 0;
+                            op = setRouting(parent, trafficRouting)
+                                    .flatMap(new BusyWaitFlatMap(cycles, filtering, debugFrequency, operatorName));
                         }
 
                         op.setParallelism(cpIterator.next())
@@ -253,9 +210,139 @@ public class BenchmarkApplication {
                         operatorsList.add(new MutablePair<>(operatorName, op));
                         operatorID++;
                     }
+                } else {
+                    if (topologyShape == Config.ConnectionShape.diamond && dagLevelsWidth.get(i - 1) > 1) { // diamond shape union
+                        DataStream<Tuple4<String, String, Long, Long>> diamondUnion = operatorsList.get(operatorID - 2).getRight().union(operatorsList.get(operatorID - 3).getRight());
+                        //TODO: maybe this can be optimized?
+                        for (int o = 2; o < dagLevelsWidth.get(i - 1); o++) {
+                            diamondUnion.union(operatorsList.get(o).getRight());
+                        }
+                        operatorName = "op_" + operatorID;
+                        cycles = app.getNextProcessing();
+
+
+                        SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
+                        if (isWindowed) {
+                            op = setWindow(diamondUnion, trafficRouting, windowingType, windowDuration, windowInterval)
+                                    .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
+                        } else {
+                            double filtering = (app.getFilteringDagLevel() == i) ? app.getFiltering() : 0;
+                            op = setRouting(diamondUnion, trafficRouting)
+                                    .flatMap(new BusyWaitFlatMap(cycles, filtering, debugFrequency, operatorName));
+                        }
+
+                        op.setParallelism(cpIterator.next())
+                                .name(operatorName);
+
+                        operatorsList.add(new MutablePair<>(operatorName, op));
+                        operatorID++;
+                    } else {
+                        int parentOperatorIdx = (topologyShape == Config.ConnectionShape.diamond ||
+                                (topologyShape == Config.ConnectionShape.star && i > 3)) ? i - 1 : i - 2;
+                        SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> parent = operatorsList.get(parentOperatorIdx).getRight();
+                        for (int opCount = 0; opCount < levelWidth; opCount++) {
+                            operatorName = "op_" + operatorID;
+                            cycles = app.getNextProcessing();
+
+                            SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
+                            if (isWindowed) {
+                                op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval, false)
+                                        .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
+                            } else {
+                                double filtering = (app.getFilteringDagLevel() == i) ? app.getFiltering() : 0;
+                                op = setRouting(parent, trafficRouting)
+                                        .flatMap(new BusyWaitFlatMap(cycles, filtering, debugFrequency, operatorName));
+//                            op = parent.map(new BusyWaitMap(cycles, debugFrequency));
+                            }
+
+                            op.setParallelism(cpIterator.next())
+                                    .name(operatorName);
+
+                            operatorsList.add(new MutablePair<>(operatorName, op));
+                            operatorID++;
+                        }
+                    }
                 }
             }
         }
+        else{
+
+
+
+            HashMap<String, Task> pipeline = app.getPipelineTree();
+            ArrayList<String> dagLevel = app.getPipelineTreeSources();
+            HashMap<String, Object> createdTasks = new HashMap<>();
+
+            while (dagLevel.size() > 0){
+
+                ArrayList<String> nextDagLevel = new ArrayList<>();
+                for (String task : dagLevel) {
+                    if (!createdTasks.containsKey(task)) {
+                        Task newTask = pipeline.get(task);
+                        if (newTask.getType() == Config.ComponentType.source) {
+                            DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(newTask.getDataSize(), newTask.getDataValues(), newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), debugFrequency))
+                                    .setParallelism((int) newTask.getParallelism())
+                                    .name(newTask.getName());
+                            createdTasks.put(newTask.getName(), source);
+                        }
+                        else{
+
+                            ArrayList<String> parentsList = newTask.getParents();
+                            SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
+                            DataStream<Tuple4<String, String, Long, Long>> streamUnion = null;
+                            if(parentsList.size() > 1) {
+                                if( pipeline.get(parentsList.get(0)).getType() == Config.ComponentType.source){
+
+                                    streamUnion = ((DataStream<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(0))).union((DataStream<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(1)));
+                                    for (int i=2; i<parentsList.size(); i++) {
+                                        streamUnion.union((DataStream<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(i)));
+                                    }
+
+                                }
+                                else{
+                                    streamUnion = ((SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(0))).union((SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(1)));
+                                    for (int i=2; i<parentsList.size(); i++) {
+                                        streamUnion.union((SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(i)));
+                                    }
+
+                                }
+
+                                //TODO: impolement windowing
+                                op =  setRouting(streamUnion, newTask.getRouting())
+                                        .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getDataSize(), debugFrequency, newTask.getName()));
+                            }
+                            else{
+
+                                if( pipeline.get(parentsList.get(0)).getType() == Config.ComponentType.source){
+                                    DataStream<Tuple4<String, String, Long, Long>> parent = (DataStream<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(0));
+
+                                    op =  setRouting(parent, newTask.getRouting())
+                                            .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getDataSize(), debugFrequency, newTask.getName()));
+                                }
+                                else{
+                                    SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> parent = (SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(0));
+
+                                    op =  setRouting(parent, newTask.getRouting())
+                                            .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getDataSize(), debugFrequency, newTask.getName()));
+                                }
+
+                            }
+
+                            op.setParallelism((int)newTask.getParallelism())
+                                    .name(newTask.getName());
+                            createdTasks.put(newTask.getName(), op);
+                        }
+
+                    }
+
+                    nextDagLevel.addAll(pipeline.get(task).getChilds());
+                }
+                dagLevel = new ArrayList<>(nextDagLevel);
+            }
+
+        }
+
+
         return env;
 
     }

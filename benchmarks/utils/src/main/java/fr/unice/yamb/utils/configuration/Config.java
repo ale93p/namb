@@ -20,7 +20,7 @@ public class Config {
     }
 
     public enum TrafficRouting{
-        balanced, hash, broadcast
+        balanced, hash, broadcast, none
     }
 
     public enum WindowingType{
@@ -42,6 +42,8 @@ public class Config {
     public enum ComponentType{
         source, task
     }
+
+    public static final int                 DF_FILTERING_PRECISION              = 10000000;
 
     public static final int                 DF_DEPTH                            = 3;
     public static final int                 DF_SCALABILITY_PARALLELISM          = 10;
