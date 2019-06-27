@@ -34,7 +34,7 @@ public class AppBuilder{
 
         YambConfigSchema.Tasks pipeline [] = conf.getPipeline().getTasks();
 
-        if(pipeline.length > 0){
+        if(pipeline != null && pipeline.length > 0){
             this.depth = pipeline.length;
             this.totalComponents = pipeline.length;
             this.pipelineDefined = true;
