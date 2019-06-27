@@ -34,12 +34,13 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     private int rate;
     private String me;
 
-    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, double frequency){
+    public SyntheticConnector(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, double frequency, String sourceName){
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;
         this.distribution = flowDistribution;
         this.flowRate = flowRate;
+        this.me = sourceName;
         if(frequency > 0) this.rate = (int)(1 / frequency);
         else this.rate = 0;
     }
@@ -55,7 +56,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
         this.count = 0;
         this.index = new Random();
         this.isRunning = true;
-        this.me = getRuntimeContext().getTaskName() + "_" + getRuntimeContext().getIndexOfThisSubtask();
+        this.me = this.me + "_" + getRuntimeContext().getIndexOfThisSubtask();
 
     }
 

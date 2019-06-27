@@ -118,6 +118,9 @@ public class BenchmarkApplication {
 
         if(! app.isPipelineDefined()) {
 
+
+            System.out.println("not pipeline");
+
             // DataFlow configurations
             int depth = conf.getDataflow().getDepth();
             int totalParallelism = conf.getDataflow().getScalability().getParallelism();
@@ -162,7 +165,7 @@ public class BenchmarkApplication {
 
             for (int s = 1; s <= numberOfSources; s++) {
                 sourceName = "source_" + s;
-                DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency))
+                DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency, sourceName))
                         .setParallelism(cpIterator.next())
                         .name(sourceName);
                 sourcesList.add(new MutablePair<>(sourceName, source));
@@ -250,7 +253,7 @@ public class BenchmarkApplication {
                                         .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                             } else {
                                 double filtering = (app.getFilteringDagLevel() == i) ? app.getFiltering() : 0;
-                                op = setRouting(parent, trafficRouting)
+                                op = setRouting(parent, Config.TrafficRouting.none)
                                         .flatMap(new BusyWaitFlatMap(cycles, filtering, debugFrequency, operatorName));
 //                            op = parent.map(new BusyWaitMap(cycles, debugFrequency));
                             }
@@ -280,7 +283,7 @@ public class BenchmarkApplication {
                     if (!createdTasks.containsKey(task)) {
                         Task newTask = pipeline.get(task);
                         if (newTask.getType() == Config.ComponentType.source) {
-                            DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(newTask.getDataSize(), newTask.getDataValues(), newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), debugFrequency))
+                            DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(newTask.getDataSize(), newTask.getDataValues(), newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), debugFrequency, newTask.getName()))
                                     .setParallelism((int) newTask.getParallelism())
                                     .name(newTask.getName());
                             createdTasks.put(newTask.getName(), source);
@@ -358,6 +361,8 @@ public class BenchmarkApplication {
 
         Config flinkConfigParser = new Config(FlinkConfigSchema.class, flinkConfFilePath);
         FlinkConfigSchema flinkConf = (FlinkConfigSchema) flinkConfigParser.getConfigSchema();
+
+        System.out.println("hello");
 
         if(yambConf != null && flinkConf != null) {
 
