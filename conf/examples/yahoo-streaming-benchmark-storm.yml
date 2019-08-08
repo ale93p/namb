@@ -1,0 +1,54 @@
+###############################################
+# PIPELINE APIs: task-specific configurations #
+###############################################
+
+### Yahoo Streaming Benchmark example
+
+pipeline:
+  tasks:
+  - name: ads
+    parallelism: 1
+    data:
+      size: 180 # size of the single data
+      values: 1000 # different values
+      distribution: uniform # [uniform, nonuniform]
+    flow:
+      distribution: uniform # [unifrom, burst, saw-tooth, normal, bimodal]
+      rate: 0 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
+
+  - name: event_deserializer
+    parallelism: 1
+    routing: balanced
+    processing: 6.9
+    parents:
+      - ads
+
+  - name: event_filter
+    parallelism: 1
+    routing: balanced
+    processing: 0.7
+    filtering: 0.333
+    parents:
+      - event_deserializer
+
+  - name: event_projection
+    parallelism: 1
+    routing: balanced
+    processing: 2.2
+    resizeddata: 52
+    parents:
+      - event_filter
+
+  - name: redis_join
+    parallelism: 1
+    routing: balanced
+    processing: 3.0
+    parents:
+      - event_projection
+
+  - name: campaign_processor
+    parallelism: 2
+    routing: hash
+    processing: 2.1
+    parents:
+      - redis_join
