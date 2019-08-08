@@ -99,8 +99,8 @@ def print_version():
 
 if __name__ == "__main__":
     # main parser
-    main_parser = argparse.ArgumentParser(prog="yamb.py")
-    main_parser.add_argument("-c", "--conf", dest="yamb_conf", metavar="<yamb_conf>", help="Specify custom YAMB configuration file", default=vars.YAMB_CONF)
+    main_parser = argparse.ArgumentParser(prog="namb.py")
+    main_parser.add_argument("-c", "--conf", dest="yamb_conf", metavar="<yamb_conf>", help="Specify custom NAMB configuration file", default=vars.YAMB_CONF)
     main_parser.add_argument("-v", "--version", dest="show_version", action="store_true", help="Show tool current version")
 
     # platform subparsers definition

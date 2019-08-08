@@ -76,6 +76,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
                 Long ts = System.currentTimeMillis();
                 sourceContext.collect(new Tuple4<>(tuple, tuple_id, this.count, ts));
 
+                ts = System.currentTimeMillis();
                 if (this.rate > 0 && this.count % this.rate == 0){
                     System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + tuple);
                 }

@@ -68,7 +68,7 @@ public class BenchmarkApplication {
         TopologyBuilder builder = new TopologyBuilder();
 
         if(! app.isPipelineDefined()) {
-            boolean                 reliability         = conf.getDataflow().isReliable();
+            boolean                 reliability         = conf.getWorkflow().isReliability();
 
             // DataStream configurations
             int                         dataSize            = conf.getDatastream().getSynthetic().getData().getSize();
@@ -81,10 +81,10 @@ public class BenchmarkApplication {
             ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
 
             // Windowing
-            boolean                 windowingEnabled    = conf.getDataflow().getWindowing().isEnabled();
-            Config.WindowingType    windowingType       = conf.getDataflow().getWindowing().getType();
-            int                     windowDuration      = conf.getDataflow().getWindowing().getDuration();
-            int                     windowInterval      = conf.getDataflow().getWindowing().getInterval();
+            boolean                 windowingEnabled    = conf.getWorkflow().getWindowing().isEnabled();
+            Config.WindowingType    windowingType       = conf.getWorkflow().getWindowing().getType();
+            int                     windowDuration      = conf.getWorkflow().getWindowing().getDuration();
+            int                     windowInterval      = conf.getWorkflow().getWindowing().getInterval();
 
             int     numberOfSpouts  = dagLevelsWidth.get(0);
             int     numberOfBolts   = app.getTotalComponents() - numberOfSpouts;
@@ -232,7 +232,7 @@ public class BenchmarkApplication {
                 org.apache.storm.Config conf = new org.apache.storm.Config();
                 conf.setNumWorkers(stormConf.getWorkers());
 
-                if (yambConf.getDataflow().isReliable()) {
+                if (yambConf.getWorkflow().isReliability()) {
                     conf.setMaxSpoutPending(stormConf.getMaxSpoutPending());
                 }
 

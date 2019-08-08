@@ -42,15 +42,15 @@ public class AppBuilder{
 
         }
         else {
-            this.depth = conf.getDataflow().getDepth();
-            this.parallelism = conf.getDataflow().getScalability().getParallelism();
-            this.paraBalancing = conf.getDataflow().getScalability().getBalancing();
-            this.variability = conf.getDataflow().getScalability().getVariability();
-            this.shape = conf.getDataflow().getConnection().getShape();
-            this.trafficRouting = conf.getDataflow().getConnection().getRouting();
-            this.processing = (int) Math.round(conf.getDataflow().getWorkload().getProcessing() * 1000);
-            this.loadBalancing = conf.getDataflow().getWorkload().getBalancing();
-            this.filtering = conf.getDataflow().getFiltering();
+            this.depth = conf.getWorkflow().getDepth();
+            this.parallelism = conf.getWorkflow().getScalability().getParallelism();
+            this.paraBalancing = conf.getWorkflow().getScalability().getBalancing();
+            this.variability = conf.getWorkflow().getScalability().getVariability();
+            this.shape = conf.getWorkflow().getConnection().getShape();
+            this.trafficRouting = conf.getWorkflow().getConnection().getRouting();
+            this.processing = (int) Math.round(conf.getWorkflow().getWorkload().getProcessing() * 1000);
+            this.loadBalancing = conf.getWorkflow().getWorkload().getBalancing();
+            this.filtering = conf.getWorkflow().getFiltering();
             this.filteringDagLevel = (this.filtering > 0) ? (this.depth / 2) : 0;
 
 
@@ -84,7 +84,7 @@ public class AppBuilder{
 
             String parents[] = p.getParents();
             if(parents == null){ //it's source
-                newTask = new Task(name, p.getParallelism(), p.isReliable(),
+                newTask = new Task(name, p.getParallelism(), p.isReliability(),
                         p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
                         p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
                 this.pipelineTreeSources.add(name);
@@ -93,7 +93,7 @@ public class AppBuilder{
             else{ //it's a task
                 List<String> parentsList = Arrays.asList(p.getParents());
                 ArrayList<String> taskParents = new ArrayList<>(parentsList);
-                newTask = new Task(name, p.getProcessing(), p.getParallelism(), p.getRouting(), p.isReliable(), p.getFiltering(), p.getResizeddata(), taskParents, new ArrayList<>());
+                newTask = new Task(name, p.getProcessing(), p.getParallelism(), p.getRouting(), p.isReliability(), p.getFiltering(), p.getResizeddata(), taskParents, new ArrayList<>());
                 for(String parent : taskParents){
                     Task parentTask = this.pipelineTree.get(parent);
                     parentTask.addChild(name);

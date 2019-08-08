@@ -19,22 +19,22 @@ pipeline:
   - name: event_deserializer
     parallelism: 1
     routing: balanced
-    processing: 6.9
+    processing: 4.14
     parents:
       - ads
 
   - name: event_filter
     parallelism: 1
     routing: balanced
-    processing: 0.9
-    filtering: 0.666
+    processing: 0.42
+    filtering: 0.333
     parents:
       - event_deserializer
 
   - name: event_projection
     parallelism: 1
     routing: balanced
-    processing: 2.2
+    processing: 1.32
     resizeddata: 52
     parents:
       - event_filter
@@ -42,13 +42,13 @@ pipeline:
   - name: redis_join
     parallelism: 1
     routing: balanced
-    processing: 3.1
+    processing: 1.8
     parents:
       - event_projection
 
   - name: campaign_processor
     parallelism: 2
     routing: hash
-    processing: 2.1
+    processing: 1.26
     parents:
       - redis_join

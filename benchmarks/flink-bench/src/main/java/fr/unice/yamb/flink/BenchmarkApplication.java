@@ -122,14 +122,14 @@ public class BenchmarkApplication {
             System.out.println("not pipeline");
 
             // DataFlow configurations
-            int depth = conf.getDataflow().getDepth();
-            int totalParallelism = conf.getDataflow().getScalability().getParallelism();
-            Config.ParaBalancing paraBalancing = conf.getDataflow().getScalability().getBalancing();
-            double variability = conf.getDataflow().getScalability().getVariability();
-            Config.ConnectionShape topologyShape = conf.getDataflow().getConnection().getShape();
-            Config.TrafficRouting trafficRouting = conf.getDataflow().getConnection().getRouting();
-            double processingLoad = conf.getDataflow().getWorkload().getProcessing();
-            Config.LoadBalancing loadBalancing = conf.getDataflow().getWorkload().getBalancing();
+            int depth = conf.getWorkflow().getDepth();
+            int totalParallelism = conf.getWorkflow().getScalability().getParallelism();
+            Config.ParaBalancing paraBalancing = conf.getWorkflow().getScalability().getBalancing();
+            double variability = conf.getWorkflow().getScalability().getVariability();
+            Config.ConnectionShape topologyShape = conf.getWorkflow().getConnection().getShape();
+            Config.TrafficRouting trafficRouting = conf.getWorkflow().getConnection().getRouting();
+            double processingLoad = conf.getWorkflow().getWorkload().getProcessing();
+            Config.LoadBalancing loadBalancing = conf.getWorkflow().getWorkload().getBalancing();
 
             // DataStream configurations
             int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
@@ -148,10 +148,10 @@ public class BenchmarkApplication {
             int numberOfOperators = app.getTotalComponents() - numberOfSources;
 
             // Windowing
-            boolean windowingEnabled = conf.getDataflow().getWindowing().isEnabled();
-            Config.WindowingType windowingType = conf.getDataflow().getWindowing().getType();
-            int windowDuration = conf.getDataflow().getWindowing().getDuration();
-            int windowInterval = conf.getDataflow().getWindowing().getInterval();
+            boolean windowingEnabled = conf.getWorkflow().getWindowing().isEnabled();
+            Config.WindowingType windowingType = conf.getWorkflow().getWindowing().getType();
+            int windowDuration = conf.getWorkflow().getWindowing().getDuration();
+            int windowInterval = conf.getWorkflow().getWindowing().getInterval();
             int windowedTasks = (depth > 3) ? 2 : 1;
 
             Iterator<Integer> cpIterator = componentsParallelism.iterator();
@@ -214,7 +214,7 @@ public class BenchmarkApplication {
                         operatorID++;
                     }
                 } else {
-                    if (topologyShape == Config.ConnectionShape.diamond && dagLevelsWidth.get(i - 1) > 1) { // diamond shape union
+                    if (topologyShape == Config.ConnectionShape.diamond && dagLevelsWidth.get(i - 1) > 1) {// diamond shape union
                         DataStream<Tuple4<String, String, Long, Long>> diamondUnion = operatorsList.get(operatorID - 2).getRight().union(operatorsList.get(operatorID - 3).getRight());
                         //TODO: maybe this can be optimized?
                         for (int o = 2; o < dagLevelsWidth.get(i - 1); o++) {
@@ -361,8 +361,6 @@ public class BenchmarkApplication {
 
         Config flinkConfigParser = new Config(FlinkConfigSchema.class, flinkConfFilePath);
         FlinkConfigSchema flinkConf = (FlinkConfigSchema) flinkConfigParser.getConfigSchema();
-
-        System.out.println("hello");
 
         if(yambConf != null && flinkConf != null) {
 

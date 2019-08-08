@@ -63,7 +63,7 @@ public class BusyWaitBolt extends BaseRichBolt {
 
         Long ts = 0L;
         if(this._filtering > 0){
-            if (this._rand.nextInt(Config.DF_FILTERING_PRECISION) <= this._filtering * Config.DF_FILTERING_PRECISION) {
+            if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
                 ts = System.currentTimeMillis();
                 _collector.emit(new Values(payload, id, num, ts));
             }

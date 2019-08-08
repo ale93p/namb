@@ -2,15 +2,12 @@ package fr.unice.yamb.utils.configuration.schema;
 
 import fr.unice.yamb.utils.configuration.Config;
 
-import java.awt.*;
-import java.util.UUID;
-
 public class YambConfigSchema extends ConfigSchema {
 
     public static class Scalability{
-        private int parallelism = Config.DF_SCALABILITY_PARALLELISM;
-        private Config.ParaBalancing balancing = Config.DF_SCALABILITY_BALANCING;
-        private double variability = Config.DF_SCALABILITY_VARIABILTY;
+        private int parallelism = Config.WF_SCALABILITY_PARALLELISM;
+        private Config.ParaBalancing balancing = Config.WF_SCALABILITY_BALANCING;
+        private double variability = Config.WF_SCALABILITY_VARIABILTY;
 
         public int getParallelism() {
             return parallelism;
@@ -37,8 +34,8 @@ public class YambConfigSchema extends ConfigSchema {
         }
     }
     public static class Connection{
-        private Config.ConnectionShape shape = Config.DF_CONNECTION_SHAPE;
-        private Config.TrafficRouting routing = Config.DF_TRAFFIC_ROUTING;
+        private Config.ConnectionShape shape = Config.WF_CONNECTION_SHAPE;
+        private Config.TrafficRouting routing = Config.WF_TRAFFIC_ROUTING;
 
         public Config.ConnectionShape getShape() {
             return shape;
@@ -57,10 +54,10 @@ public class YambConfigSchema extends ConfigSchema {
         }
     }
     public static class Windowing{
-        private boolean enabled = Config.DF_WINDOWING_ENABLED;
-        private Config.WindowingType type = Config.DF_WINDOWING_TYPE;
-        private int duration = Config.DF_WINDOW_DURATION;
-        private int interval = Config.DF_WINDOW_INTERVAL;
+        private boolean enabled = Config.WF_WINDOWING_ENABLED;
+        private Config.WindowingType type = Config.WF_WINDOWING_TYPE;
+        private int duration = Config.WF_WINDOW_DURATION;
+        private int interval = Config.WF_WINDOW_INTERVAL;
 
         public boolean isEnabled() {
             return enabled;
@@ -95,8 +92,8 @@ public class YambConfigSchema extends ConfigSchema {
         }
     }
     public static class Workload{
-        private double processing = Config.DF_WORKLOAD_PROCESSING;
-        private Config.LoadBalancing balancing = Config.DF_WORKLOAD_BALANCING;
+        private double processing = Config.WF_WORKLOAD_PROCESSING;
+        private Config.LoadBalancing balancing = Config.WF_WORKLOAD_BALANCING;
 
         public double getProcessing() {
             return processing;
@@ -168,13 +165,13 @@ public class YambConfigSchema extends ConfigSchema {
 
     public static class DataFlow {
 
-        private int depth = Config.DF_DEPTH;
+        private int depth = Config.WF_DEPTH;
         private Scalability scalability = new Scalability();
         private Connection connection = new Connection();
-        private boolean reliable = Config.DF_MESSAGE_RELIABILITY;
+        private boolean reliability = Config.WF_MESSAGE_RELIABILITY;
         private Windowing windowing = new Windowing();
         private Workload workload = new Workload();
-        private double filtering = Config.DF_FILTERING;
+        private double filtering = Config.WF_FILTERING;
 
         public int getDepth() {
             return depth;
@@ -200,12 +197,12 @@ public class YambConfigSchema extends ConfigSchema {
             this.connection = connection;
         }
 
-        public boolean isReliable() {
-            return reliable;
+        public boolean isReliability() {
+            return reliability;
         }
 
-        public void setReliable(boolean message_reliability) {
-            this.reliable = message_reliability;
+        public void setReliability(boolean message_reliability) {
+            this.reliability = message_reliability;
         }
 
         public Windowing getWindowing() {
@@ -274,9 +271,9 @@ public class YambConfigSchema extends ConfigSchema {
         private Config.ComponentType type = null;
         private long parallelism = 1;
         private Config.TrafficRouting routing = Config.TrafficRouting.none;
-        private double processing = Config.DF_WORKLOAD_PROCESSING;
+        private double processing = Config.WF_WORKLOAD_PROCESSING;
         private double filtering = 0;
-        private boolean reliable = Config.DF_MESSAGE_RELIABILITY;
+        private boolean reliability = Config.WF_MESSAGE_RELIABILITY;
         private Windowing windowing = new Windowing();
         private Data data = new Data();
         private int resizeddata = 0;
@@ -324,12 +321,12 @@ public class YambConfigSchema extends ConfigSchema {
         }
 
 
-        public boolean isReliable() {
-            return reliable;
+        public boolean isReliability() {
+            return reliability;
         }
 
-        public void setReliable(boolean reliable) {
-            this.reliable = reliable;
+        public void setReliability(boolean reliability) {
+            this.reliability = reliability;
         }
 
         public double getFiltering() {
@@ -393,20 +390,20 @@ public class YambConfigSchema extends ConfigSchema {
         }
     }
 
-    private DataFlow dataflow = new DataFlow();
+    private DataFlow workflow = new DataFlow();
     private DataStream datastream = new DataStream();
     private Pipeline pipeline = new Pipeline();
 
-    public void setDataflow(DataFlow dataflow){
-        this.dataflow = dataflow;
+    public void setWorkflow(DataFlow workflow){
+        this.workflow = workflow;
     }
     public void setDatastream(DataStream datastream){
         this.datastream = datastream;
     }
     public void setPipeline(Pipeline pipeline){ this.pipeline = pipeline; }
 
-    public DataFlow getDataflow(){
-        return this.dataflow;
+    public DataFlow getWorkflow(){
+        return this.workflow;
     }
     public DataStream getDatastream(){
         return this.datastream;
