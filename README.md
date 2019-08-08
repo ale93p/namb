@@ -1,12 +1,12 @@
-# YAMB
+# NAMB
 
-[![CircleCI](https://circleci.com/gh/ale93p/yamb.svg?style=shield&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/yamb)
+[![CircleCI](https://circleci.com/gh/ale93p/yamb.svg?style=shield&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/namb)
 ![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/ale93p/yamb.svg?label=latest)
 
 
-**YAMB** (__Y__*et* __A__*nother* __M__*icro-*__B__*enchmark*) is a *parametrizable* and *automatically generated* benchmark
+**NAMB** (__N__*ot* only __A__ __M__*icro-*__B__*enchmark*) is a *parametrizable* and *automatically generated* benchmark
 application for Data Stream Processing Systems (DSP). 
-YAMB aims to be a general and standardized benchmark to generate reproducible results.
+NAMB aims to be a general and standardized benchmark to generate reproducible results.
 
 ## Features
 
@@ -27,15 +27,11 @@ YAMB aims to be a general and standardized benchmark to generate reproducible re
 
 2. Compile the project:
      ```bash
-     python3 yamb.py build
+     python3 namb.py build
      ```
 3. Customize the configuration files (see: [doc/configurations](#)): 
 5. Run the benchmark on your platform. e.g. flink:
      ```bash
-     python3 yamb.py flink
+     python3 namb.py flink
      ```
     Use -h for more options and informations or visit [doc/benchmarks](#).
-
-## Acknowledgements
-
---

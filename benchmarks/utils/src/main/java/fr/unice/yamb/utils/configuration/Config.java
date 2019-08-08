@@ -20,7 +20,7 @@ public class Config {
     }
 
     public enum TrafficRouting{
-        balanced, hash, broadcast
+        balanced, hash, broadcast, none
     }
 
     public enum WindowingType{
@@ -39,24 +39,35 @@ public class Config {
         uniform, burst //TODO: add normal, saw-tooth, bimodal
     }
 
-    public static final int                 DF_DEPTH                            = 3;
-    public static final int                 DF_SCALABILITY_PARALLELISM          = 10;
-    public static final ParaBalancing       DF_SCALABILITY_BALANCING            = ParaBalancing.balanced;
-    public static final double              DF_SCALABILITY_VARIABILTY           = 0.5;
-    public static final ConnectionShape     DF_CONNECTION_SHAPE                 = ConnectionShape.linear;
-    public static final TrafficRouting      DF_TRAFFIC_ROUTING                  = TrafficRouting.balanced;
-    public static final boolean             DF_MESSAGE_RELIABILITY              = true;
-    public static final boolean             DF_WINDOWING_ENABLED                = false;
-    public static final WindowingType       DF_WINDOWING_TYPE                   = WindowingType.tumbling;
-    public static final int                 DF_WINDOW_DURATION                  = 30;
-    public static final int                 DF_WINDOW_INTERVAL                  = 10;
-    public static final double              DF_WORKLOAD_PROCESSING              = 10;
-    public static final LoadBalancing       DF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
+    public enum ComponentType{
+        source, task
+    }
+
+    public static final int                 WF_FILTERING_PRECISION              = 10000000;
+
+    public static final int                 WF_DEPTH                            = 3;
+    public static final int                 WF_SCALABILITY_PARALLELISM          = 10;
+    public static final ParaBalancing       WF_SCALABILITY_BALANCING            = ParaBalancing.balanced;
+    public static final double              WF_SCALABILITY_VARIABILTY           = 0.5;
+    public static final ConnectionShape     WF_CONNECTION_SHAPE                 = ConnectionShape.linear;
+    public static final TrafficRouting      WF_TRAFFIC_ROUTING                  = TrafficRouting.balanced;
+    public static final boolean             WF_MESSAGE_RELIABILITY              = true;
+    public static final boolean             WF_WINDOWING_ENABLED                = false;
+    public static final WindowingType       WF_WINDOWING_TYPE                   = WindowingType.tumbling;
+    public static final int                 WF_WINDOW_DURATION                  = 30;
+    public static final int                 WF_WINDOW_INTERVAL                  = 10;
+    public static final double              WF_WORKLOAD_PROCESSING              = 10;
+    public static final LoadBalancing       WF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
+    public static final double              WF_FILTERING                        = 0;
+
+
+
     public static final int                 DS_SYNTHETIC_DATA_SIZE              = 8;
     public static final int                 DS_DATA_VALUES                      = 100;
     public static final DataDistribution    DS_DATA_DISTRIBUTION                = DataDistribution.uniform;
     public static final ArrivalDistribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = ArrivalDistribution.uniform;
     public static final int                 DS_SYNTHETIC_ARRIVAL_RATE           = 1000;
+
 
 
     ConfigSchema configSchema;
@@ -93,9 +104,9 @@ public class Config {
     /* Validate YAMB Configuration file */
     public static void validateConf(YambConfigSchema conf) throws Exception{
 
-        int parallelism = conf.getDataflow().getScalability().getParallelism();
-        int depth = conf.getDataflow().getDepth();
-        ConnectionShape shape = conf.getDataflow().getConnection().getShape();
+        int parallelism = conf.getWorkflow().getScalability().getParallelism();
+        int depth = conf.getWorkflow().getDepth();
+        ConnectionShape shape = conf.getWorkflow().getConnection().getShape();
 
         AppBuilder app = new AppBuilder();
         int totalComponents = app.sumArray(app.getTopologyShape(shape, depth));
