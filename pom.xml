@@ -36,7 +36,7 @@
         <module>benchmarks/utils</module>
         <module>benchmarks/flink-bench</module>
         <module>benchmarks/storm-bench</module>
-        <!--<module>benchmarks/heron-bench</module>-->
+        <module>benchmarks/heron-bench</module>
     </modules>
 
     <dependencyManagement>

@@ -14,6 +14,7 @@ import com.twitter.heron.api.utils.Utils;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class SyntheticSpout extends BaseRichSpout {
 
@@ -60,23 +61,25 @@ public class SyntheticSpout extends BaseRichSpout {
     }
 
     public void nextTuple(){
-        byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
+        String nextValue = new String(this.payloadArray.get(this.index.nextInt(this.payloadArray.size())));
         try {
             if (this.flowRate != 0) {
                 Utils.sleep(
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                 );
             }
-            this.ts = System.currentTimeMillis();
+
             this.count++;
+            String tuple_id = UUID.randomUUID().toString();
+            this.ts = System.currentTimeMillis();
             if(this.reliable) {
-                _collector.emit(new Values(nextValue, this.count, this,ts), this.count);
+                _collector.emit(new Values(nextValue, tuple_id, this.count, this,ts), this.count);
             }
             else
-                _collector.emit(new Values(nextValue, this.count, this.ts));
+                _collector.emit(new Values(nextValue, tuple_id, this.count, this.ts));
 
             if (this.rate > 0 && this.count % this.rate == 0){
-                System.out.println("[DEBUG] " + this.me + ": " + this.count + "," + this.ts + "," + nextValue);
+                System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + this.ts + "," + nextValue);
             }
 
         } catch (Exception e){
@@ -87,6 +90,6 @@ public class SyntheticSpout extends BaseRichSpout {
     public void ack(Object msgId){ super.ack(msgId); }
 
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("value", "id", "timestamp"));
+        declarer.declare(new Fields("value", "id", "num", "timestamp"));
     }
 }

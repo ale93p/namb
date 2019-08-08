@@ -78,7 +78,7 @@ public class SyntheticSpout extends BaseRichSpout {
             else {
                 _collector.emit(new Values(nextValue, tuple_id, this.count, this.ts));
             }
-            if (this.rate > 0 && this.count % this.rate == 0){
+            if (this.rate > 0  && this.count % this.rate == 0){
                 System.out.println("[DEBUG] [" + this._me + "] : " + tuple_id + "," + this.count + "," + this.ts + "," + nextValue);
             }
 

@@ -20,6 +20,7 @@ public class BusyWaitBolt extends BaseRichBolt {
     private boolean _reliable;
     private int _dataSize;
     private int _rate;
+    private long _count;
     private String _me;
     private Random _rand;
 
@@ -29,6 +30,7 @@ public class BusyWaitBolt extends BaseRichBolt {
         this._filtering = filtering;
         this._reliable = msg_reliability;
         this._dataSize = dataSize;
+        this._count = 0;
         if(frequency!=0) this._rate = (int)(1/frequency);
         else this._rate = 0;
     }
@@ -56,8 +58,8 @@ public class BusyWaitBolt extends BaseRichBolt {
         }
 
         String id = tuple.getString(1);
-        Long num = tuple.getLong(2);
 
+        this._count ++;
         // simulate processing load
         for(long i = 0; i < this._cycles; i++){}
 
@@ -65,21 +67,21 @@ public class BusyWaitBolt extends BaseRichBolt {
         if(this._filtering > 0){
             if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
                 ts = System.currentTimeMillis();
-                _collector.emit(new Values(payload, id, num, ts));
+                _collector.emit(new Values(payload, id, this._count, ts));
             }
         }
         else {
             ts = System.currentTimeMillis();
-            _collector.emit(new Values(payload, id, num, ts));
+            _collector.emit(new Values(payload, id, this._count, ts));
         }
 
         if (this._reliable) {
             _collector.ack(tuple);
         }
 
-        if (this._rate > 0 && num % this._rate == 0) {
+        if (this._rate > 0 && this._count % this._rate == 0) {
             if (ts == 0) ts = System.currentTimeMillis();
-            System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + num + "," + ts + "," + payload);
+            System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + this._count + "," + ts + "," + payload);
         }
 
 

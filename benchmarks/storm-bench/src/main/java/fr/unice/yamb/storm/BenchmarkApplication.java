@@ -237,13 +237,11 @@ public class BenchmarkApplication {
                 }
 
                 if (stormConf.getDeployment() == StormDeployment.local) {
-                    System.out.println("RUNNING IN LOCAL");
                     LocalCluster cluster = new LocalCluster();
                     cluster.submitTopology("local-testing", conf, builder.createTopology());
                     Thread.sleep(100000); //100s of test duration
                     cluster.shutdown();
                 } else {
-                    System.out.println("RUNNING IN CLUSTER MODE");
                     String topologyName = "yamb_bench_" + System.currentTimeMillis();
                     StormSubmitter.submitTopologyWithProgressBar(topologyName, conf, builder.createTopology());
                 }
