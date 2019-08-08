@@ -1,7 +1,7 @@
 # NAMB
 
-[![CircleCI](https://circleci.com/gh/ale93p/yamb.svg?style=shield&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/namb)
-![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/ale93p/yamb.svg?label=latest)
+[![CircleCI](https://circleci.com/gh/ale93p/namb.svg?style=svg&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/namb)
+![GitHub tag (latest by date)](https://img.shields.io/github/release/ale93p/namb)
 
 
 **NAMB** (__N__*ot* only __A__ __M__*icro-*__B__*enchmark*) is a *parametrizable* and *automatically generated* benchmark
