@@ -100,7 +100,7 @@ public class BenchmarkApplication {
             }
 
             int boltID = 1;
-            int cycles;
+            long cycles;
             String boltName;
             //System.out.println("Topology shape: " + dagLevelsWidth.toString());
             // int i: represent the tree level
@@ -114,6 +114,7 @@ public class BenchmarkApplication {
                         cycles = app.getNextProcessing();
                         BoltDeclarer boltDeclarer = null;
                         if (isWindowed) {
+                            boltName = "windowed-" + boltName;
                             WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                             setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                             boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
@@ -135,6 +136,7 @@ public class BenchmarkApplication {
                         cycles = app.getNextProcessing();
                         BoltDeclarer boltDeclarer = null;
                         if (isWindowed) {
+                            boltName = "windowed-" + boltName;
                             WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                             setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                             boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());

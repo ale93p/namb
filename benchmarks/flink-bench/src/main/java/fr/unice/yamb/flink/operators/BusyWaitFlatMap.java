@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, Long, Long>, Tuple4<String, String, Long, Long>> {
 
-    private int _cycles;
+    private long _cycles;
     private double _filtering;
     private int _dataSize;
     private int _rate;
@@ -19,7 +19,7 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
     private String _me;
 
 
-    public BusyWaitFlatMap(int cycles, double filtering, int dataSize, double frequency, String operator_name){
+    public BusyWaitFlatMap(long cycles, double filtering, int dataSize, double frequency, String operator_name){
         _cycles = cycles;
         _filtering = filtering;
         _dataSize = dataSize;

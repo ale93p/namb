@@ -199,6 +199,7 @@ public class BenchmarkApplication {
 
                         SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
                         if (isWindowed) {
+                            operatorName = "windowed-" + operatorName;
                             op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval)
                                     .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                         } else {
@@ -226,6 +227,7 @@ public class BenchmarkApplication {
 
                         SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
                         if (isWindowed) {
+                            operatorName = "windowed-" + operatorName;
                             op = setWindow(diamondUnion, trafficRouting, windowingType, windowDuration, windowInterval)
                                     .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                         } else {
@@ -249,6 +251,7 @@ public class BenchmarkApplication {
 
                             SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
                             if (isWindowed) {
+                                operatorName = "windowed-" + operatorName;
                                 op = setWindow(parent, trafficRouting, windowingType, windowDuration, windowInterval, false)
                                         .apply(new WindowedBusyWaitFunction(cycles, debugFrequency));
                             } else {

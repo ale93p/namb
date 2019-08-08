@@ -15,6 +15,7 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     private OutputCollector _collector;
     private long _cycles;
     private int _rate;
+    private long _count;
     private String _me;
 
 
@@ -27,30 +28,31 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector){
         this._collector = collector;
         this._me = context.getThisComponentId() + "_" + context.getThisTaskId();
+        this._count = 0;
     }
 
     public void execute(TupleWindow inputWindow){
 
         Object payload = null;
         String id = null;
-        Long num = null;
-        Long ts = System.currentTimeMillis();
+        Long ts = 0L;
 
 
         for (Tuple tuple : inputWindow.get()) {
             payload = tuple.getValue(0);
             id = tuple.getString(1);
-            num = tuple.getLong(2);
+
+            this._count ++;
             // simulate processing load
             for (long i = 0; i < _cycles; i++) {
             }
             ts = System.currentTimeMillis();
-            if (this._rate > 0 && num % this._rate == 0){
-                System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + num + "," + ts + "," + payload.toString());
+            if (this._rate > 0 && this._count % this._rate == 0){
+                System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + this._count + "," + ts + "," + payload.toString());
             }
         }
 
-        _collector.emit(new Values(payload, id, num, ts));
+        _collector.emit(new Values(payload, id, this._count, ts));
 
 
     }

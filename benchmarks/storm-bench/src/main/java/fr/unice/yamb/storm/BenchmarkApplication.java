@@ -118,6 +118,7 @@ public class BenchmarkApplication {
                         cycles = app.getNextProcessing();
                         BoltDeclarer boltDeclarer = null;
                         if (isWindowed) {
+                            boltName = "windowed-" + boltName;
                             WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                             setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                             boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
@@ -139,6 +140,7 @@ public class BenchmarkApplication {
                         cycles = app.getNextProcessing();
                         BoltDeclarer boltDeclarer = null;
                         if (isWindowed) {
+                            boltName = "windowed-" + boltName;
                             WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                             setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
                             boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());

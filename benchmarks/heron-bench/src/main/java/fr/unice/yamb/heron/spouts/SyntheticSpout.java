@@ -37,7 +37,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private long count;
     private String me;
 
-    public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable, float frequency) {
+    public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable, double frequency) {
         this.dataSize = dataSize;
         this.dataValues = dataValues;
         this.dataValuesBalancing = dataValuesBalancing;

@@ -48,7 +48,7 @@ public class BusyWaitBolt extends BaseRichBolt {
         this._collector = collector;
         this._me = context.getThisComponentId() + "_" + context.getThisTaskId();
         if(this._filtering > 0){
-            this._rand = new Random()
+            this._rand = new Random();
         }
 
     }
