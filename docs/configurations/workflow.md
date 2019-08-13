@@ -2,8 +2,10 @@
 layout: default
 title: Workflow Schema
 parent: Configurations
-nav_order: 2
+nav_order: 1
 ---
+
+# Workflow Schema
 
 ## Table of Contents
 {: .no_toc .text-delta }
@@ -11,9 +13,7 @@ nav_order: 2
 1. TOC
 {:toc}
 
-## Application configurations
-
-### Dataflow
+## Dataflow Definition
 
 This properies are inside the `dataflow` tag: 
 ```yaml
@@ -199,6 +199,8 @@ It defines how the workload is distrubuted over the tasks:
 * `pyramid`: the cpu load will increase until the middle task and then decrease, starting from the value given
 
 
+## Datastream Definition
+
 ### Synthetic Datastream
 
 This properies are inside the `synthetic` tag of the `datastream` section: 
@@ -279,7 +281,3 @@ datastream:
             rate: 100
 ```
 The number of messages per second that will be generated. The max value is 1000, as `sleep` cannot go under 1ms. If the value is set to 0 there won't be any rate limitation.
-
-## Platform-specific configurations
-
-TODO

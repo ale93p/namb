@@ -11,8 +11,6 @@ permalink: /
 benchmark application for Data Stream Processing Systems (DSP). NAMB aims to be a general 
 and standardized benchmark to generate reproducible results.
 
-## The Idea
-
 ### Why?
 Considering that _common_ industrial benchmarks focus field-specific tasks (such IoT or CEP), they are
 (such it should be) hardly reusable in different contexts; also, the _most-used_ micro-benchmark applications
