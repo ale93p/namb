@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Implementation
-parent: Documentation
+parent: Project
 nav_order: 5
 has_children: true
 permalink: /docs/implementation

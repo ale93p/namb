@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Documentation
+title: Project
 nav_order: 2
 has_children: true
-permalink: /docs
+permalink: /project
 ---
 
 # Documentation

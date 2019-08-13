@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Fundamental Characteristics
-parent: Documentation
+parent: Project
 nav_order: 2
 ---
 # Fundamental Characteristics

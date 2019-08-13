@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Get NAMB
-parent: Documentation
+parent: Project
 nav_order: 1
 ---
 

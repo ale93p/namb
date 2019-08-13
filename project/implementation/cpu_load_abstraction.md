@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CPU Load Abstraction
-grand_parent: Documentation
+grand_parent: Project
 parent: Implementation
 ---
 
