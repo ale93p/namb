@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Getting Started
+title: What is NAMB?
 nav_order: 1
 permalink: /
 ---
@@ -11,27 +11,23 @@ permalink: /
 benchmark application for Data Stream Processing Systems (DSP). NAMB aims to be a general 
 and standardized benchmark to generate reproducible results.
 
-## Getting Started
+## The Idea
 
-### NAMB Basics
+### Why?
+Considering that _common_ industrial benchmarks focus field-specific tasks (such IoT or CEP), they are
+(such it should be) hardly reusable in different contexts; also, the _most-used_ micro-benchmark applications
+are rarely described in literature, so that to leave their implementation totally dependand by the author
+of a benchmark, thus make a comparison between different solutions results very difficult.
 
-To understand the basic concepts behind NAMB, why and how it was created, head to the [Concepts](/docs/concepts) page.
+### How?
+We base our implementation on a definition of several fundamental characteristics common to DSP applications,
+and which, in our opinion, have an important impact over the characterization of an application workload.
+We then abstract these characteristics in a set of parameters configurable by the user. 
 
-### Download
-
-NAMB is open source and freely available on [GitHub](github.com/ale93p/namb). Head to the master branch for the last released version.
-
-### Usage
-
-1. Clone the repository and move in it
-
-2. Compile the project:
-     ```bash
-     python3 namb.py build
-     ```
-3. Customize the configuration files (check the [configurations doc](/docs/configurations))
-4. Run the benchmark on the selected platform. e.g. flink:
-     ```bash
-     python3 namb.py flink
-     ```
-    Use -h for more options.
+### Objectives
+Given these configurations, YAMB will __automatically__ create a DSP application. 
+The challenges the project overcome are:
+* **Ease-of-use**: the configuration given shall not be over-complicated, but give the minimum set of parameters that allows the best application definition flexibility.
+* **Realistic**: the definition of the parameters has to make the benchmark results, over different systems/infrastructures, comparable **without the need of reproducing it**.
+* **Cross-Platform**:
+* **Availability**: the software is made available open-source.
