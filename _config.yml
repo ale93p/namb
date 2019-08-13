@@ -1,11 +1,11 @@
-title: YAMB
+title: NAMB
 author: Alessio Pagliari
-description: YAMB Documentation
+description: NAMB Documentation
 
 remote_theme: pmarsceill/just-the-docs
 
 # search_enabled: false
 aux_links:
-  "YAMB on GitHub":
-    - "//github.com/ale93p/yamb"
+  "NAMB on GitHub":
+    - "//github.com/ale93p/namb"
 # color_scheme: "dark"
