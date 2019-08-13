@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Getting NAMB
+title: Get NAMB
 parent: Documentation
 nav_order: 1
 ---
