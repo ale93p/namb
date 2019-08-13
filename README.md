@@ -29,9 +29,9 @@ NAMB aims to be a general and standardized benchmark to generate reproducible re
      ```bash
      python3 namb.py build
      ```
-3. Customize the configuration files (see: [doc/configurations](#)): 
+3. Customize the configuration files (see: [doc/configurations](https://ale93p.github.io/namb/docs/configurations.html)): 
 5. Run the benchmark on your platform. e.g. flink:
      ```bash
      python3 namb.py flink
      ```
-    Use -h for more options and informations or visit [doc/benchmarks](#).
+    Use -h for more options and information.
