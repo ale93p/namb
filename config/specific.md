@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Platform-Specific Configurations
-grand_parent: Documentation
 parent: Configurations
 nav_order: 3
 ---

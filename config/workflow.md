@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Workflow Schema
-grand_parent: Documentation
 parent: Configurations
 nav_order: 1
 ---
