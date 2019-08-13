@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Pipeline Schema
+grand_parent: Documentation
 parent: Configurations
 nav_order: 2
 ---
