@@ -1,7 +1,8 @@
 ---
 layout: default
 title: Concepts
-nav_order: 2
+parent: Getting Started
+nav_order: 1
 ---
 # Concepts
 {: .no_toc }
@@ -13,8 +14,6 @@ nav_order: 2
 {:toc}
 
 ## The Idea
-
-
 
 ### Why?
 Considering that _common_ industrial benchmarks focus field-specific tasks (such IoT or CEP), they are
