@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Project
+title: NAMB
 nav_order: 2
 has_children: true
 permalink: /project
 ---
 
-# Documentation
+# Project
