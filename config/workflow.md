@@ -34,7 +34,7 @@ workflow:
 | &nbsp;&nbsp;&nbsp;&nbsp;[`values`](#values) | integer |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`balancing`](#balancing-data) | balanced \| unbalanced |
 | `flow:` | | |
-| &nbsp;&nbsp;&nbsp;&nbsp;[`distribution`](#distribution) | uniform \| burst \| saw-tooth \| normal \| bimodal |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`distribution`](#distribution) | uniform \| burst |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`rate`](#rate) | integer |
 
 #### size
