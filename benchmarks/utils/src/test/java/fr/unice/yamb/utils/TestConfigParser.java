@@ -10,8 +10,15 @@ import static org.junit.Assert.*;
 public class TestConfigParser {
 
     @Test
-    public void testYambConfigParser(){
-        String defaultConf = "../../conf/defaults/yamb.yml";
+    public void testWorkflowSchemaConfigParser(){
+        String defaultConf = "../../conf/defaults/workflow_schema.yml";
+        Config conf = new Config(YambConfigSchema.class, defaultConf);
+        assertNotNull(conf.getConfigSchema());
+    }
+
+    @Test
+    public void testPipelineSchemaConfigParser(){
+        String defaultConf = "../../conf/defaults/pipeline_schema.yml";
         Config conf = new Config(YambConfigSchema.class, defaultConf);
         assertNotNull(conf.getConfigSchema());
     }
@@ -27,6 +34,13 @@ public class TestConfigParser {
     public void testHeronConfigParser(){
         String heronDefaultConf = "../../conf/defaults/heron-benchmark.yml";
         Config conf = new Config(HeronConfigSchema.class, heronDefaultConf);
+        assertNotNull(conf.getConfigSchema());
+    }
+
+    @Test
+    public void tesFlinkConfigParser(){
+        String flinkDefaultConf = "../../conf/defaults/flink-benchmark.yml";
+        Config conf = new Config(HeronConfigSchema.class, flinkDefaultConf);
         assertNotNull(conf.getConfigSchema());
     }
 
