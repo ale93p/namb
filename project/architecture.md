@@ -3,7 +3,6 @@ layout: default
 title: Architecture
 parent: Project
 nav_order: 3
-exclude: true
 ---
 
 # NAMB Architecture

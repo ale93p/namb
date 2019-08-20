@@ -149,7 +149,7 @@ datastream:
 ```
 The number of messages per second that will be generated. The max value is 1000, as `sleep` cannot go under 1ms. If the value is set to 0 there won't be any rate limitation.
 
-## Processing Task Definition
+## Processing Task Properties
 
 At the same manner, the tasks will be defined as a **ordered** list.
 

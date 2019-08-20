@@ -3,7 +3,6 @@ layout: default
 title: Platforms
 parent: Project
 nav_order: 4
-exclude: true
 ---
 
 # Platforms
