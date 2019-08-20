@@ -57,7 +57,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>fr.unice.yamb.flink.BenchmarkApplication</mainClass>
+                            <mainClass>fr.unice.namb.flink.BenchmarkApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
