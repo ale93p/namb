@@ -1,0 +1,47 @@
+###############################################
+# DATA_STREAM: input data properties          #
+###############################################
+
+datastream:
+
+  synthetic:
+    data:
+      size: 8 # size of the single data
+      values: 100 # different values
+      distribution: uniform # [uniform, nonuniform]
+    flow:
+      distribution: uniform # [unifrom, burst]
+      rate: 1000 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
+
+
+###############################################
+# WORKFLOW: application (DAG) properties
+###############################################
+
+workflow:
+
+  ## DAG levels
+  depth: 3
+
+  scalability:
+    parallelism: 10 # Total number of executors
+    balancing: balanced # [balanced, increasing, decreasing, pyramid]
+    variability: 0.5 # balancing variability used during instances distribution
+  
+  connection: 
+    shape: linear #[linear, diamond, star]
+    routing: balanced # [none, balanced, hash, broadcast]
+
+  workload:
+    processing: 4.5 # CPU load value in thousands of cycles
+    balancing: balanced # [balanced, increasing, decreasing, pyramid]
+
+  reliability: true # Boolean, true to enable "acking-like" mechanism, false otherwise
+
+  filtering: 0 # percentage of filtered data [1: output=100% of input, 0.3: output=30% of input, and so on]
+
+  windowing:
+    enabled: false
+    type: tumbling # [tumbling, sliding]
+    duration: 0 # window duration in seconds
+    interval: 0 # interval between windows, enabled only if sliding
