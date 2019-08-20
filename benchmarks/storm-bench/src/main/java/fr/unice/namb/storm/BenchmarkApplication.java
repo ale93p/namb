@@ -213,28 +213,28 @@ public class BenchmarkApplication {
 
     public static void main (String[] args) throws Exception{
 
-        String yambConfFilePath = args[0];
+        String nambConfFilePath = args[0];
         String stormConfFilePath = args[1];
 
         // Obtaining Configurations
-        Config confParser = new Config(NambConfigSchema.class, yambConfFilePath);
-        NambConfigSchema yambConf = (NambConfigSchema) confParser.getConfigSchema();
+        Config confParser = new Config(NambConfigSchema.class, nambConfFilePath);
+        NambConfigSchema nambConf = (NambConfigSchema) confParser.getConfigSchema();
 
         Config stormConfigParser = new Config(StormConfigSchema.class, stormConfFilePath);
         StormConfigSchema stormConf = (StormConfigSchema) stormConfigParser.getConfigSchema();
 
         // Check configuration validity, if something wrong it throws exception
-        if(yambConf != null && stormConf != null) {
-            confParser.validateConf(yambConf);
+        if(nambConf != null && stormConf != null) {
+            confParser.validateConf(nambConf);
 
 
-            TopologyBuilder builder = buildBenchmarkTopology(yambConf, stormConf.getDebugFrequency());
+            TopologyBuilder builder = buildBenchmarkTopology(nambConf, stormConf.getDebugFrequency());
             if (builder != null) {
 
                 org.apache.storm.Config conf = new org.apache.storm.Config();
                 conf.setNumWorkers(stormConf.getWorkers());
 
-                if (yambConf.getWorkflow().isReliability()) {
+                if (nambConf.getWorkflow().isReliability()) {
                     conf.setMaxSpoutPending(stormConf.getMaxSpoutPending());
                 }
 
@@ -244,7 +244,7 @@ public class BenchmarkApplication {
                     Thread.sleep(100000); //100s of test duration
                     cluster.shutdown();
                 } else {
-                    String topologyName = "yamb_bench_" + System.currentTimeMillis();
+                    String topologyName = "namb_bench_" + System.currentTimeMillis();
                     StormSubmitter.submitTopologyWithProgressBar(topologyName, conf, builder.createTopology());
                 }
             } else {

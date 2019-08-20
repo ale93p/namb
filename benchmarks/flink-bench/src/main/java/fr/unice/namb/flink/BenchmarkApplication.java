@@ -355,25 +355,25 @@ public class BenchmarkApplication {
 
     public static void main(String[] args) throws Exception{
 
-        String yambConfFilePath = args[0];
+        String nambConfFilePath = args[0];
         String flinkConfFilePath = args[1];
 
         //Obtaining Configurations
-        Config confParser = new Config(NambConfigSchema.class, yambConfFilePath);
-        NambConfigSchema yambConf = (NambConfigSchema) confParser.getConfigSchema();
+        Config confParser = new Config(NambConfigSchema.class, nambConfFilePath);
+        NambConfigSchema nambConf = (NambConfigSchema) confParser.getConfigSchema();
 
         Config flinkConfigParser = new Config(FlinkConfigSchema.class, flinkConfFilePath);
         FlinkConfigSchema flinkConf = (FlinkConfigSchema) flinkConfigParser.getConfigSchema();
 
-        if(yambConf != null && flinkConf != null) {
+        if(nambConf != null && flinkConf != null) {
 
-            confParser.validateConf(yambConf);
+            confParser.validateConf(nambConf);
 
-            StreamExecutionEnvironment env = buildBenchmarkEnvironment(yambConf, flinkConf.getDebugFrequency());
+            StreamExecutionEnvironment env = buildBenchmarkEnvironment(nambConf, flinkConf.getDebugFrequency());
 
             if (env != null){
 
-                String executionName = "yamb_bench_" + System.currentTimeMillis();
+                String executionName = "namb_bench_" + System.currentTimeMillis();
                 env.execute(executionName);
             }
 

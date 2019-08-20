@@ -208,33 +208,33 @@ public class BenchmarkApplication {
 
     public static void main (String[] args) throws Exception {
 
-        String yambConfFilePath = args[0];
+        String nambConfFilePath = args[0];
         String heronConfFilePath = args[1];
 
         // Obtaining Configurations
-        Config confParser = new Config(NambConfigSchema.class, yambConfFilePath);
-        NambConfigSchema yambConf = (NambConfigSchema) confParser.getConfigSchema();
+        Config confParser = new Config(NambConfigSchema.class, nambConfFilePath);
+        NambConfigSchema nambConf = (NambConfigSchema) confParser.getConfigSchema();
 
         Config heronConfigParser = new Config(HeronConfigSchema.class, heronConfFilePath);
         HeronConfigSchema heronConf = (HeronConfigSchema) heronConfigParser.getConfigSchema();
 
         // Check configuration validity, if something wrong it throws exception
-        if(yambConf != null && heronConf != null) {
-            confParser.validateConf(yambConf);
+        if(nambConf != null && heronConf != null) {
+            confParser.validateConf(nambConf);
 
-            TopologyBuilder builder = buildBenchmarkTopology(yambConf, heronConf.getDebugFrequency());
+            TopologyBuilder builder = buildBenchmarkTopology(nambConf, heronConf.getDebugFrequency());
 
             if(builder != null){
 
                 com.twitter.heron.api.Config conf = new com.twitter.heron.api.Config();
 
-                if(yambConf.getWorkflow().isReliability()){
+                if(nambConf.getWorkflow().isReliability()){
                     conf.setMaxSpoutPending(heronConf.getMaxSpoutPending());
                 }
 
-                conf.setNumStmgrs(yambConf.getWorkflow().getScalability().getParallelism());
+                conf.setNumStmgrs(nambConf.getWorkflow().getScalability().getParallelism());
 
-                String topologyName = "yamb_bench_" + System.currentTimeMillis();
+                String topologyName = "namb_bench_" + System.currentTimeMillis();
                 HeronSubmitter.submitTopology(topologyName, conf, builder.createTopology());
 
 
