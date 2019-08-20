@@ -44,9 +44,7 @@ one task after the another, to more complex trees where the data is duplicated b
 rejoin to a single one.
 
 * **Traffic Balancing**<br/>
-When the flow splits in more pathways, or when a single task is parallelized, the balancing of the data over
-the several available paths not always is fully balanced. It may happen that some tasks receives more data than
-the others, that can be cause by a filtering task or by an hash routing.
+When the flow splits in more pathways, or when a single task is parallelized, the balancing of the data over the several available paths not always is fully balanced. It may happen that some tasks receives more data than the others, that can be cause by a filtering task or by an hash routing.
 
 * **Message Reliability**<br/>
 Most DSP allow the enabling of a reliability mechanism to ensure message processing.
@@ -54,8 +52,7 @@ Most DSP allow the enabling of a reliability mechanism to ensure message process
 * **Workload**<br/>
 Each task by which the DAG is composed has to process the data, based on queries and instruction given at implementation.
 Between these different operations there are some that are more costly than others.
-For that reason, the processing load is not always balanced all over the applications, and we may find a _bottleneck_ task
-that could require more time to execute more complex operations than o``thers.
+For that reason, the processing load is not always balanced all over the applications, and we may find a _bottleneck_ task that could require more time to execute more complex operations than o``thers.
 
 * _Dependency_<br/>
 A task may have to wait data coming from more than one path, like in the case of Complex Event Processing,
