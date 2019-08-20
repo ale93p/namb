@@ -12,14 +12,14 @@ public class TestConfigParser {
 
     @Test
     public void testWorkflowSchemaConfigParser(){
-        String defaultConf = "../../conf/defaults/workflow_schema.yml";
+        String defaultConf = "../../conf/defaults/yamb.yml";
         Config conf = new Config(NambConfigSchema.class, defaultConf);
         assertNotNull(conf.getConfigSchema());
     }
 
     @Test
     public void testPipelineSchemaConfigParser(){
-        String defaultConf = "../../conf/defaults/pipeline_schema.yml";
+        String defaultConf = "../../conf/defaults/yamb_pipeline.yml";
         Config conf = new Config(NambConfigSchema.class, defaultConf);
         assertNotNull(conf.getConfigSchema());
     }
