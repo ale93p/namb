@@ -1,11 +1,11 @@
 ---
 layout: default
-title: CPU Load Abstraction
+title: Load Generator
 grand_parent: Project
 parent: Implementation
 ---
 
-# CPU Load Abstraction
+# Load Generator
 
 ## Objective
 

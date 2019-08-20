@@ -32,9 +32,9 @@ workflow:
 | `data:` | |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`size`](#size) | integer |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`values`](#values) | integer |
-| &nbsp;&nbsp;&nbsp;&nbsp;[`balancing`](#balancing-data) | balanced \| unbalanced |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`distribution`](#distribution-data) | balanced \| unbalanced |
 | `flow:` | | |
-| &nbsp;&nbsp;&nbsp;&nbsp;[`distribution`](#distribution) | uniform \| burst |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`distribution`](#distribution-flow) | uniform \| burst |
 | &nbsp;&nbsp;&nbsp;&nbsp;[`rate`](#rate) | integer |
 
 #### size
@@ -73,7 +73,7 @@ In an abstracted way, it represents the probability of a value occurrence:
 * `nonuniform`: each values is inserted several time in the urn following the power of 2 (e.g. 1st element added once, 2nd element twice, 3rd element 4 times, and so on)
 
 
-#### distribution
+#### distribution (flow)
 {: .no_toc }
 
 ```yaml
@@ -197,9 +197,13 @@ workflow:
         routing: hash
 ```
 It defines the way the data will be distributed over the tasks:
+* `none`: without specifying a routing method, it will be applied the default one for each platform
 * `balanced`: each task balances the routing of the messages in a balanced (e.g. round-robin) way to the following tasks
 * `hash`: an hash-based function is used to decide the next task to where route the message
 * `broadcast`: each message is replicate over all the following tasks 
+
+Currently direct operator connection in Flink, and shuffle grouping in Storm and Heron.
+{: .text-red-000 }
 
 #### processing
 {: .no_toc }
@@ -209,15 +213,9 @@ workflow:
     workload:
         processing: 10
 ```
-It represent the CPU load of the tasks. The integer value represent the number of cycles the busywait will perform, some examples of values could be:
+It represent the CPU load of the tasks. The integer value represent the number of cycles the busywait will perform.
 
-<table>
-<tr><td> lower </td><td> 0.5 </td><td> equivalent of an aggregation task </td></tr>
-<tr><td> medium </td><td> 150 </td><td> equivalent of a ranking task </td></tr>
-<tr><td> higher </td><td> 500 </td><td> equivalent of a transformation task </td></tr>
-</table>
-
-To better understand how the value has been computed check the section relative to the [cpu load abstraction](/docs/implementation/cpu-load).
+To better understand how the value has been computed check the section relative to the [load generator](/project/implementation/load-generator).
 
 #### balancing (workload)
 {: .no_toc }
