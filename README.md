@@ -12,7 +12,6 @@
 <p align="center">
     <b>NAMB</b> (<b>N</b><i>ot only</i> <b>A M</b><i>icro-</i><b>B</b><i>enchmark</i>) is a <i>parametrizable</i> and <i>automatically generated</i> benchmark
 application for Data Stream Processing Systems (DSP). 
-NAMB aims to be a general and standardized benchmark to generate reproducible results.
 </p>
 
 ## Features
