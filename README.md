@@ -1,4 +1,6 @@
-# NAMB
+<p align="center">
+    <h1> NAMB </h1>
+</p>
 
 [![CircleCI](https://circleci.com/gh/ale93p/namb.svg?style=svg&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/namb)
 ![GitHub tag (latest by date)](https://img.shields.io/github/release/ale93p/namb)
