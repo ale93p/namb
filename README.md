@@ -1,12 +1,18 @@
-# NAMB
+<h1 align="center"> namb </h1>
 
-[![CircleCI](https://circleci.com/gh/ale93p/namb.svg?style=svg&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28)](https://circleci.com/gh/ale93p/namb)
-![GitHub tag (latest by date)](https://img.shields.io/github/release/ale93p/namb)
-
-
-**NAMB** (__N__*ot* only __A__ __M__*icro-*__B__*enchmark*) is a *parametrizable* and *automatically generated* benchmark
+<p align="center" style="text-align:center">
+    <a href="https://circleci.com/gh/ale93p/namb">
+        <img src="https://circleci.com/gh/ale93p/namb.svg?style=svg&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28" title="Circle CI" alt="Circle CI" />
+    </a>
+    <a href="https://img.shields.io/github/release/ale93p/namb">
+        <img src="https://img.shields.io/github/release/ale93p/namb" title="GitHub tag (latest by date)" alt="GitHub tag (latest by date)" />
+    </a>
+</p>
+     
+<p align="center">
+    <b>NAMB</b> (<b>N</b><i>ot only</i> <b>A M</b><i>icro-</i><b>B</b><i>enchmark</i>) is a <i>parametrizable</i> and <i>automatically generated</i> benchmark
 application for Data Stream Processing Systems (DSP). 
-NAMB aims to be a general and standardized benchmark to generate reproducible results.
+</p>
 
 ## Features
 
