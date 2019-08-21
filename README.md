@@ -1,4 +1,9 @@
-<h1 align="center"> namb </h1>
+<p align="center" style="text-align:center">
+  <h1 align="center">
+  <img alt="namb logo" src="https://i.imgur.com/TzDokzP.png" width="80" align="middle"/>
+    namb
+  </h1>
+</p>
 
 <p align="center" style="text-align:center">
   <a href="https://circleci.com/gh/ale93p/namb">
