@@ -7,8 +7,6 @@ import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 
 public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String, String, Long, Long>> {
@@ -24,8 +22,6 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     private DataGenerator dataGenerator;
     private DataStream dataStream;
 
-    private ArrayList<byte[]> payloadArray;
-    private Random index;
     private long count;
     private int rate;
     private String me;
@@ -48,7 +44,6 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
         if (this.flowRate != 0)
             this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
-        this.index = new Random();
         this.isRunning = true;
         this.me = this.me + "_" + getRuntimeContext().getIndexOfThisSubtask();
 

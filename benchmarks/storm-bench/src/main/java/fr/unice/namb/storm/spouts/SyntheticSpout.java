@@ -11,7 +11,6 @@ import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import org.apache.storm.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -31,9 +30,6 @@ public class SyntheticSpout extends BaseRichSpout {
     private boolean reliable;
     private int rate;
 
-
-    private ArrayList<byte[]> payloadArray;
-    private Random index;
     private long count;
     private long ts;
     private String me;
@@ -55,7 +51,6 @@ public class SyntheticSpout extends BaseRichSpout {
         if (this.flowRate != 0)
             this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
-        this.index = new Random();
         this._collector = collector;
         this.me = context.getThisComponentId() + "_" + context.getThisTaskId();
     }
