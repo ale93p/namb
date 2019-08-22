@@ -1,7 +1,7 @@
 package fr.unice.namb.flink.connectors;
 
 import fr.unice.namb.utils.common.DataStream;
-import fr.unice.namb.utils.common.StringGenerator;
+import fr.unice.namb.utils.common.DataGenerator;
 import fr.unice.namb.utils.configuration.Config;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
@@ -21,6 +21,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     private int flowRate;
     private long sleepTime;
     private Config.ArrivalDistribution distribution;
+    private DataGenerator dataGenerator;
     private DataStream dataStream;
 
     private ArrayList<byte[]> payloadArray;
@@ -42,9 +43,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
 
     @Override
     public void open(Configuration parameters){
-
-        StringGenerator generator = new StringGenerator(this.dataSize);
-        this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
+        this.dataGenerator = new DataGenerator(this.dataSize, this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
         if (this.flowRate != 0)
             this.sleepTime = dataStream.convertToInterval(this.flowRate);
@@ -58,22 +57,21 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     @Override
     public void run(SourceContext<Tuple4<String, String, Long, Long>> sourceContext){
         while(isRunning){
-            byte[] nextValue = this.payloadArray.get(this.index.nextInt(this.payloadArray.size()));
-            String tuple = new String(nextValue);
-            String tuple_id = UUID.randomUUID().toString();
             try {
+                String nextValue = dataGenerator.getNextValue().toString();
                 if (this.flowRate != 0) {
                     Thread.sleep(
                             this.dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
                     );
                 }
                 this.count++;
+                String tuple_id = UUID.randomUUID().toString();
                 Long ts = System.currentTimeMillis();
-                sourceContext.collect(new Tuple4<>(tuple, tuple_id, this.count, ts));
+                sourceContext.collect(new Tuple4<>(nextValue, tuple_id, this.count, ts));
 
                 ts = System.currentTimeMillis();
                 if (this.rate > 0 && this.count % this.rate == 0){
-                    System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + tuple);
+                    System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + nextValue);
                 }
             } catch (Exception e){
                 e.printStackTrace();
