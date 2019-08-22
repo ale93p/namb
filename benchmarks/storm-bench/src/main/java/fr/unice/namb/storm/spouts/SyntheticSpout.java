@@ -1,6 +1,6 @@
 package fr.unice.namb.storm.spouts;
 
-import fr.unice.namb.utils.common.StringGenerator;
+import fr.unice.namb.utils.common.DataGenerator;
 import fr.unice.namb.utils.common.DataStream;
 import fr.unice.namb.utils.configuration.Config;
 import org.apache.storm.spout.SpoutOutputCollector;
@@ -26,6 +26,7 @@ public class SyntheticSpout extends BaseRichSpout {
     private int flowRate;
     private long sleepTime;
     private Config.ArrivalDistribution distribution;
+    private DataGenerator dataGenerator;
     private DataStream dataStream;
     private boolean reliable;
     private int rate;
@@ -49,8 +50,7 @@ public class SyntheticSpout extends BaseRichSpout {
     }
 
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
-        StringGenerator generator = new StringGenerator(this.dataSize);
-        this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
+        this.dataGenerator = new DataGenerator(this.dataSize, this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
         if (this.flowRate != 0)
             this.sleepTime = dataStream.convertToInterval(this.flowRate);
@@ -61,8 +61,8 @@ public class SyntheticSpout extends BaseRichSpout {
     }
 
     public void nextTuple(){
-        String nextValue = new String(this.payloadArray.get(this.index.nextInt(this.payloadArray.size())));
         try {
+            String nextValue = this.dataGenerator.getNextValue().toString();
             if (this.flowRate != 0) {
                 Utils.sleep(
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
