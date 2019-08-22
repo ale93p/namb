@@ -62,7 +62,7 @@ public class SyntheticSpout extends BaseRichSpout {
 
     public void nextTuple(){
         try {
-            String nextValue = this.dataGenerator.getNextValue().toString();
+            String nextValue = new String(dataGenerator.getNextValue());
             if (this.flowRate != 0) {
                 Utils.sleep(
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)

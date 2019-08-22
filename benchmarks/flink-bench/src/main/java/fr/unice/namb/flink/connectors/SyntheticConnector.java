@@ -58,7 +58,7 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
     public void run(SourceContext<Tuple4<String, String, Long, Long>> sourceContext){
         while(isRunning){
             try {
-                String nextValue = dataGenerator.getNextValue().toString();
+                String nextValue = new String(dataGenerator.getNextValue());
                 if (this.flowRate != 0) {
                     Thread.sleep(
                             this.dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)
