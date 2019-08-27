@@ -7,9 +7,8 @@ permalink: /
 
 # What is NAMB?
 
-**NAMB** (Not only A Micro-Benchmark) is a parametrizable and automatically generated 
-benchmark application for Data Stream Processing Systems (DSP). NAMB aims to be a general 
-and standardized benchmark to generate reproducible results.
+**NAMB** (Not only A Micro-Benchmark) is a parametrizable generator of 
+benchmark application for Data Stream Processing Systems (DSP).
 
 ### Why?
 Considering that _common_ industrial benchmarks focus field-specific tasks (such IoT or CEP), they are
@@ -22,10 +21,10 @@ We base our implementation on a definition of several fundamental characteristic
 and which, in our opinion, have an important impact over the characterization of an application workload.
 We then abstract these characteristics in a set of parameters configurable by the user. 
 
-### Objectives
+### Features
 Given these configurations, YAMB will __automatically__ create a DSP application. 
-The challenges the project overcome are:
-* **Ease-of-use**: the configuration given shall not be over-complicated, but give the minimum set of parameters that allows the best application definition flexibility.
-* **Realistic**: the definition of the parameters has to make the benchmark results, over different systems/infrastructures, comparable **without the need of reproducing it**.
-* **Cross-Platform**:
-* **Availability**: the software is made available open-source.
+NAMB main features and properties are:
+* **Cross-Platform**: NAMB is a modularized framework able to generate the benchmark for multiple platforms using the same configurations set.
+* **Realistic**: more than generating *only micro-benchmarks*, NAMB is able to simulate and reproduce real applications.
+* **Ease-of-use**: the configuration given is simple and intuitive, giving the minimum set of parameters that allows the best application definition flexibility.
+* **Availability**: the software is made available to everyone through a GitHub repository; everyone is allowed to use it, test it and improve it.
