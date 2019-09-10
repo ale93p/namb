@@ -5,7 +5,7 @@ import subprocess
 import shutil
 import os
 import sys
-import modules.yamb_variables as vars
+import modules.namb_variables as vars
 
 CMD_NOT_FOUND_CODE = 127
 
@@ -17,18 +17,18 @@ class CommandNotFound(Exception):
         return "{}: {}".format(self.__class__.__name__, self.error_message)
 
 
-def run_storm(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, storm_conf=vars.STORM_CONF):
+def run_storm(custom_bin_path=None, namb_conf=vars.NAMB_CONF, storm_conf=vars.STORM_CONF):
     storm_bin = custom_bin_path if custom_bin_path else 'storm'
 
     if subprocess.run([storm_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
-        storm_command = [storm_bin, 'jar', vars.STORM_JAR, vars.STORM_CLASS, yamb_conf, storm_conf]
+        storm_command = [storm_bin, 'jar', vars.STORM_JAR, vars.STORM_CLASS, namb_conf, storm_conf]
         subprocess.run(storm_command)
         return
     else:
         raise CommandNotFound(storm_bin)
 
 
-def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HERON_CONF):
+def run_heron(custom_bin_path=None, namb_conf=vars.NAMB_CONF, heron_conf=vars.HERON_CONF):
     heron_bin = custom_bin_path if custom_bin_path else 'heron'
 
     deployment = "local"
@@ -38,7 +38,7 @@ def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HE
             deployment = value.split("#")[0].strip()
 
     if subprocess.run([heron_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
-        heron_command = [heron_bin, "submit", deployment, vars.HERON_JAR, vars.HERON_CLASS, yamb_conf]
+        heron_command = [heron_bin, "submit", deployment, vars.HERON_JAR, vars.HERON_CLASS, namb_conf]
         print(heron_command)
         subprocess.run(heron_command)
         return
@@ -46,13 +46,13 @@ def run_heron(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, heron_conf=vars.HE
         raise CommandNotFound(heron_bin)
 
 
-def run_flink(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, flink_conf=vars.FLINK_CONF, detached=False):
+def run_flink(custom_bin_path=None, namb_conf=vars.NAMB_CONF, flink_conf=vars.FLINK_CONF, detached=False):
     flink_bin = custom_bin_path if custom_bin_path else 'flink'
 
     if subprocess.run([flink_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != CMD_NOT_FOUND_CODE:
         flink_command = [flink_bin, "run",]
         if detached: flink_command.append("-d")
-        flink_command.extend([vars.FLINK_JAR, yamb_conf, flink_conf])
+        flink_command.extend([vars.FLINK_JAR, namb_conf, flink_conf])
         subprocess.run(flink_command)
         return
     else:
@@ -61,14 +61,14 @@ def run_flink(custom_bin_path=None, yamb_conf=vars.YAMB_CONF, flink_conf=vars.FL
 
 def run(cmd, **kwargs):
     if cmd == 'storm':
-        run_storm(kwargs["custom_bin_path"], kwargs["custom_yamb_conf"], kwargs["custom_platform_conf"])
+        run_storm(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_platform_conf"])
 
     elif cmd == 'heron':
-        run_heron(kwargs["custom_bin_path"], kwargs["custom_yamb_conf"], kwargs["custom_platform_conf"])
+        run_heron(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_platform_conf"])
 
         return
     elif cmd == 'flink':
-        run_flink(kwargs["custom_bin_path"], kwargs["custom_yamb_conf"], kwargs["custom_platform_conf"], kwargs["detached"])
+        run_flink(kwargs["custom_bin_path"], kwargs["custom_namb_conf"], kwargs["custom_platform_conf"], kwargs["detached"])
 
     else:
         print("Oh my gosh. You shall not be here... Run fool!")
@@ -92,7 +92,7 @@ def build(test, keep_files):
         initialize_configurations()
 
 def print_version():
-    print("\033[1mYAMB v{}\033[0m".format(vars.YAMB_VERSION))
+    print("\033[1mNAMB v{}\033[0m".format(vars.NAMB_VERSION))
     print("This is Yet Another MicroBenchmark")
     sys.exit(0)
 
@@ -100,7 +100,7 @@ def print_version():
 if __name__ == "__main__":
     # main parser
     main_parser = argparse.ArgumentParser(prog="namb.py")
-    main_parser.add_argument("-c", "--conf", dest="yamb_conf", metavar="<yamb_conf>", help="Specify custom NAMB configuration file", default=vars.YAMB_CONF)
+    main_parser.add_argument("-c", "--conf", dest="namb_conf", metavar="<namb_conf>", help="Specify custom NAMB configuration file", default=vars.NAMB_CONF)
     main_parser.add_argument("-v", "--version", dest="show_version", action="store_true", help="Show tool current version")
 
     # platform subparsers definition
@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     else:
         try:
-            kwargs = {"custom_bin_path":args.exec_path, "custom_yamb_conf":args.yamb_conf, "custom_platform_conf":args.platform_conf}
+            kwargs = {"custom_bin_path":args.exec_path, "custom_namb_conf":args.namb_conf, "custom_platform_conf":args.platform_conf}
             if args.command == 'flink':
                 kwargs["detached"] = args.is_detached
             run(args.command, **kwargs)

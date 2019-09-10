@@ -3,7 +3,7 @@ package fr.unice.namb.heron.spouts;
 import com.twitter.heron.api.spout.BaseRichSpout;
 import com.twitter.heron.api.topology.TopologyContext;
 import fr.unice.namb.utils.common.DataStream;
-import fr.unice.namb.utils.common.StringGenerator;
+import fr.unice.namb.utils.common.DataGenerator;
 import fr.unice.namb.utils.configuration.Config;
 import com.twitter.heron.api.spout.SpoutOutputCollector;
 import com.twitter.heron.api.topology.OutputFieldsDeclarer;
@@ -11,7 +11,6 @@ import com.twitter.heron.api.tuple.Fields;
 import com.twitter.heron.api.tuple.Values;
 import com.twitter.heron.api.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -26,15 +25,13 @@ public class SyntheticSpout extends BaseRichSpout {
     private int flowRate;
     private long sleepTime;
     private Config.ArrivalDistribution distribution;
+    private DataGenerator dataGenerator;
     private DataStream dataStream;
     private boolean reliable;
-    private long ts;
     private int rate;
 
-
-    private ArrayList<byte[]> payloadArray;
-    private Random index;
     private long count;
+    private long ts;
     private String me;
 
     public SyntheticSpout(int dataSize, int dataValues, Config.DataDistribution dataValuesBalancing, Config.ArrivalDistribution flowDistribution, int flowRate, boolean reliable, double frequency) {
@@ -49,20 +46,18 @@ public class SyntheticSpout extends BaseRichSpout {
     }
 
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
-        StringGenerator generator = new StringGenerator(this.dataSize);
-        this.payloadArray = generator.generatePayload(this.dataValues, this.dataValuesBalancing);
+        this.dataGenerator = new DataGenerator(this.dataSize, this.dataValues, this.dataValuesBalancing);
         this.dataStream = new DataStream();
         if (this.flowRate != 0)
             this.sleepTime = dataStream.convertToInterval(this.flowRate);
         this.count = 0;
-        this.index = new Random();
         this._collector = collector;
         this.me = context.getThisComponentId() + "_" + context.getThisTaskId();
     }
 
     public void nextTuple(){
-        String nextValue = new String(this.payloadArray.get(this.index.nextInt(this.payloadArray.size())));
         try {
+            String nextValue = new String(dataGenerator.getNextValue());
             if (this.flowRate != 0) {
                 Utils.sleep(
                         dataStream.getInterMessageTime(this.distribution, (int) this.sleepTime)

@@ -9,7 +9,7 @@
   <a href="https://circleci.com/gh/ale93p/namb">
     <img alt="Circle CI" src="https://circleci.com/gh/ale93p/namb.svg?style=svg&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28"/>
   </a>
-  <img alt="GitHub release (latest SemVer including pre-releases)" src="https://img.shields.io/github/v/release/ale93p/namb?include_prereleases&sort=semver">
+  <img alt="GitHub tag (latest SemVer pre-release)" src="https://img.shields.io/github/v/tag/ale93p/namb?include_prereleases&label=release&sort=semver">
 </p>
 
      
