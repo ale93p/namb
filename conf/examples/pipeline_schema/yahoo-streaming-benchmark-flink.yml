@@ -25,15 +25,13 @@ pipeline:
 
   - name: event_filter
     parallelism: 1
-    routing: balanced
-    processing: 0.42
-    filtering: 0.333
+    processing: 0.54
+    filtering: 0.666
     parents:
       - event_deserializer
 
   - name: event_projection
     parallelism: 1
-    routing: balanced
     processing: 1.32
     resizeddata: 52
     parents:
@@ -41,8 +39,7 @@ pipeline:
 
   - name: redis_join
     parallelism: 1
-    routing: balanced
-    processing: 1.8
+    processing: 1.86
     parents:
       - event_projection
 
