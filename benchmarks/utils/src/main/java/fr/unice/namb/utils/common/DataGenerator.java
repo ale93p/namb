@@ -27,6 +27,7 @@ public class DataGenerator {
         this.pivot = 0;
         this.characters = lastASCIIValue - firstASCIIValue + 1;
         this.payload = generatePayload();
+        this.distribution = distribution;
     }
 
     private ArrayList<Character> generateArrayList(int length, char value){
