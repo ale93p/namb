@@ -1,10 +1,15 @@
-<h1 align="center"> namb </h1>
+<p align="center" style="text-align:center">
+  <h1 align="center">
+  <img alt="namb logo" src="https://i.imgur.com/TzDokzP.png" width="80" align="middle"/>
+    namb
+  </h1>
+</p>
 
 <p align="center" style="text-align:center">
   <a href="https://circleci.com/gh/ale93p/namb">
     <img alt="Circle CI" src="https://circleci.com/gh/ale93p/namb.svg?style=svg&circle-token=61b5a845848493f3a460eae0c42bdc489bc63d28"/>
   </a>
-  <img alt="GitHub tag (latest SemVer pre-release)" src="https://img.shields.io/github/v/tag/ale93p/namb?include_prereleases&label=release&sort=semver">
+  <img alt="GitHub tag (latest SemVer pre-release)" src="https://img.shields.io/github/v/tag/ale93p/namb?label=release&sort=semver">
 </p>
 
      
