@@ -69,6 +69,7 @@ public class AppBuilder{
             this.kafkaServer = conf.getDatastream().getExternal().getKafka().getServer();
             this.externalSource = !(kafkaServer == null);
             if (this.externalSource){
+                if(this.shape == Config.ConnectionShape.diamond) throw new IllegalArgumentException("A " + shape + " topology shape is not supported if an external Kafka source is configured");
                 this.kafkaGroup = conf.getDatastream().getExternal().getKafka().getGroup();
                 this.kafkaTopic = conf.getDatastream().getExternal().getKafka().getTopic();
                 this.zookeeperServer = conf.getDatastream().getExternal().getZookeeper().getServer();
