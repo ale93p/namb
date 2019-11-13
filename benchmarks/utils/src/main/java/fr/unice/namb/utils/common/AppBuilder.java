@@ -25,6 +25,11 @@ public class AppBuilder{
     private HashMap<String, Task> pipelineTree;
     private ArrayList<String> pipelineTreeSources;
 
+    private boolean externalSource;
+    private String kafkaServer;
+    private String kafkaGroup;
+    private String kafkaTopic;
+    private String zookeeperServer;
 
 
     private int count;
@@ -61,7 +66,16 @@ public class AppBuilder{
             this.componentsParallelism = computeComponentsParallelism();
 
             this.pipelineDefined = false;
+            this.kafkaServer = conf.getDatastream().getExternal().getKafka().getServer();
+            this.externalSource = !(kafkaServer == null);
+            if (this.externalSource){
+                this.kafkaGroup = conf.getDatastream().getExternal().getKafka().getGroup();
+                this.kafkaTopic = conf.getDatastream().getExternal().getKafka().getTopic();
+                this.zookeeperServer = conf.getDatastream().getExternal().getZookeeper().getServer();
+            }
         }
+
+
 
         this.count = 0;
     }
@@ -326,6 +340,8 @@ public class AppBuilder{
         return sum;
     }
 
+
+
     public int sumArray(ArrayList<Integer> arr, int upper){
         return sumArray(arr, 0, upper);
     }
@@ -376,5 +392,25 @@ public class AppBuilder{
 
     public int getFilteringDagLevel() {
         return filteringDagLevel;
+    }
+
+    public boolean isExternalSource() {
+        return externalSource;
+    }
+
+    public String getKafkaServer() {
+        return kafkaServer;
+    }
+
+    public String getKafkaGroup() {
+        return kafkaGroup;
+    }
+
+    public String getKafkaTopic() {
+        return kafkaTopic;
+    }
+
+    public String getZookeeperServer() {
+        return zookeeperServer;
     }
 }

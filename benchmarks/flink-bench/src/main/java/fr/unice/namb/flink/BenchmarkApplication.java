@@ -3,6 +3,7 @@ package fr.unice.namb.flink;
 import fr.unice.namb.flink.connectors.SyntheticConnector;
 import fr.unice.namb.flink.operators.BusyWaitFlatMap;
 import fr.unice.namb.flink.operators.WindowedBusyWaitFunction;
+import fr.unice.namb.flink.utils.KafkaDeserializationSchema;
 import fr.unice.namb.utils.common.AppBuilder;
 import fr.unice.namb.utils.common.Task;
 import fr.unice.namb.utils.configuration.Config;
@@ -10,17 +11,24 @@ import fr.unice.namb.utils.configuration.schema.FlinkConfigSchema;
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.flink.api.common.serialization.DeserializationSchema;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.streaming.api.datastream.AllWindowedStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 
 public class BenchmarkApplication {
 
@@ -117,7 +125,9 @@ public class BenchmarkApplication {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         if(! app.isPipelineDefined()) {
-
+            /*
+            Workflow Schema Translation
+             */
 
             System.out.println("not pipeline");
 
@@ -162,25 +172,46 @@ public class BenchmarkApplication {
 
             String sourceName;
 
+            /*
+            Sources Definition
+             */
+            if (app.isExternalSource()){
+                int s = 1;
+                sourceName = "kafka_source_" + s;
+                Properties properties = new Properties();
+                properties.setProperty("bootstrap.servers", app.getKafkaServer());
+                properties.setProperty("zookeeper.connect", app.getZookeeperServer());
+                properties.setProperty("grgoup.id", app.getKafkaGroup());
+                FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(app.getKafkaTopic(), new KafkaDeserializationSchema(), properties);
 
-            for (int s = 1; s <= numberOfSources; s++) {
-                sourceName = "source_" + s;
-                DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency, sourceName))
+                DataStream<Tuple4<String, String, Long, Long>> source = env
+                        .addSource(kafkaConsumer)
                         .setParallelism(cpIterator.next())
                         .name(sourceName);
-                sourcesList.add(new MutablePair<>(sourceName, source));
-
             }
+            else {
+                for (int s = 1; s <= numberOfSources; s++) {
+                    sourceName = "source_" + s;
+                    DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency, sourceName))
+                            .setParallelism(cpIterator.next())
+                            .name(sourceName);
+                    sourcesList.add(new MutablePair<>(sourceName, source));
 
-            if (numberOfSources > 1) {
-                sourceName = "unified_source";
-                DataStream<Tuple4<String, String, Long, Long>> source = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
-                for (int s = 2; s < numberOfSources; s++) {
-                    source.union(sourcesList.get(s).getRight());
                 }
-                sourcesList.add(new MutablePair<>(sourceName, source));
+
+                if (numberOfSources > 1) {
+                    sourceName = "unified_source";
+                    DataStream<Tuple4<String, String, Long, Long>> source = sourcesList.get(0).getRight().union(sourcesList.get(1).getRight());
+                    for (int s = 2; s < numberOfSources; s++) {
+                        source.union(sourcesList.get(s).getRight());
+                    }
+                    sourcesList.add(new MutablePair<>(sourceName, source));
+                }
             }
 
+            /*
+            Tasks definition
+             */
 
             int operatorID = 1;
             int cycles;
@@ -272,8 +303,9 @@ public class BenchmarkApplication {
             }
         }
         else{
-
-
+            /*
+            Pipeline Schema Translation
+             */
 
             HashMap<String, Task> pipeline = app.getPipelineTree();
             ArrayList<String> dagLevel = app.getPipelineTreeSources();
