@@ -14,24 +14,38 @@ public class KafkaRecordTranslator implements RecordTranslator<String, String> {
     private static final long serialVersionUID = 4678369144122009596L;
     private final Fields fields;
     private final String stream;
-    private long count;
+    private long counter;
+    private int rate;
+    private String me;
 
-    public KafkaRecordTranslator() {
+    public KafkaRecordTranslator(double frequency, String me) {
         this.fields = new Fields("tuple_id", "tuple_value", "ts", "num");
         this.stream = "default";
-        this.count = 0;
+        this.counter = 0;
+        if (frequency > 0) this.rate = (int) (1/frequency);
     }
 
     public List<Object> apply(ConsumerRecord<String, String> record) {
-        String value = record.value();
-        if (value == null) {
+        String nextValue = record.value();
+
+        if (nextValue == null) {
             return null;
         } else {
+            String tuple_id = UUID.randomUUID().toString();
+            ++counter;
+            Long ts = System.currentTimeMillis();
+
             KafkaTuple ret = new KafkaTuple();
-            ret.add(1, UUID.randomUUID().toString());
-            ret.add(0, value);
-            ret.add(3, System.currentTimeMillis());
-            ret.add(2, ++count);
+            ret.add(0, nextValue);
+            ret.add(1, tuple_id);
+            ret.add(2, this.counter);
+            ret.add(3, ts);
+
+
+            if (this.rate > 0 && this.counter % this.rate == 0){
+                System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.counter + "," + ts + "," + nextValue);
+            }
+
             return ret.routedTo(this.stream);
         }
     }

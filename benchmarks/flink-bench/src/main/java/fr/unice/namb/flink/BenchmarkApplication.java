@@ -129,8 +129,6 @@ public class BenchmarkApplication {
             Workflow Schema Translation
              */
 
-            System.out.println("not pipeline");
-
             // DataFlow configurations
             int depth = conf.getWorkflow().getDepth();
             int totalParallelism = conf.getWorkflow().getScalability().getParallelism();
@@ -182,12 +180,13 @@ public class BenchmarkApplication {
                 properties.setProperty("bootstrap.servers", app.getKafkaServer());
                 properties.setProperty("zookeeper.connect", app.getZookeeperServer());
                 properties.setProperty("group.id", app.getKafkaGroup());
-                FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(app.getKafkaTopic(), new KafkaDeserializationSchema(), properties);
+                FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(app.getKafkaTopic(), new KafkaDeserializationSchema(debugFrequency, sourceName), properties);
 
                 DataStream<Tuple4<String, String, Long, Long>> source = env
                         .addSource(kafkaConsumer)
                         .setParallelism(cpIterator.next())
                         .name(sourceName);
+                sourcesList.add(new MutablePair<>(sourceName, source));
             }
             else {
                 for (int s = 1; s <= numberOfSources; s++) {
@@ -324,7 +323,7 @@ public class BenchmarkApplication {
                                 properties.setProperty("bootstrap.servers", newTask.getKafkaServer());
                                 properties.setProperty("zookeeper.connect", newTask.getZookeeperServer());
                                 properties.setProperty("group.id", newTask.getKafkaGroup());
-                                FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(newTask.getKafkaTopic(), new KafkaDeserializationSchema(), properties);
+                                FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(newTask.getKafkaTopic(), new KafkaDeserializationSchema(debugFrequency, newTask.getName()), properties);
 
                                  source = env
                                         .addSource(kafkaConsumer)

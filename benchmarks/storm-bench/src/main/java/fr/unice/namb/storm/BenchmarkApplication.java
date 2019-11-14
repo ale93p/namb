@@ -108,12 +108,14 @@ public class BenchmarkApplication {
             if(app.isExternalSource()){
                 int s = 1;
                 spoutName = "spout_" + s;
+                spoutsList.add(spoutName);
                 KafkaSpoutConfig<String, String> kafkaConfig = KafkaSpoutConfig.builder(app.getKafkaServer(), app.getKafkaTopic())
                         .setFirstPollOffsetStrategy(KafkaSpoutConfig.FirstPollOffsetStrategy.LATEST)
                         .setProp(ConsumerConfig.GROUP_ID_CONFIG, app.getKafkaServer())
-                        .setRecordTranslator(new KafkaRecordTranslator())
+                        .setRecordTranslator(new KafkaRecordTranslator(debugFrequency, spoutName))
                         .build();
                 builder.setSpout(spoutName, new KafkaSpout<>(kafkaConfig), cpIterator.next());
+
             }
             else{
                 for (int s = 1; s <= numberOfSpouts; s++) {
@@ -213,7 +215,7 @@ public class BenchmarkApplication {
                                 KafkaSpoutConfig<String, String> kafkaConfig = KafkaSpoutConfig.builder(app.getKafkaServer(), newTask.getKafkaTopic())
                                         .setFirstPollOffsetStrategy(KafkaSpoutConfig.FirstPollOffsetStrategy.LATEST)
                                         .setProp(ConsumerConfig.GROUP_ID_CONFIG, newTask.getKafkaServer())
-                                        .setRecordTranslator(new KafkaRecordTranslator())
+                                        .setRecordTranslator(new KafkaRecordTranslator(debugFrequency, newTask.getName()))
                                         .build();
                                 spout = builder.setSpout(newTask.getName(), new KafkaSpout<>(kafkaConfig), newTask.getParallelism());
                             }

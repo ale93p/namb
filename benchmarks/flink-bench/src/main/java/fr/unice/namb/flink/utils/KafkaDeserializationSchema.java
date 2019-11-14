@@ -19,14 +19,14 @@ public class KafkaDeserializationSchema implements DeserializationSchema<Tuple4<
 
     private transient Charset charset;
     private long counter = 0;
+    private int rate;
+    private String me;
 
 
-    public KafkaDeserializationSchema() {
-        this(StandardCharsets.UTF_8);
-    }
-
-    public KafkaDeserializationSchema(Charset charset) {
-        this.charset = checkNotNull(charset);
+    public KafkaDeserializationSchema(double frequency, String me) {
+        this.charset = checkNotNull(StandardCharsets.UTF_8);
+        this.me = me;
+        if (frequency > 0) this.rate = (int) (1/frequency);
     }
 
     public Charset getCharset() {
@@ -39,7 +39,17 @@ public class KafkaDeserializationSchema implements DeserializationSchema<Tuple4<
 
     @Override
     public Tuple4<String, String, Long, Long> deserialize(byte[] message) {
-        return new Tuple4<>(new String(message, charset), UUID.randomUUID().toString(), ++counter, System.currentTimeMillis());
+
+        String nextValue = new String(message, charset);
+        String tuple_id = UUID.randomUUID().toString();
+        ++counter;
+        long ts = System.currentTimeMillis();
+
+        if (this.rate > 0 && this.counter % this.rate == 0){
+            System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.counter + "," + ts + "," + nextValue);
+        }
+
+        return new Tuple4<>(nextValue, tuple_id, this.counter, ts);
     }
 
     @Override
