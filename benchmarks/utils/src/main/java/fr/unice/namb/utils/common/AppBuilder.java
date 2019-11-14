@@ -99,9 +99,14 @@ public class AppBuilder{
 
             String parents[] = p.getParents();
             if(parents == null){ //it's source
-                newTask = new Task(name, p.getParallelism(), p.isReliability(),
-                        p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
-                        p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
+                if (p.getKafka().getServer() == null)
+                    newTask = new Task(name, p.getParallelism(), p.isReliability(),
+                            p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
+                            p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
+                else
+                    newTask = new Task(name, p.getParallelism(), p.isReliability(),
+                            p.getKafka().getServer(), p.getKafka().getGroup(), p.getKafka().getTopic(), p.getKafka().getZookeeper(),
+                            new ArrayList<>());
                 this.pipelineTreeSources.add(name);
                 this.pipelineTree.put(name, newTask);
             }

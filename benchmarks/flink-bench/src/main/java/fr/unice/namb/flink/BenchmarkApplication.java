@@ -181,7 +181,7 @@ public class BenchmarkApplication {
                 Properties properties = new Properties();
                 properties.setProperty("bootstrap.servers", app.getKafkaServer());
                 properties.setProperty("zookeeper.connect", app.getZookeeperServer());
-                properties.setProperty("grgoup.id", app.getKafkaGroup());
+                properties.setProperty("group.id", app.getKafkaGroup());
                 FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(app.getKafkaTopic(), new KafkaDeserializationSchema(), properties);
 
                 DataStream<Tuple4<String, String, Long, Long>> source = env
@@ -318,9 +318,24 @@ public class BenchmarkApplication {
                     if (!createdTasks.containsKey(task)) {
                         Task newTask = pipeline.get(task);
                         if (newTask.getType() == Config.ComponentType.source) {
-                            DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(newTask.getDataSize(), newTask.getDataValues(), newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), debugFrequency, newTask.getName()))
-                                    .setParallelism((int) newTask.getParallelism())
-                                    .name(newTask.getName());
+                            DataStream<Tuple4<String, String, Long, Long>> source = null;
+                            if(newTask.isExternal()){
+                                Properties properties = new Properties();
+                                properties.setProperty("bootstrap.servers", newTask.getKafkaServer());
+                                properties.setProperty("zookeeper.connect", newTask.getZookeeperServer());
+                                properties.setProperty("group.id", newTask.getKafkaGroup());
+                                FlinkKafkaConsumer<Tuple4<String, String, Long, Long>> kafkaConsumer = new FlinkKafkaConsumer<>(newTask.getKafkaTopic(), new KafkaDeserializationSchema(), properties);
+
+                                 source = env
+                                        .addSource(kafkaConsumer)
+                                        .setParallelism((int) newTask.getParallelism())
+                                        .name(newTask.getName());
+                            }
+                            else {
+                                 source = env.addSource(new SyntheticConnector(newTask.getDataSize(), newTask.getDataValues(), newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), debugFrequency, newTask.getName()))
+                                        .setParallelism((int) newTask.getParallelism())
+                                        .name(newTask.getName());
+                            }
                             createdTasks.put(newTask.getName(), source);
                         }
                         else{

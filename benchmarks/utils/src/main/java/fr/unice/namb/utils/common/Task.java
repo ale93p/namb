@@ -21,6 +21,12 @@ public class Task {
     private Config.ArrivalDistribution flowDistribution;
     private int flowRate;
 
+    private boolean isExternal;
+    private String kafkaServer;
+    private String kafkaGroup;
+    private String kafkaTopic;
+    private String zookeeperServer;
+
 
     //TODO add windowing
 
@@ -31,7 +37,8 @@ public class Task {
                 Config.TrafficRouting routing, boolean isReliable, double filtering,
                 int dataSize, int dataValues, Config.DataDistribution dataDistribution,
                 Config.ArrivalDistribution flowDistribution, int flowRate,
-                ArrayList<String> parents, ArrayList<String> childs) {
+                ArrayList<String> parents, ArrayList<String> childs,
+                boolean isExternal, String kafkaServer, String kafkaGroup, String kafkaTopic, String zookeeperServer) {
         this.name = name;
         this.type = type;
         this.processing = (int) Math.round(processing * 1000);
@@ -48,21 +55,31 @@ public class Task {
 
         this.parents = parents;
         this.childs = childs;
+
+        this.isExternal = isExternal;
+        this.kafkaServer = kafkaServer;
+        this.kafkaGroup = kafkaGroup;
+        this.kafkaTopic = kafkaTopic;
+        this.zookeeperServer = zookeeperServer;
     }
 
-    //it's source
+    //it's synthetic source
     public Task(String name, long parallelism, boolean isReliable,
                 int dataSize, int dataValues, Config.DataDistribution dataDistribution,
                 Config.ArrivalDistribution flowDistribution, int flowRate, ArrayList<String> childs){
-        this(name, Config.ComponentType.source, 0, parallelism, null, isReliable, 0, dataSize, dataValues, dataDistribution, flowDistribution, flowRate, null, childs);
+        this(name, Config.ComponentType.source, 0, parallelism, null, isReliable, 0, dataSize, dataValues, dataDistribution, flowDistribution, flowRate, null, childs, false, null, null, null, null);
+    }
+
+    //it's kafka source
+    public Task(String name, long parallelism, boolean isReliable,
+                String kafkaServer, String kafkaGroup, String kafkaTopic, String zookeeperServer,
+                ArrayList<String> childs){
+        this(name, Config.ComponentType.source, 0, parallelism, null, isReliable, 0, 0, 0, null, null, 0, null, childs, true, kafkaServer, kafkaGroup, kafkaTopic, zookeeperServer);
     }
 
     //it's task
-    public Task(String name, double processing, long parallelism, Config.TrafficRouting routing, boolean isReliable, double filtering, ArrayList<String> parents, ArrayList<String> childs){
-        this(name, Config.ComponentType.task, processing, parallelism, routing, isReliable, filtering, 0, 0, null, null, 0, parents, childs);
-    }
     public Task(String name, double processing, long parallelism, Config.TrafficRouting routing, boolean isReliable, double filtering, int dataSize, ArrayList<String> parents, ArrayList<String> childs){
-        this(name, Config.ComponentType.task, processing, parallelism, routing, isReliable, filtering, dataSize, 0, null, null, 0, parents, childs);
+        this(name, Config.ComponentType.task, processing, parallelism, routing, isReliable, filtering, dataSize, 0, null, null, 0, parents, childs, false, null, null, null, null);
     }
 
     public void addChild(String t){
@@ -159,5 +176,29 @@ public class Task {
 
     public void setChilds(ArrayList<String> childs) {
         this.childs = childs;
+    }
+
+    public boolean isExternal() {
+        return isExternal;
+    }
+
+    public void setExternal(boolean external) {
+        isExternal = external;
+    }
+
+    public String getKafkaServer() {
+        return kafkaServer;
+    }
+
+    public String getKafkaGroup() {
+        return kafkaGroup;
+    }
+
+    public String getKafkaTopic() {
+        return kafkaTopic;
+    }
+
+    public String getZookeeperServer() {
+        return zookeeperServer;
     }
 }

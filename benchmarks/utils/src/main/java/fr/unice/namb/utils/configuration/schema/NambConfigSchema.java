@@ -456,6 +456,14 @@ public class NambConfigSchema extends ConfigSchema {
         public void setParents(String[] parents) {
             this.parents = parents;
         }
+
+        public ExternalSourceKafka getKafka() {
+            return kafka;
+        }
+
+        public void setKafka(ExternalSourceKafka kafka) {
+            this.kafka = kafka;
+        }
     }
 
     public static class Pipeline{
