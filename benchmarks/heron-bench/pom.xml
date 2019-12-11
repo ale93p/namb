@@ -12,7 +12,7 @@
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>heron-bench</artifactId>
-    <version>${heron.benchmark.version}</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>fr.unice.namb</groupId>
             <artifactId>utils</artifactId>
-            <version>${utils.version}</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 
