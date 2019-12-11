@@ -57,10 +57,7 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
 
         _count ++;
         // simulate processing load
-//        for(int i = 0; i < 10000; i++){}
         for(long i = 0; i < _cycles; i++){}
-
-
 
         if(this._filtering > 0) {
             if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
@@ -72,14 +69,10 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
         else {
             ts = System.currentTimeMillis();
             out.collect(new Tuple4<>(nextValue, tuple_id, this._count, ts));
-//        out.collect(in);
         }
 
         if (this._rate > 0 && this._count % this._rate == 0){
-//        if (_count % _rate == 0){
-//        if (_count % 2000 == 0){
             if (ts == 0) ts = System.currentTimeMillis();
-//            System.out.println("[DEBUG] [" + this._me + "] : " + tuple_id + "," + this._count + "," + System.currentTimeMillis() + "," + nextValue);
             System.out.println("[DEBUG] [" + _me + "] : " + tuple_id + "," + _count + "," + ts + "," + nextValue );
         }
 

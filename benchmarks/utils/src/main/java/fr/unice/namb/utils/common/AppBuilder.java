@@ -25,6 +25,11 @@ public class AppBuilder{
     private HashMap<String, Task> pipelineTree;
     private ArrayList<String> pipelineTreeSources;
 
+    private boolean externalSource;
+    private String kafkaServer;
+    private String kafkaGroup;
+    private String kafkaTopic;
+    private String zookeeperServer;
 
 
     private int count;
@@ -61,7 +66,17 @@ public class AppBuilder{
             this.componentsParallelism = computeComponentsParallelism();
 
             this.pipelineDefined = false;
+            this.kafkaServer = conf.getDatastream().getExternal().getKafka().getServer();
+            this.externalSource = !(kafkaServer == null);
+            if (this.externalSource){
+                if(this.shape == Config.ConnectionShape.diamond) throw new IllegalArgumentException("A " + shape + " topology shape is not supported if an external Kafka source is configured");
+                this.kafkaGroup = conf.getDatastream().getExternal().getKafka().getGroup();
+                this.kafkaTopic = conf.getDatastream().getExternal().getKafka().getTopic();
+                this.zookeeperServer = conf.getDatastream().getExternal().getZookeeper().getServer();
+            }
         }
+
+
 
         this.count = 0;
     }
@@ -84,9 +99,14 @@ public class AppBuilder{
 
             String parents[] = p.getParents();
             if(parents == null){ //it's source
-                newTask = new Task(name, p.getParallelism(), p.isReliability(),
-                        p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
-                        p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
+                if (p.getKafka().getServer() == null)
+                    newTask = new Task(name, p.getParallelism(), p.isReliability(),
+                            p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
+                            p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
+                else
+                    newTask = new Task(name, p.getParallelism(), p.isReliability(),
+                            p.getKafka().getServer(), p.getKafka().getGroup(), p.getKafka().getTopic(), p.getKafka().getZookeeper(),
+                            new ArrayList<>());
                 this.pipelineTreeSources.add(name);
                 this.pipelineTree.put(name, newTask);
             }
@@ -326,6 +346,8 @@ public class AppBuilder{
         return sum;
     }
 
+
+
     public int sumArray(ArrayList<Integer> arr, int upper){
         return sumArray(arr, 0, upper);
     }
@@ -376,5 +398,25 @@ public class AppBuilder{
 
     public int getFilteringDagLevel() {
         return filteringDagLevel;
+    }
+
+    public boolean isExternalSource() {
+        return externalSource;
+    }
+
+    public String getKafkaServer() {
+        return kafkaServer;
+    }
+
+    public String getKafkaGroup() {
+        return kafkaGroup;
+    }
+
+    public String getKafkaTopic() {
+        return kafkaTopic;
+    }
+
+    public String getZookeeperServer() {
+        return zookeeperServer;
     }
 }
