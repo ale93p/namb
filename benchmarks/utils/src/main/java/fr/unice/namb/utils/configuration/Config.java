@@ -68,6 +68,12 @@ public class Config {
     public static final ArrivalDistribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = ArrivalDistribution.uniform;
     public static final int                 DS_SYNTHETIC_ARRIVAL_RATE           = 1000;
 
+    public static final String              DS_KAFKA_BOOTSTRAP_SERVER           = null;
+    public static final String              DS_KAFKA_GROUP                      = "namb_default";
+    public static final String              DS_KAFKA_TOPIC                      = "namb_topic";
+
+    public static final String              DS_ZOOKEEPER_SERVER                 = "localhost:2181";
+
 
 
     ConfigSchema configSchema;

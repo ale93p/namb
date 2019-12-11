@@ -11,7 +11,7 @@
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>flink-bench</artifactId>
-    <version>${flink.benchmark.version}</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>fr.unice.namb</groupId>
             <artifactId>utils</artifactId>
-            <version>${utils.version}</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 

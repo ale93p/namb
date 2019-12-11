@@ -4,6 +4,7 @@ package fr.unice.namb.storm;
 import fr.unice.namb.storm.bolts.BusyWaitBolt;
 import fr.unice.namb.storm.bolts.WindowedBusyWaitBolt;
 import fr.unice.namb.storm.spouts.SyntheticSpout;
+import fr.unice.namb.storm.utils.KafkaRecordTranslator;
 import fr.unice.namb.utils.common.AppBuilder;
 import fr.unice.namb.utils.common.Task;
 import fr.unice.namb.utils.configuration.Config;
@@ -11,8 +12,11 @@ import fr.unice.namb.utils.configuration.schema.NambConfigSchema;
 import fr.unice.namb.utils.configuration.schema.StormConfigSchema;
 import fr.unice.namb.utils.configuration.schema.StormConfigSchema.StormDeployment;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
+import org.apache.storm.kafka.spout.KafkaSpout;
+import org.apache.storm.kafka.spout.KafkaSpoutConfig;
 import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.SpoutDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
@@ -68,6 +72,10 @@ public class BenchmarkApplication {
         TopologyBuilder builder = new TopologyBuilder();
 
         if(! app.isPipelineDefined()) {
+            /*
+            Workflow Schema Translation
+             */
+
             boolean                 reliability         = conf.getWorkflow().isReliability();
 
             // DataStream configurations
@@ -97,10 +105,24 @@ public class BenchmarkApplication {
 
             String spoutName;
             // int s: represent the spout ID
-            for (int s = 1; s <= numberOfSpouts; s++) {
+            if(app.isExternalSource()){
+                int s = 1;
                 spoutName = "spout_" + s;
                 spoutsList.add(spoutName);
-                builder.setSpout(spoutName, new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequency), cpIterator.next());
+                KafkaSpoutConfig<String, String> kafkaConfig = KafkaSpoutConfig.builder(app.getKafkaServer(), app.getKafkaTopic())
+                        .setFirstPollOffsetStrategy(KafkaSpoutConfig.FirstPollOffsetStrategy.LATEST)
+                        .setProp(ConsumerConfig.GROUP_ID_CONFIG, app.getKafkaServer())
+                        .setRecordTranslator(new KafkaRecordTranslator(debugFrequency, spoutName))
+                        .build();
+                builder.setSpout(spoutName, new KafkaSpout<>(kafkaConfig), cpIterator.next());
+
+            }
+            else{
+                for (int s = 1; s <= numberOfSpouts; s++) {
+                    spoutName = "spout_" + s;
+                    spoutsList.add(spoutName);
+                    builder.setSpout(spoutName, new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequency), cpIterator.next());
+                }
             }
 
             int boltID = 1;
@@ -174,6 +196,10 @@ public class BenchmarkApplication {
             }
         }
         else{
+            /*
+            Pipeline Schema Translation
+             */
+
             HashMap<String, Task> pipeline = app.getPipelineTree();
             ArrayList<String> dagLevel = app.getPipelineTreeSources();
             HashMap<String, Object> createdTasks = new HashMap<>();
@@ -184,8 +210,18 @@ public class BenchmarkApplication {
                     if (!createdTasks.containsKey(task)) {
                         Task newTask = pipeline.get(task);
                         if (newTask.getType() == Config.ComponentType.source) {
-                            SpoutDeclarer spout = builder.setSpout(newTask.getName(), new SyntheticSpout(newTask.getDataSize(), newTask.getDataValues(),
-                                    newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), newTask.isReliable(), debugFrequency), newTask.getParallelism());
+                            SpoutDeclarer spout = null;
+                            if (newTask.isExternal()){
+                                KafkaSpoutConfig<String, String> kafkaConfig = KafkaSpoutConfig.builder(app.getKafkaServer(), newTask.getKafkaTopic())
+                                        .setFirstPollOffsetStrategy(KafkaSpoutConfig.FirstPollOffsetStrategy.LATEST)
+                                        .setProp(ConsumerConfig.GROUP_ID_CONFIG, newTask.getKafkaServer())
+                                        .setRecordTranslator(new KafkaRecordTranslator(debugFrequency, newTask.getName()))
+                                        .build();
+                                spout = builder.setSpout(newTask.getName(), new KafkaSpout<>(kafkaConfig), newTask.getParallelism());
+                            }
+                            else
+                                spout = builder.setSpout(newTask.getName(), new SyntheticSpout(newTask.getDataSize(), newTask.getDataValues(),
+                                        newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), newTask.isReliable(), debugFrequency), newTask.getParallelism());
                             createdTasks.put(newTask.getName(), spout);
                         } else {
                             //TODO add windowing

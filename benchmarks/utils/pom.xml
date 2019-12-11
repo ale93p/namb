@@ -12,7 +12,7 @@
     </parent>
     <groupId>fr.unice.namb</groupId>
     <artifactId>utils</artifactId>
-    <version>${utils.version}</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -39,6 +39,12 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka_2.11</artifactId>
+            <version>${flink.version}</version>
         </dependency>
 
     </dependencies>

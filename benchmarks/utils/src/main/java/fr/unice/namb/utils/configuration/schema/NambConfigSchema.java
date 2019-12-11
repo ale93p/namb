@@ -163,6 +163,56 @@ public class NambConfigSchema extends ConfigSchema {
         }
     }
 
+    public static class ExternalSourceKafka{
+        private String server = Config.DS_KAFKA_BOOTSTRAP_SERVER;
+        private String zookeeper = Config.DS_ZOOKEEPER_SERVER;
+        private String group = Config.DS_KAFKA_GROUP;
+        private String topic = Config.DS_KAFKA_TOPIC;
+
+        public String getServer() {
+            return server;
+        }
+
+        public void setServer(String server) {
+            this.server = server;
+        }
+
+        public String getZookeeper() {
+            return zookeeper;
+        }
+
+        public void setZookeeper(String zookeeper) {
+            this.zookeeper = zookeeper;
+        }
+
+        public String getGroup() {
+            return group;
+        }
+
+        public void setGroup(String group) {
+            this.group = group;
+        }
+
+        public String getTopic() {
+            return topic;
+        }
+
+        public void setTopic(String topic) {
+            this.topic = topic;
+        }
+    }
+    public static class ZookeeperCluster{
+        private String server = Config.DS_ZOOKEEPER_SERVER;
+
+        public String getServer() {
+            return server;
+        }
+
+        public void setServer(String server) {
+            this.server = server;
+        }
+    }
+
     public static class DataFlow {
 
         private int depth = Config.WF_DEPTH;
@@ -253,9 +303,38 @@ public class NambConfigSchema extends ConfigSchema {
             }
         }
 
-        //TODO: implement external data source
+        public static class External {
+
+            private ExternalSourceKafka kafka = new ExternalSourceKafka();
+            private ZookeeperCluster zookeeper = new ZookeeperCluster();
+
+            public ExternalSourceKafka getKafka() {
+                return kafka;
+            }
+
+            public void setKafka(ExternalSourceKafka kafka) {
+                this.kafka = kafka;
+            }
+
+            public ZookeeperCluster getZookeeper() {
+                return zookeeper;
+            }
+
+            public void setZookeeper(ZookeeperCluster zookeeper) {
+                this.zookeeper = zookeeper;
+            }
+        }
 
         private Synthetic synthetic = new Synthetic();
+        private External external = new External();
+
+        public External getExternal() {
+            return external;
+        }
+
+        public void setExternal(External external) {
+            this.external = external;
+        }
 
         public Synthetic getSynthetic() {
             return synthetic;
@@ -279,6 +358,7 @@ public class NambConfigSchema extends ConfigSchema {
         private int resizeddata = 0;
         private Flow flow = new Flow();
         private String[] parents = null;
+        private ExternalSourceKafka kafka = new ExternalSourceKafka();
 
         public String getName() {
             return name;
@@ -375,6 +455,14 @@ public class NambConfigSchema extends ConfigSchema {
 
         public void setParents(String[] parents) {
             this.parents = parents;
+        }
+
+        public ExternalSourceKafka getKafka() {
+            return kafka;
+        }
+
+        public void setKafka(ExternalSourceKafka kafka) {
+            this.kafka = kafka;
         }
     }
 
