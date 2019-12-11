@@ -35,6 +35,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.heron</groupId>
+            <artifactId>heron-api</artifactId>
+            <version>0.20.1-incubating</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

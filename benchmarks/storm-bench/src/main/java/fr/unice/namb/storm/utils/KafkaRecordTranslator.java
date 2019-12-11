@@ -22,6 +22,7 @@ public class KafkaRecordTranslator implements RecordTranslator<String, String> {
         this.fields = new Fields("tuple_id", "tuple_value", "ts", "num");
         this.stream = "default";
         this.counter = 0;
+        this.me = me;
         if (frequency > 0) this.rate = (int) (1/frequency);
     }
 
