@@ -13,13 +13,13 @@ datastream:
       distribution: uniform # [uniform, burst]
       rate: 1000 # msg/s: max value is 1000 (1 each ms), 0 is without pause between packages
 
-  external:
-    kafka:
-      server: localhost:9092
-      group: test
-      topic: topic
-    zookeeper:
-      server: localhost:2181
+  # external:
+  #   kafka:
+  #     server: localhost:9092
+  #     group: test
+  #     topic: topic
+  #   zookeeper:
+  #     server: localhost:2181
 
 ###############################################
 # WORKFLOW: application (DAG) properties
