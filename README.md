@@ -39,7 +39,7 @@ application for Data Stream Processing Systems (DSP).
      ```bash
      python3 namb.py build
      ```
-3. Customize the configuration files (see: [doc/configurations](https://ale93p.github.io/namb/docs/configurations.html)): 
+3. Customize the configuration files (see: [doc/configurations](https://ale93p.github.io/namb/config)): 
 5. Run the benchmark on your platform. e.g. flink:
      ```bash
      python3 namb.py flink
