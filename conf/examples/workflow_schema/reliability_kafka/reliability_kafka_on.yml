@@ -1,0 +1,26 @@
+datastream:
+
+  external:
+    kafka:
+      server: localhost:9092
+      group: test
+      topic: test
+    zookeeper:
+      server: localhost:2181
+
+dataflow:
+
+  depth: 3
+
+  scalability:
+    parallelism: 3
+    balancing: balanced
+
+  connection: 
+    shape: linear 
+    routing: balanced 
+
+  workload:
+    processing: 0
+
+  reliable: true
