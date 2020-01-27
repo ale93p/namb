@@ -67,3 +67,7 @@ application for Data Stream Processing Systems (DSP).
      python3 namb.py flink
      ```
     Use -h for more options and infos.
+    
+## Publications
+
+[[pagliari2019workflow](https://hal.archives-ouvertes.fr/hal-02371215/)] A. Pagliari, F. Huet, G. Urvoy-Keller, "Towards a High-Level Description for Generating Stream Processing Benchmark Applications", IEEE BigData, 3rd IEEE BPOD Workshop, 2019
