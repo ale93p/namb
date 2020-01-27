@@ -31,17 +31,39 @@ application for Data Stream Processing Systems (DSP).
     | [Apache Storm](https://storm.apache.org/) | ![Maven Central with version prefix filter](https://img.shields.io/maven-central/v/org.apache.storm/storm-core/1.2?style=flat-square) |
     | [Apache Heron](https://apache.github.io/incubator-heron/) | ![Maven Central with version prefix filter](https://img.shields.io/maven-central/v/com.twitter.heron/heron-api/0.17.svg?style=flat-square) | 
 
-## Usage
+## Requirements
 
-1. Clone the repository and move in it
+* Java 8 and maven environment
+* Python 3
+
+## Quick Start
+
+> **N.B. We assume a local deployment of a DSP platform is previously configured and running.**<br/>
+> **For this quickstart we consider running NAMB on Apache Flink.**
+
+1. Clone the repository in a local folder and move in it
 
 2. Compile the project:
      ```bash
      python3 namb.py build
      ```
-3. Customize the configuration files (see: [doc/configurations](https://ale93p.github.io/namb/config)): 
-5. Run the benchmark on your platform. e.g. flink:
+   or directly with maven:
+     ```bash
+     mvn clean install
+     ```   
+3. Prepare NAMB environment
+    + Copy the default NAMB configuration file to the main configuration folder:
+     ```bash
+     cp conf/defaults/workflow_schema.yml conf/namb.yml
+     ```   
+    + Copy the platform-specific configurations to the main configuratino folder:
+     ```bash
+     cp conf/defaults/flink-benchmark.yml conf/flink-benchmark.yml
+     ```   
+    More info on how to ustomize the configuration files see [doc/configurations](https://ale93p.github.io/namb/config) 
+  
+4. Run the benchmark application:
      ```bash
      python3 namb.py flink
      ```
-    Use -h for more options and information.
+    Use -h for more options and infos.
