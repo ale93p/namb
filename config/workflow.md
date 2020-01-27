@@ -17,7 +17,7 @@ nav_order: 1
 
 ### Synthetic Datastream
 
-This properies are inside the `synthetic` tag of the `datastream` section: 
+These properties are inside the `synthetic` tag of the `datastream` section: 
 ```yaml
 datastream:
     synthetic:
@@ -97,10 +97,74 @@ datastream:
 ```
 The number of messages per second that will be generated. The max value is 1000, as `sleep` cannot go under 1ms. If the value is set to 0 there won't be any rate limitation.
 
+### External Generation
+These properties are inside the `external` tag of the `datastream` section: 
+```yaml
+datastream:
+    external:
+        --> here <--
+
+workflow:
+    ...
+```
+
+| Property | Value 
+|:----|:----|
+| `kafka:` | |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`server`](#kafka-server) | text |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`group`](#group) | text |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`topic`](#topic) | text |
+| `zookeeper:` | | |
+| &nbsp;&nbsp;&nbsp;&nbsp;[`server`](#zookeeper-server) | text |
+
+#### kafka server
+{: .no_toc }
+
+```yaml
+datastream:
+    external:
+        kafka:
+            server: localhost:9092
+```
+It speciefies the connection string `address:port` to the kafka server.
+
+#### group
+{: .no_toc }
+
+```yaml
+datastream:
+    external:
+        kafka:
+            group: test
+```
+It speciefies the kafka group of which the client will be part of.
+
+#### topic
+{: .no_toc }
+
+```yaml
+datastream:
+    external:
+        kafka:
+            topic: test
+```
+It speciefies the kafka topic to which connect the client.
+
+#### kafka server
+{: .no_toc }
+
+```yaml
+datastream:
+    external:
+        zookeeper:
+            server: localhost:9092
+```
+It speciefies the connection string `address:port` to the zookeeper server.
+
 
 ## Workflow Definition
 
-This properies are inside the `workflow` tag: 
+These properties are inside the `workflow` tag: 
 ```yaml
 datastream:
     ...
