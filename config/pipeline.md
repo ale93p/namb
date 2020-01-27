@@ -7,6 +7,8 @@ nav_order: 2
 
 # Pipeline Schema
 
+The Pipeline Schema has a per-task definition of the application. It allows the user to specify the application logic at each step, allowing for a generation of more complex applications.
+
 ## Table of Contents
 {: .no_toc .text-delta }
 
@@ -60,9 +62,6 @@ pipeline:
       reliability: true
 ```
 A boolean value that enables (if true) the message reliability mechanism of the platform in the current task.
-
-Currently not available in `flink`.
-{: .text-red-000 }
 
 ## Source Properties
 

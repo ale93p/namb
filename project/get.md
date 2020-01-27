@@ -18,8 +18,9 @@ NAMB is open source and freely available on [GitHub](github.com/ale93p/namb). He
 
 ## Quick Start
 
-> **N.B. We assume a local deployment of a DSP platform is previously configured and running.**<br/>
-> **For this quickstart we consider running NAMB on Apache Flink.**
+> N.B. We assume a local deployment of a DSP platform is **previously configured and running**.<br/>
+> For this quickstart we consider running NAMB on **Apache Flink**.
+{: .text-red-000 }
 
 1. Clone the repository in a local folder and move in it
 
@@ -40,7 +41,7 @@ NAMB is open source and freely available on [GitHub](github.com/ale93p/namb). He
      ```bash
      cp conf/defaults/flink-benchmark.yml conf/flink-benchmark.yml
      ```   
-    More info on how to ustomize the configuration files see [doc/configurations](https://ale93p.github.io/namb/config) 
+    More info on how to ustomize the configuration files see [config](/config) 
   
 4. Run the benchmark application:
      ```bash

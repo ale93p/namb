@@ -7,6 +7,10 @@ nav_order: 1
 
 # Workflow Schema
 
+The Workflow Schema is a generic description of the application that we want to generate. It is fast and easy to customize. The configuration file is divided in two major sections:
+* **datastream**: describe the input flow of data
+* **workflow**: describe the actual business logic of the application
+
 ## Table of Contents
 {: .no_toc .text-delta }
 
