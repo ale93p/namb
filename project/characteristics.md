@@ -3,6 +3,7 @@ layout: default
 title: Fundamental Characteristics
 parent: Project
 nav_order: 2
+nav_exclude: true
 ---
 # Fundamental Characteristics
 {: .no_toc }
