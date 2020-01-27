@@ -67,8 +67,8 @@ Currently not available in `flink`.
 ## Source Properties
 
 The sources are the first tasks listed under the `tasks`tag. The properties of the data stream that will be injected in the application are identical as the ones described in the Workflow Schema: 
-* the source can [generate syntethic data](config/workflow#synthetic-datastream)
-* or connect to an [external kafka](config/workflow#external-generation) producer
+* the source can [generate syntethic data](workflow#synthetic-datastream)
+* or connect to an [external kafka](workflow#external-generation) producer
 
 ## Processing Task Properties
 
