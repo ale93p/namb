@@ -40,6 +40,11 @@ public class BuildWorkflow {
 
         ArrayList<Integer> dagLevelsWidth = app.getDagLevelsWidth();
         ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
+        ArrayList<Integer> componentsLoad = app.getComponentsLoad();
+        Iterator<Integer> componentParallelism = componentsParallelism.iterator();
+        Iterator<Integer> componentLoad = componentsLoad.iterator();
+
+        int numberOfSpouts = dagLevelsWidth.get(0);
 
         // Windowing
         boolean windowingEnabled = conf.getWorkflow().getWindowing().isEnabled();
@@ -47,14 +52,10 @@ public class BuildWorkflow {
         int windowDuration = conf.getWorkflow().getWindowing().getDuration();
         int windowInterval = conf.getWorkflow().getWindowing().getInterval();
 
-        int numberOfSpouts = dagLevelsWidth.get(0);
-        int numberOfBolts = app.getTotalComponents() - numberOfSpouts;
+        int windowedTasks = (app.getDepth() > 3) ? 2 : 1;
 
-        Iterator<Integer> cpIterator = componentsParallelism.iterator();
         ArrayList<String> spoutsList = new ArrayList<>();
         ArrayList<String> boltsList = new ArrayList<>();
-
-        int windowedTasks = (app.getDepth() > 3) ? 2 : 1;
 
         String spoutName;
         // int s: represent the spout ID
@@ -67,13 +68,13 @@ public class BuildWorkflow {
                     .setProp(ConsumerConfig.GROUP_ID_CONFIG, app.getKafkaServer())
                     .setRecordTranslator(new KafkaRecordTranslator(debugFrequency, spoutName))
                     .build();
-            builder.setSpout(spoutName, new KafkaSpout<>(kafkaConfig), cpIterator.next());
+            builder.setSpout(spoutName, new KafkaSpout<>(kafkaConfig), componentParallelism.next());
 
         } else {
             for (int s = 1; s <= numberOfSpouts; s++) {
                 spoutName = "spout_" + s;
                 spoutsList.add(spoutName);
-                builder.setSpout(spoutName, new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequency), cpIterator.next());
+                builder.setSpout(spoutName, new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequency), componentParallelism.next());
             }
         }
 
@@ -89,16 +90,16 @@ public class BuildWorkflow {
             if (i == 1) {
                 for (int boltCount = 0; boltCount < levelWidth; boltCount++) {
                     boltName = "bolt_" + boltID;
-                    cycles = app.getNextProcessing();
+                    cycles = componentLoad.next();
                     BoltDeclarer boltDeclarer = null;
                     if (isWindowed) {
                         boltName = "windowed-" + boltName;
                         WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
-                        boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, windowedBolt, componentParallelism.next());
                     } else {
                         double filtering = (app.getFilteringDagLevel() == i) ? app.getFiltering() : 0;
-                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, filtering, reliability, debugFrequency), cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, filtering, reliability, debugFrequency), componentParallelism.next());
                     }
                     for (int spout = 0; spout < numberOfSpouts; spout++) {
                         setRouting(boltDeclarer, spoutsList.get(spout), app.getTrafficRouting());
@@ -111,16 +112,16 @@ public class BuildWorkflow {
                 for (int bolt = 0; bolt < levelWidth; bolt++) {
                     int startingIdx = app.sumArray(dagLevelsWidth, i - 2) - numberOfSpouts;
                     boltName = "bolt_" + boltID;
-                    cycles = app.getNextProcessing();
+                    cycles = componentLoad.next();
                     BoltDeclarer boltDeclarer = null;
                     if (isWindowed) {
                         boltName = "windowed-" + boltName;
                         WindowedBusyWaitBolt windowedBolt = new WindowedBusyWaitBolt(cycles, debugFrequency);
                         setWindow(windowedBolt, windowingType, windowDuration, windowInterval);
-                        boltDeclarer = builder.setBolt(boltName, windowedBolt, cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, windowedBolt, componentParallelism.next());
                     } else {
                         double filtering = (app.getFilteringDagLevel() == i) ? app.getFiltering() : 0;
-                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, filtering, reliability, debugFrequency), cpIterator.next());
+                        boltDeclarer = builder.setBolt(boltName, new BusyWaitBolt(cycles, filtering, reliability, debugFrequency), componentParallelism.next());
                     }
                     if (app.getShape() == Config.ConnectionShape.diamond) {
                         for (int boltCount = 0; boltCount < dagLevelsWidth.get(i - 1); boltCount++) {

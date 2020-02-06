@@ -149,11 +149,11 @@ public class BenchmarkApplication {
             // Generating app builder
             ArrayList<Integer> dagLevelsWidth = app.getDagLevelsWidth();
             ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
+            ArrayList<Integer> componentsLoad = app.getComponentsLoad();
 
 
             // Bolt-specific configurations
             int numberOfSources = dagLevelsWidth.get(0);
-            int numberOfOperators = app.getTotalComponents() - numberOfSources;
 
             // Windowing
             boolean windowingEnabled = conf.getWorkflow().getWindowing().isEnabled();
@@ -162,7 +162,8 @@ public class BenchmarkApplication {
             int windowInterval = conf.getWorkflow().getWindowing().getInterval();
             int windowedTasks = (depth > 3) ? 2 : 1;
 
-            Iterator<Integer> cpIterator = componentsParallelism.iterator();
+            Iterator<Integer> componentParallelism = componentsParallelism.iterator();
+            Iterator<Integer> componentLoad = componentsLoad.iterator();
             ArrayList<MutablePair<String, DataStream<Tuple4<String, String, Long, Long>>>> sourcesList = new ArrayList<>();
             ArrayList<MutablePair<String, SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>>> operatorsList = new ArrayList<>();
 
@@ -184,7 +185,7 @@ public class BenchmarkApplication {
 
                 DataStream<Tuple4<String, String, Long, Long>> source = env
                         .addSource(kafkaConsumer)
-                        .setParallelism(cpIterator.next())
+                        .setParallelism(componentParallelism.next())
                         .name(sourceName);
                 sourcesList.add(new MutablePair<>(sourceName, source));
             }
@@ -192,7 +193,7 @@ public class BenchmarkApplication {
                 for (int s = 1; s <= numberOfSources; s++) {
                     sourceName = "source_" + s;
                     DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency, sourceName))
-                            .setParallelism(cpIterator.next())
+                            .setParallelism(componentParallelism.next())
                             .name(sourceName);
                     sourcesList.add(new MutablePair<>(sourceName, source));
 
@@ -223,7 +224,7 @@ public class BenchmarkApplication {
                 if (i == 1) {
                     for (int opCount = 0; opCount < levelWidth; opCount++) {
                         operatorName = "op_" + operatorID;
-                        cycles = app.getNextProcessing();
+                        cycles = componentLoad.next();
                         DataStream<Tuple4<String, String, Long, Long>> parent = sourcesList.get(sourcesList.size() - 1).getRight();
 
 
@@ -238,7 +239,7 @@ public class BenchmarkApplication {
                                     .flatMap(new BusyWaitFlatMap(cycles, filtering, debugFrequency, operatorName));
                         }
 
-                        op.setParallelism(cpIterator.next())
+                        op.setParallelism(componentParallelism.next())
                                 .name(operatorName);
 
                         operatorsList.add(new MutablePair<>(operatorName, op));
@@ -252,7 +253,7 @@ public class BenchmarkApplication {
                             diamondUnion.union(operatorsList.get(o).getRight());
                         }
                         operatorName = "op_" + operatorID;
-                        cycles = app.getNextProcessing();
+                        cycles = componentLoad.next();
 
 
                         SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
@@ -266,7 +267,7 @@ public class BenchmarkApplication {
                                     .flatMap(new BusyWaitFlatMap(cycles, filtering, debugFrequency, operatorName));
                         }
 
-                        op.setParallelism(cpIterator.next())
+                        op.setParallelism(componentParallelism.next())
                                 .name(operatorName);
 
                         operatorsList.add(new MutablePair<>(operatorName, op));
@@ -277,7 +278,7 @@ public class BenchmarkApplication {
                         SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> parent = operatorsList.get(parentOperatorIdx).getRight();
                         for (int opCount = 0; opCount < levelWidth; opCount++) {
                             operatorName = "op_" + operatorID;
-                            cycles = app.getNextProcessing();
+                            cycles = componentLoad.next();
 
                             SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> op = null;
                             if (isWindowed) {
@@ -291,7 +292,7 @@ public class BenchmarkApplication {
 //                            op = parent.map(new BusyWaitMap(cycles, debugFrequency));
                             }
 
-                            op.setParallelism(cpIterator.next())
+                            op.setParallelism(componentParallelism.next())
                                     .name(operatorName);
 
                             operatorsList.add(new MutablePair<>(operatorName, op));

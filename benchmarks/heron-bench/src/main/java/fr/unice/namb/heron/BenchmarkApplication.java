@@ -75,6 +75,7 @@ public class BenchmarkApplication {
 
             ArrayList<Integer>      dagLevelsWidth          = app.getDagLevelsWidth();
             ArrayList<Integer>      componentsParallelism   = app.getComponentsParallelism();
+            ArrayList<Integer>      componentsLoad          = app.getComponentsLoad();
 
             // Windowing
             boolean                 windowingEnabled    = conf.getWorkflow().getWindowing().isEnabled();
@@ -83,9 +84,9 @@ public class BenchmarkApplication {
             int                     windowInterval      = conf.getWorkflow().getWindowing().getInterval();
 
             int     numberOfSpouts  = dagLevelsWidth.get(0);
-            int     numberOfBolts   = app.getTotalComponents() - numberOfSpouts;
 
             Iterator<Integer> cpIterator    = componentsParallelism.iterator();
+            Iterator<Integer> componentLoad = componentsLoad.iterator();
             ArrayList<String> spoutsList    = new ArrayList<>();
             ArrayList<String> boltsList     = new ArrayList<>();
 
@@ -111,7 +112,7 @@ public class BenchmarkApplication {
                 if (i == 1) {
                     for (int boltCount = 0; boltCount < levelWidth; boltCount++) {
                         boltName = "bolt_" + boltID;
-                        cycles = app.getNextProcessing();
+                        cycles = componentLoad.next();
                         BoltDeclarer boltDeclarer = null;
                         if (isWindowed) {
                             boltName = "windowed-" + boltName;
@@ -133,7 +134,7 @@ public class BenchmarkApplication {
                     for (int bolt = 0; bolt < levelWidth; bolt++) {
                         int startingIdx = app.sumArray(dagLevelsWidth, i - 2) - numberOfSpouts;
                         boltName = "bolt_" + boltID;
-                        cycles = app.getNextProcessing();
+                        cycles = componentLoad.next();
                         BoltDeclarer boltDeclarer = null;
                         if (isWindowed) {
                             boltName = "windowed-" + boltName;
