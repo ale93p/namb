@@ -1,6 +1,5 @@
 package fr.unice.namb.storm;
 
-import fr.unice.namb.storm.bolts.WindowedBusyWaitBolt;
 import fr.unice.namb.storm.utils.BuildPipeline;
 import fr.unice.namb.storm.utils.BuildWorkflow;
 import fr.unice.namb.utils.common.AppBuilder;
@@ -11,10 +10,7 @@ import fr.unice.namb.utils.configuration.schema.StormConfigSchema.StormDeploymen
 
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
-import org.apache.storm.topology.BoltDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
-import org.apache.storm.topology.base.BaseWindowedBolt.Duration;
-import org.apache.storm.tuple.Fields;
 
 public class BenchmarkApplication {
 

@@ -35,24 +35,26 @@ public class WindowedBusyWaitBolt extends BaseWindowedBolt {
 
         Object payload = null;
         String id = null;
+        long sourceCount = 0L;
         Long ts = 0L;
 
 
         for (Tuple tuple : inputWindow.get()) {
             payload = tuple.getValue(0);
             id = tuple.getString(1);
+            sourceCount = tuple.getLong(2);
 
             this._count ++;
             // simulate processing load
             for (long i = 0; i < _cycles; i++) {
             }
             ts = System.currentTimeMillis();
-            if (this._rate > 0 && this._count % this._rate == 0){
+            if (this._rate > 0 && sourceCount % this._rate == 0){
                 System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + this._count + "," + ts + "," + payload.toString());
             }
         }
 
-        _collector.emit(new Values(payload, id, this._count, ts));
+        _collector.emit(new Values(payload, id, sourceCount, ts));
 
 
     }
