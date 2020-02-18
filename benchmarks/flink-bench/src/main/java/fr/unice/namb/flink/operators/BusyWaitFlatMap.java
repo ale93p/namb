@@ -50,6 +50,7 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
 
         String nextValue = in.f0;
         String tuple_id = in.f1;
+        long sourceCount = in.f2;
 
         if(this._dataSize > 0 && this._dataSize < nextValue.length()){
             nextValue = nextValue.substring(0, this._dataSize);
@@ -62,18 +63,18 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
         if(this._filtering > 0) {
             if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
                 ts = System.currentTimeMillis();
-                out.collect(new Tuple4<>(nextValue, tuple_id, this._count, ts));
+                out.collect(new Tuple4<>(nextValue, tuple_id, sourceCount, ts));
 
             }
         }
         else {
             ts = System.currentTimeMillis();
-            out.collect(new Tuple4<>(nextValue, tuple_id, this._count, ts));
+            out.collect(new Tuple4<>(nextValue, tuple_id, sourceCount, ts));
         }
 
-        if (this._rate > 0 && this._count % this._rate == 0){
+        if (this._rate > 0 && sourceCount % this._rate == 0){
             if (ts == 0) ts = System.currentTimeMillis();
-            System.out.println("[DEBUG] [" + _me + "] : " + tuple_id + "," + _count + "," + ts + "," + nextValue );
+            System.out.println("[DEBUG] [" + _me + "] : " + tuple_id + "," + this._count + "," + ts + "," + nextValue );
         }
 
     }
