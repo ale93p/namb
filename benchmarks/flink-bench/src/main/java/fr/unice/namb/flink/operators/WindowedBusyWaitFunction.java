@@ -30,11 +30,12 @@ public class WindowedBusyWaitFunction implements AllWindowFunction<Tuple4<String
         for (Tuple4<String, String, Long, Long> t: values) {
             String nextValue = t.f0;
             String tuple_id = t.f1;
+            long sourceCount = t.f2;
             this._count ++;
             // simulate processing load
             for (long i = 0; i < this._cycles; i++) { }
             ts = System.currentTimeMillis();
-            if (this._rate > 0 && this._count % this._rate == 0){
+            if (this._rate > 0 && sourceCount % this._rate == 0){
                 System.out.println("[DEBUG] [" + this._me + "] : " + tuple_id + "," + this._count + "," + ts + "," + nextValue);
             }
             value = t;

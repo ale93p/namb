@@ -53,6 +53,7 @@ public class BusyWaitBolt extends BaseRichBolt {
 
 
         String payload = tuple.getString(0);
+        long sourceCount = tuple.getLong(2);
         if(this._dataSize > 0 && this._dataSize < payload.length()){
             payload = payload.substring(0, this._dataSize);
         }
@@ -61,25 +62,25 @@ public class BusyWaitBolt extends BaseRichBolt {
 
         this._count ++;
         // simulate processing load
-        for(long i = 0; i < this._cycles; i++){}
+        for(long i = 0; i < this._cycles; i++);
 
         Long ts = 0L;
         if(this._filtering > 0){
             if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
                 ts = System.currentTimeMillis();
-                _collector.emit(new Values(payload, id, this._count, ts));
+                _collector.emit(new Values(payload, id, sourceCount, ts));
             }
         }
         else {
             ts = System.currentTimeMillis();
-            _collector.emit(new Values(payload, id, this._count, ts));
+            _collector.emit(new Values(payload, id, sourceCount, ts));
         }
 
         if (this._reliable) {
             _collector.ack(tuple);
         }
 
-        if (this._rate > 0 && this._count % this._rate == 0) {
+        if (this._rate > 0 && sourceCount % this._rate == 0) {
             if (ts == 0) ts = System.currentTimeMillis();
             System.out.println("[DEBUG] [" + this._me + "] : " + id + "," + this._count + "," + ts + "," + payload);
         }
