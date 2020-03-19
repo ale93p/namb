@@ -1,6 +1,7 @@
 package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.Config;
+import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Data; 
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,23 +20,15 @@ public class DataGenerator {
     private ArrayList<byte[]> payload;
     private Config.DataDistribution distribution;
 
-    public DataGenerator(int size, int values, Config.DataDistribution distribution) {
-        this.dataSize = size;
-        this.dataValues = values;
+    public DataGenerator(Data conf) {
+        this.dataSize = conf.getSize();
+        this.dataValues = conf.getValues();
         this.currentString = new char[this.dataSize];
         Arrays.fill(this.currentString, (char) firstASCIIValue);
         this.pivot = 0;
         this.characters = lastASCIIValue - firstASCIIValue + 1;
         this.payload = generatePayload();
-        this.distribution = distribution;
-    }
-
-    private ArrayList<Character> generateArrayList(int length, char value){
-        ArrayList<Character> array = new ArrayList<>(length);
-        for(int i=0; i<length; i++){
-            array.add(value);
-        }
-        return array;
+        this.distribution = conf.getDistribution();
     }
 
     private String next(){
