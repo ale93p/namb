@@ -2,7 +2,8 @@ package fr.unice.namb.utils.configuration.schema;
 
 public class FlinkConfigSchema extends ConfigSchema {
 
-    private float debugFrequency = 0;
+    private float
+            debugFrequency = 0;
 
     public float getDebugFrequency() {
         return debugFrequency;

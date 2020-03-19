@@ -36,7 +36,7 @@ public class Config {
     }
 
     public enum ArrivalDistribution{
-        uniform, burst //TODO: add normal, saw-tooth, bimodal
+        uniform, burst, sawtooth, revsawtooth, sin
     }
 
     public enum ComponentType{
@@ -67,6 +67,7 @@ public class Config {
     public static final DataDistribution    DS_DATA_DISTRIBUTION                = DataDistribution.uniform;
     public static final ArrivalDistribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = ArrivalDistribution.uniform;
     public static final int                 DS_SYNTHETIC_ARRIVAL_RATE           = 1000;
+    public static final long				DS_SYNTETHIC_PHASE_DURATION			= 300;
 
     public static final String              DS_KAFKA_BOOTSTRAP_SERVER           = null;
     public static final String              DS_KAFKA_GROUP                      = "namb_default";
