@@ -60,14 +60,14 @@ public class Config {
     public static final LoadBalancing       WF_WORKLOAD_BALANCING               = LoadBalancing.balanced;
     public static final double              WF_FILTERING                        = 0;
 
-
-
     public static final int                 DS_SYNTHETIC_DATA_SIZE              = 8;
     public static final int                 DS_DATA_VALUES                      = 100;
     public static final DataDistribution    DS_DATA_DISTRIBUTION                = DataDistribution.uniform;
     public static final ArrivalDistribution DS_SYNTHETIC_ARRIVAL_DISTRIBUTION   = ArrivalDistribution.uniform;
     public static final int                 DS_SYNTHETIC_ARRIVAL_RATE           = 1000;
     public static final long				DS_SYNTETHIC_PHASE_DURATION			= 300;
+    public static final long				DS_SYNTHETIC_BURST_DURATION			= 120;
+    public static final long				DS_SYNTHETIC_BURST_INTERVAL			= 300;
 
     public static final String              DS_KAFKA_BOOTSTRAP_SERVER           = null;
     public static final String              DS_KAFKA_GROUP                      = "namb_default";

@@ -149,6 +149,9 @@ public class NambConfigSchema extends ConfigSchema {
         private int rate = Config.DS_SYNTHETIC_ARRIVAL_RATE;
         
         // For burst distribution
+        private long duration = Config.DS_SYNTHETIC_BURST_DURATION;
+        private long interval = Config.DS_SYNTHETIC_BURST_INTERVAL;
+        
         
         // For sin and sawtooth distribution
         private long phase = Config.DS_SYNTETHIC_PHASE_DURATION;
@@ -177,6 +180,23 @@ public class NambConfigSchema extends ConfigSchema {
 		public void setPhase(long phase) {
 			this.phase = phase;
 		}
+
+		public long getDuration() {
+			return duration;
+		}
+
+		public void setDuration(long duration) {
+			this.duration = duration;
+		}
+
+		public long getInterval() {
+			return interval;
+		}
+
+		public void setInterval(long interval) {
+			this.interval = interval;
+		}
+	
     }
     
     public static class Synthetic {

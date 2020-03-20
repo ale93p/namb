@@ -14,6 +14,9 @@ public class BurstDistribution extends DataDistribution {
 	public BurstDistribution(Flow conf) {
 		super(conf);
 		this.defaultInterval = 1000./(double)this.rate;
+		
+		this.interBurstInterval = conf.getInterval();
+		this.burstDuration = conf.getDuration();
 	}
 
 	@Override
