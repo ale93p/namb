@@ -21,7 +21,7 @@ import static fr.unice.namb.storm.utils.BuildCommons.setWindow;
 
 public class BuildWorkflow {
 
-    public static void build(TopologyBuilder builder, AppBuilder app, NambConfigSchema conf, StormConfigSchema stormConf) {
+    public static void build(TopologyBuilder builder, AppBuilder app, NambConfigSchema conf, StormConfigSchema stormConf) throws IllegalArgumentException, Exception {
 
         /*
             Workflow Schema Translation
@@ -32,11 +32,11 @@ public class BuildWorkflow {
         boolean reliability = conf.getWorkflow().isReliability();
 
         // DataStream configurations
-        int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
-        int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
-        Config.DataDistribution dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
-        Config.ArrivalDistribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
-        int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
+//        int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
+//        int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
+//        Config.DataDistribution dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
+//        Config.ArrivalDistribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
+//        int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
 
         ArrayList<Integer> dagLevelsWidth = app.getDagLevelsWidth();
         ArrayList<Integer> componentsParallelism = app.getComponentsParallelism();
@@ -74,7 +74,7 @@ public class BuildWorkflow {
             for (int s = 1; s <= numberOfSpouts; s++) {
                 spoutName = "spout_" + s;
                 spoutsList.add(spoutName);
-                builder.setSpout(spoutName, new SyntheticSpout(dataSize, dataValues, dataValuesBalancing, distribution, rate, reliability, debugFrequency), componentParallelism.next());
+                builder.setSpout(spoutName, new SyntheticSpout(conf.getDatastream().getSynthetic(), reliability, debugFrequency), componentParallelism.next());
             }
         }
 

@@ -20,7 +20,7 @@ import static fr.unice.namb.storm.utils.BuildCommons.setRouting;
 
 public class BuildPipeline {
 
-    public static void build(TopologyBuilder builder, AppBuilder app, StormConfigSchema stormConf) {
+    public static void build(TopologyBuilder builder, AppBuilder app, StormConfigSchema stormConf) throws IllegalArgumentException, Exception {
          /*
         Pipeline Schema Translation
          */
@@ -46,8 +46,7 @@ public class BuildPipeline {
                                     .build();
                             spout = builder.setSpout(newTask.getName(), new KafkaSpout<>(kafkaConfig), newTask.getParallelism());
                         } else
-                            spout = builder.setSpout(newTask.getName(), new SyntheticSpout(newTask.getDataSize(), newTask.getDataValues(),
-                                    newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), newTask.isReliable(), debugFrequency), newTask.getParallelism());
+                            spout = builder.setSpout(newTask.getName(), new SyntheticSpout(newTask.getData(), newTask.getFlow(), newTask.isReliable(), debugFrequency), newTask.getParallelism());
                         createdTasks.put(newTask.getName(), spout);
                     } else {
                         //TODO add windowing
@@ -55,7 +54,7 @@ public class BuildPipeline {
 //                            System.out.println(newTask.getName() + " has datasize " + newTask.getDataSize());
 
 
-                        BoltDeclarer boltDeclarer = builder.setBolt(newTask.getName(), new BusyWaitBolt(newTask.getProcessing(), newTask.getFiltering(), newTask.isReliable(), newTask.getDataSize(), debugFrequency), newTask.getParallelism());
+                        BoltDeclarer boltDeclarer = builder.setBolt(newTask.getName(), new BusyWaitBolt(newTask.getProcessing(), newTask.getFiltering(), newTask.isReliable(), newTask.getResizeddata(), debugFrequency), newTask.getParallelism());
                         for (String parent : newTask.getParents()) {
                             setRouting(boltDeclarer, parent, newTask.getRouting());
                         }
