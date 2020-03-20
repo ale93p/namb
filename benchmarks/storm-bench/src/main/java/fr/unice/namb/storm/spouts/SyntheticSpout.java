@@ -23,9 +23,6 @@ public class SyntheticSpout extends BaseRichSpout {
 
     private SpoutOutputCollector _collector;
 
-    
-    private long sleepTime;
-    private Config.ArrivalDistribution distribution;
     private DataGenerator dataGenerator;
     private StreamGenerator dataStream;
     private boolean reliable;
