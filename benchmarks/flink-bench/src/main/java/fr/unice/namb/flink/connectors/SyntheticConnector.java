@@ -53,9 +53,12 @@ public class SyntheticConnector extends RichParallelSourceFunction<Tuple4<String
                 String nextValue = new String(dataGenerator.getNextValue());
                 
                 double sleepTime = this.dataStream.getSleepTime();
-                Thread.sleep(
+                
+                if(sleepTime != 0) {
+	                Thread.sleep(
                 		(long) sleepTime, (int)((sleepTime - (long)sleepTime) * 1000000)
                     );
+                }
                 
                 this.count++;
                 String tuple_id = UUID.randomUUID().toString();
