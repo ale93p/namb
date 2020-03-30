@@ -1,13 +1,14 @@
 package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.Config;
-import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Data; 
+import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class DataGenerator {
+public class DataGenerator implements Serializable{
 
     private final static int firstASCIIValue = 97;
     private final static int lastASCIIValue = 122;

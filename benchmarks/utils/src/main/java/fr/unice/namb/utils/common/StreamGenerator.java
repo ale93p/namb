@@ -2,24 +2,28 @@ package fr.unice.namb.utils.common;
 
 import fr.unice.namb.utils.configuration.Config.ArrivalDistribution;
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Flow;
+
+import java.io.Serializable;
+
 import fr.unice.namb.utils.common.generators.*;
 
-public class StreamGenerator {
+public class StreamGenerator implements Serializable{
     
     private ArrivalDistribution distribution;
     
-    private DataDistribution dataDist;
+    private StreamDistribution dataDist;
     
     public StreamGenerator(Flow conf) throws Exception{
         distribution = conf.getDistribution();
-        dataDist = getDataDistribution(conf);
+        dataDist = getStreamDistribution(conf);
     }
     
-    private DataDistribution getDataDistribution(Flow conf) throws Exception {
+    private StreamDistribution getStreamDistribution(Flow conf) throws Exception {
     	switch(distribution){
     	case uniform:
     		return new CbrDistribution(conf);
     	case burst:
+    		return new BurstDistribution(conf);
     	case sin:
     		return new SinDistribution(conf);
     	case sawtooth:
