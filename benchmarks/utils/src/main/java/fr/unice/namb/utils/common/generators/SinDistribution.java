@@ -2,7 +2,7 @@ package fr.unice.namb.utils.common.generators;
 
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Flow;
 
-public class SinDistribution extends DataDistribution {
+public class SinDistribution extends StreamDistribution {
 
 	private long phaseDuration; 
 	
@@ -13,7 +13,7 @@ public class SinDistribution extends DataDistribution {
 
 	@Override
 	public double getInterMessageTime() {
-		double omega = 2 * Math.PI * (1/(double)(phaseDuration*1000)); //convert phase from seconds to ms
+		double omega = 2 * Math.PI * (1/(double)(phaseDuration));
 		double t = System.currentTimeMillis();
 		double s = rate/2 * Math.sin(omega*t) + rate/2;
 		return 1000/s;

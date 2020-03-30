@@ -2,7 +2,7 @@ package fr.unice.namb.utils.common.generators;
 
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Flow;
 
-public class BurstDistribution extends DataDistribution {
+public class BurstDistribution extends StreamDistribution {
 	
 	private double defaultInterval;
 	

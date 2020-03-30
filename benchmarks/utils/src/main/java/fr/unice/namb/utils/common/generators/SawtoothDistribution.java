@@ -2,7 +2,7 @@ package fr.unice.namb.utils.common.generators;
 
 import fr.unice.namb.utils.configuration.schema.NambConfigSchema.Flow;
 
-public class SawtoothDistribution extends DataDistribution {
+public class SawtoothDistribution extends StreamDistribution {
 	
 	private long phaseDuration; 
 	private boolean isReverse;
@@ -19,10 +19,10 @@ public class SawtoothDistribution extends DataDistribution {
 
 	@Override
 	public double getInterMessageTime() {
-		double k = - rate / Math.PI;
-		if (isReverse) k *= -1;
+		double k = - (rate / Math.PI);
+		if (isReverse) k *= -1.;
 		double t = System.currentTimeMillis();
-		double omega = 1. / Math.tan( (t * Math.PI) / (phaseDuration*1000) ); //convert phase from seconds to ms
+		double omega = 1. / Math.tan( (t * Math.PI) / (phaseDuration) );
 		double s = k * Math.atan( omega ) + rate/2;
 		if ((int) s == 0) s = rate;
 		return 1000 / s;
