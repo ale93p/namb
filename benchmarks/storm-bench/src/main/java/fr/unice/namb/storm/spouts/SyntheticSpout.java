@@ -29,7 +29,6 @@ public class SyntheticSpout extends BaseRichSpout {
     private int rate;
 
     private long count;
-    private long ts;
     private String me;
 
     public SyntheticSpout(Data data, Flow flow, boolean isReliable, double frequency) throws Exception {
@@ -65,16 +64,16 @@ public class SyntheticSpout extends BaseRichSpout {
 
             this.count++;
             String tuple_id = UUID.randomUUID().toString();
-            this.ts = System.currentTimeMillis();
+            long ts = System.currentTimeMillis();
             if(this.reliable) {
-                _collector.emit(new Values(nextValue, tuple_id, this.count, this.ts), this.count);
+                _collector.emit(new Values(nextValue, tuple_id, this.count, ts), this.count);
             }
             else {
-                _collector.emit(new Values(nextValue, tuple_id, this.count, this.ts));
+                _collector.emit(new Values(nextValue, tuple_id, this.count, ts));
             }
             
             if (this.rate > 0  && this.count % this.rate == 0){
-                System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + this.ts + "," + nextValue);
+                System.out.println("[DEBUG] [" + this.me + "] : " + tuple_id + "," + this.count + "," + ts + "," + nextValue);
             }
 
         } catch (Exception e){

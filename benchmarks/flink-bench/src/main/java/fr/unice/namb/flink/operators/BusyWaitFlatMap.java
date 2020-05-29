@@ -45,7 +45,7 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
     @Override
     public void flatMap(Tuple4<String, String, Long, Long> in, Collector<Tuple4<String, String, Long, Long>> out){
 
-        long ts = 0L;
+
 
 
         String nextValue = in.f0;
@@ -60,15 +60,13 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
         // simulate processing load
         for(long i = 0; i < _cycles; i++){}
 
+        long ts = System.currentTimeMillis();
         if(this._filtering > 0) {
             if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
-                ts = System.currentTimeMillis();
                 out.collect(new Tuple4<>(nextValue, tuple_id, sourceCount, ts));
-
             }
         }
         else {
-            ts = System.currentTimeMillis();
             out.collect(new Tuple4<>(nextValue, tuple_id, sourceCount, ts));
         }
 
