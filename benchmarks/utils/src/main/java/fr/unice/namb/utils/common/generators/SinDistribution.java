@@ -13,7 +13,7 @@ public class SinDistribution extends StreamDistribution {
 
 	@Override
 	public double getInterMessageTime() {
-		double omega = 2 * Math.PI * (1/(double)(phaseDuration));
+		double omega = 2 * Math.PI * (1/(double)(phaseDuration*1000));
 		double t = System.currentTimeMillis();
 		double s = rate/2 * Math.sin(omega*t) + rate/2;
 		return 1000/s;

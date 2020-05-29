@@ -22,7 +22,7 @@ public class SawtoothDistribution extends StreamDistribution {
 		double k = - (rate / Math.PI);
 		if (isReverse) k *= -1.;
 		double t = System.currentTimeMillis();
-		double omega = 1. / Math.tan( (t * Math.PI) / (phaseDuration) );
+		double omega = 1. / Math.tan( (t * Math.PI) / (phaseDuration*1000) );
 		double s = k * Math.atan( omega ) + rate/2;
 		if ((int) s == 0) s = rate;
 		return 1000 / s;
