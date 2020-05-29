@@ -20,7 +20,7 @@ import java.util.Properties;
 import static fr.unice.namb.flink.utils.BuildCommons.setRouting;
 
 public class BuildPipeline {
-    public static void build(StreamExecutionEnvironment env, AppBuilder app, NambConfigSchema conf, FlinkConfigSchema flinkConf){
+    public static void build(StreamExecutionEnvironment env, AppBuilder app, NambConfigSchema conf, FlinkConfigSchema flinkConf) throws Exception{
         /*
             Pipeline Schema Translation
              */
@@ -52,7 +52,7 @@ public class BuildPipeline {
                                     .name(newTask.getName());
                         }
                         else {
-                            source = env.addSource(new SyntheticConnector(newTask.getDataSize(), newTask.getDataValues(), newTask.getDataDistribution(), newTask.getFlowDistribution(), newTask.getFlowRate(), debugFrequency, newTask.getName()))
+                            source = env.addSource(new SyntheticConnector(newTask.getData(), newTask.getFlow(), debugFrequency, newTask.getName()))
                                     .setParallelism((int) newTask.getParallelism())
                                     .name(newTask.getName());
                         }
@@ -82,7 +82,7 @@ public class BuildPipeline {
 
                             //TODO: impolement windowing
                             op =  setRouting(streamUnion, newTask.getRouting())
-                                    .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getDataSize(), debugFrequency, newTask.getName()));
+                                    .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getResizeddata(), debugFrequency, newTask.getName()));
                         }
                         else{
 
@@ -90,13 +90,13 @@ public class BuildPipeline {
                                 DataStream<Tuple4<String, String, Long, Long>> parent = (DataStream<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(0));
 
                                 op =  setRouting(parent, newTask.getRouting())
-                                        .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getDataSize(), debugFrequency, newTask.getName()));
+                                        .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getResizeddata(), debugFrequency, newTask.getName()));
                             }
                             else{
                                 SingleOutputStreamOperator<Tuple4<String, String, Long, Long>> parent = (SingleOutputStreamOperator<Tuple4<String, String, Long, Long>>) createdTasks.get(parentsList.get(0));
 
                                 op =  setRouting(parent, newTask.getRouting())
-                                        .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getDataSize(), debugFrequency, newTask.getName()));
+                                        .flatMap(new BusyWaitFlatMap(newTask.getProcessing(), newTask.getFiltering(), newTask.getResizeddata(), debugFrequency, newTask.getName()));
                             }
 
                         }

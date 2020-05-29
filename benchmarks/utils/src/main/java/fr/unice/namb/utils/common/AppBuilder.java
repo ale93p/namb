@@ -18,7 +18,8 @@ public class AppBuilder {
     private int parallelism;
     private Config.ParaBalancing paraBalancing;
     private ArrayList<Integer> componentsParallelism;
-
+    
+    
     private int processing;
     private Config.LoadBalancing loadBalancing;
     private ArrayList<Integer> componentsLoad;
@@ -333,19 +334,15 @@ public class AppBuilder {
             String parents[] = p.getParents();
             if (parents == null) { //it's source
                 if (p.getKafka().getServer() == null)
-                    newTask = new Task(name, p.getParallelism(), p.isReliability(),
-                            p.getData().getSize(), p.getData().getValues(), p.getData().getDistribution(),
-                            p.getFlow().getDistribution(), p.getFlow().getRate(), new ArrayList<>());
+                    newTask = new Task(name, p, new ArrayList<>());
                 else
-                    newTask = new Task(name, p.getParallelism(), p.isReliability(),
-                            p.getKafka().getServer(), p.getKafka().getGroup(), p.getKafka().getTopic(), p.getKafka().getZookeeper(),
-                            new ArrayList<>());
+                    newTask = new Task(name, p, new ArrayList<>());
                 this.pipelineTreeSources.add(name);
                 this.pipelineTree.put(name, newTask);
             } else { //it's a task
                 List<String> parentsList = Arrays.asList(p.getParents());
                 ArrayList<String> taskParents = new ArrayList<>(parentsList);
-                newTask = new Task(name, p.getProcessing(), p.getParallelism(), p.getRouting(), p.isReliability(), p.getFiltering(), p.getResizeddata(), taskParents, new ArrayList<>());
+                newTask = new Task(name, p, taskParents, new ArrayList<>());
                 for (String parent : taskParents) {
                     Task parentTask = this.pipelineTree.get(parent);
                     parentTask.addChild(name);

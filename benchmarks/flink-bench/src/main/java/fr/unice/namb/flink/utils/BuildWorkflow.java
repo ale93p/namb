@@ -23,7 +23,7 @@ import static fr.unice.namb.flink.utils.BuildCommons.setWindow;
 
 public class BuildWorkflow {
 
-    public static void build(StreamExecutionEnvironment env, AppBuilder app, NambConfigSchema conf, FlinkConfigSchema flinkConf) {
+    public static void build(StreamExecutionEnvironment env, AppBuilder app, NambConfigSchema conf, FlinkConfigSchema flinkConf) throws Exception {
         /*
         Workflow Schema Translation
          */
@@ -32,20 +32,13 @@ public class BuildWorkflow {
 
         // DataFlow configurations
         int depth = conf.getWorkflow().getDepth();
-        int totalParallelism = conf.getWorkflow().getScalability().getParallelism();
-        Config.ParaBalancing paraBalancing = conf.getWorkflow().getScalability().getBalancing();
-        double variability = conf.getWorkflow().getScalability().getVariability();
+//        int totalParallelism = conf.getWorkflow().getScalability().getParallelism();
+//        Config.ParaBalancing paraBalancing = conf.getWorkflow().getScalability().getBalancing();
+//        double variability = conf.getWorkflow().getScalability().getVariability();
         Config.ConnectionShape topologyShape = conf.getWorkflow().getConnection().getShape();
         Config.TrafficRouting trafficRouting = conf.getWorkflow().getConnection().getRouting();
-        double processingLoad = conf.getWorkflow().getWorkload().getProcessing();
-        Config.LoadBalancing loadBalancing = conf.getWorkflow().getWorkload().getBalancing();
-
-        // DataStream configurations
-        int dataSize = conf.getDatastream().getSynthetic().getData().getSize();
-        int dataValues = conf.getDatastream().getSynthetic().getData().getValues();
-        Config.DataDistribution dataValuesBalancing = conf.getDatastream().getSynthetic().getData().getDistribution();
-        Config.ArrivalDistribution distribution = conf.getDatastream().getSynthetic().getFlow().getDistribution();
-        int rate = conf.getDatastream().getSynthetic().getFlow().getRate();
+//        double processingLoad = conf.getWorkflow().getWorkload().getProcessing();
+//        Config.LoadBalancing loadBalancing = conf.getWorkflow().getWorkload().getBalancing();
 
         // Generating app builder
         ArrayList<Integer> dagLevelsWidth = app.getDagLevelsWidth();
@@ -91,7 +84,7 @@ public class BuildWorkflow {
         } else {
             for (int s = 1; s <= numberOfSources; s++) {
                 sourceName = "source_" + s;
-                DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(dataSize, dataValues, dataValuesBalancing, distribution, rate, debugFrequency, sourceName))
+                DataStream<Tuple4<String, String, Long, Long>> source = env.addSource(new SyntheticConnector(conf.getDatastream().getSynthetic(), debugFrequency, sourceName))
                         .setParallelism(componentParallelism.next())
                         .name(sourceName);
                 sourcesList.add(new MutablePair<>(sourceName, source));

@@ -144,9 +144,20 @@ public class NambConfigSchema extends ConfigSchema {
     }
     public static class Flow{
         private Config.ArrivalDistribution distribution = Config.DS_SYNTHETIC_ARRIVAL_DISTRIBUTION;
+        
+        // Maximum throughput (base throughput for burst)
         private int rate = Config.DS_SYNTHETIC_ARRIVAL_RATE;
+        
+        // For burst distribution
+        private long duration = Config.DS_SYNTHETIC_BURST_DURATION;
+        private long interval = Config.DS_SYNTHETIC_BURST_INTERVAL;
+        
+        
+        // For sin and sawtooth distribution
+        private long phase = Config.DS_SYNTETHIC_PHASE_DURATION;
+        
 
-        public Config.ArrivalDistribution getDistribution() {
+		public Config.ArrivalDistribution getDistribution() {
             return distribution;
         }
 
@@ -161,8 +172,54 @@ public class NambConfigSchema extends ConfigSchema {
         public void setRate(int rate) {
             this.rate = rate;
         }
-    }
+        
+        public long getPhase() {
+			return phase;
+		}
 
+		public void setPhase(long phase) {
+			this.phase = phase;
+		}
+
+		public long getDuration() {
+			return duration;
+		}
+
+		public void setDuration(long duration) {
+			this.duration = duration;
+		}
+
+		public long getInterval() {
+			return interval;
+		}
+
+		public void setInterval(long interval) {
+			this.interval = interval;
+		}
+	
+    }
+    
+    public static class Synthetic {
+    	
+	    private Data data = new Data();
+	    private Flow flow = new Flow();
+	
+	    public Data getData() {
+	        return data;
+	    }
+	
+	    public void setData(Data data) {
+	        this.data = data;
+	    }
+	
+	    public Flow getFlow() {
+	        return flow;
+	    }
+	
+	    public void setFlow(Flow flow) {
+	        this.flow = flow;
+	    }
+	}
     public static class ExternalSourceKafka{
         private String server = Config.DS_KAFKA_BOOTSTRAP_SERVER;
         private String zookeeper = Config.DS_ZOOKEEPER_SERVER;
@@ -213,7 +270,7 @@ public class NambConfigSchema extends ConfigSchema {
         }
     }
 
-    public static class DataFlow {
+    public static class WorkFlow {
 
         private int depth = Config.WF_DEPTH;
         private Scalability scalability = new Scalability();
@@ -281,28 +338,6 @@ public class NambConfigSchema extends ConfigSchema {
     }
 
     public static class DataStream {
-        public static class Synthetic {
-
-            private Data data = new Data();
-            private Flow flow = new Flow();
-
-            public Data getData() {
-                return data;
-            }
-
-            public void setData(Data data) {
-                this.data = data;
-            }
-
-            public Flow getFlow() {
-                return flow;
-            }
-
-            public void setFlow(Flow flow) {
-                this.flow = flow;
-            }
-        }
-
         public static class External {
 
             private ExternalSourceKafka kafka = new ExternalSourceKafka();
@@ -325,25 +360,25 @@ public class NambConfigSchema extends ConfigSchema {
             }
         }
 
-        private Synthetic synthetic = new Synthetic();
-        private External external = new External();
-
-        public External getExternal() {
-            return external;
-        }
-
-        public void setExternal(External external) {
-            this.external = external;
-        }
-
-        public Synthetic getSynthetic() {
-            return synthetic;
-        }
-
-        public void setSynthetic(Synthetic synthetic) {
-            this.synthetic = synthetic;
-        }
-    }
+	        private Synthetic synthetic = new Synthetic();
+	        private External external = new External();
+	
+	        public External getExternal() {
+	            return external;
+	        }
+	
+	        public void setExternal(External external) {
+	            this.external = external;
+	        }
+	
+	        public NambConfigSchema.Synthetic getSynthetic() {
+	            return synthetic;
+	        }
+	
+	        public void setSynthetic(NambConfigSchema.Synthetic synthetic) {
+	            this.synthetic = synthetic;
+	        }
+	    }
 
     public static class Tasks {
         private String name = null;
@@ -355,10 +390,12 @@ public class NambConfigSchema extends ConfigSchema {
         private boolean reliability = Config.WF_MESSAGE_RELIABILITY;
         private Windowing windowing = new Windowing();
         private Data data = new Data();
-        private int resizeddata = 0;
         private Flow flow = new Flow();
-        private String[] parents = null;
+        private int resizeddata = 0;
+        
         private ExternalSourceKafka kafka = new ExternalSourceKafka();
+        
+        private String[] parents = null;
 
         public String getName() {
             return name;
@@ -478,11 +515,12 @@ public class NambConfigSchema extends ConfigSchema {
         }
     }
 
-    private DataFlow workflow = new DataFlow();
+
+	private WorkFlow workflow = new WorkFlow();
     private DataStream datastream = new DataStream();
     private Pipeline pipeline = new Pipeline();
 
-    public void setWorkflow(DataFlow workflow){
+    public void setWorkflow(WorkFlow workflow){
         this.workflow = workflow;
     }
     public void setDatastream(DataStream datastream){
@@ -490,7 +528,7 @@ public class NambConfigSchema extends ConfigSchema {
     }
     public void setPipeline(Pipeline pipeline){ this.pipeline = pipeline; }
 
-    public DataFlow getWorkflow(){
+    public WorkFlow getWorkflow(){
         return this.workflow;
     }
     public DataStream getDatastream(){

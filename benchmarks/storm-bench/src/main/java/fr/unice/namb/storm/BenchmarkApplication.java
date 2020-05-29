@@ -14,8 +14,6 @@ import org.apache.storm.topology.TopologyBuilder;
 
 public class BenchmarkApplication {
 
-
-
     private static TopologyBuilder buildBenchmarkTopology(NambConfigSchema conf, StormConfigSchema stormConf) throws Exception{
 
         // Generating app builder

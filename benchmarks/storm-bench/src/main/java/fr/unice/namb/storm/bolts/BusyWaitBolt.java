@@ -64,15 +64,13 @@ public class BusyWaitBolt extends BaseRichBolt {
         // simulate processing load
         for(long i = 0; i < this._cycles; i++);
 
-        Long ts = 0L;
+        Long ts = System.currentTimeMillis();
         if(this._filtering > 0){
             if (this._rand.nextInt(Config.WF_FILTERING_PRECISION) <= this._filtering * Config.WF_FILTERING_PRECISION) {
-                ts = System.currentTimeMillis();
                 _collector.emit(new Values(payload, id, sourceCount, ts));
             }
         }
         else {
-            ts = System.currentTimeMillis();
             _collector.emit(new Values(payload, id, sourceCount, ts));
         }
 
