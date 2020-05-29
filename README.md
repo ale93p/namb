@@ -71,3 +71,5 @@ application for Data Stream Processing Systems (DSP).
 ## Publications
 
 [[pagliari2019workflow](https://hal.archives-ouvertes.fr/hal-02371215/)] A. Pagliari, F. Huet, G. Urvoy-Keller, "Towards a High-Level Description for Generating Stream Processing Benchmark Applications", IEEE BigData, 3rd IEEE BPOD Workshop, 2019
+
+[[pagliari2020namb](https://hal.archives-ouvertes.fr/hal-02483008v1)] A. Pagliari, F. Huet, G. Urvoy-Keller, "NAMB: A Quick and Flexible Stream Processing Application Prototype Generator", IEEE/ACM CCGrid 2020
