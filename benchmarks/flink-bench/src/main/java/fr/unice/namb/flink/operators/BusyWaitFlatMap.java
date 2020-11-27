@@ -45,9 +45,6 @@ public class BusyWaitFlatMap extends RichFlatMapFunction<Tuple4<String, String, 
     @Override
     public void flatMap(Tuple4<String, String, Long, Long> in, Collector<Tuple4<String, String, Long, Long>> out){
 
-
-
-
         String nextValue = in.f0;
         String tuple_id = in.f1;
         long sourceCount = in.f2;

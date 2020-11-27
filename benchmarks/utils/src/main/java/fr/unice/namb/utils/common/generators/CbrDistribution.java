@@ -10,7 +10,8 @@ public class CbrDistribution extends StreamDistribution {
 
 	@Override
 	public double getInterMessageTime() {
-		return 1000/this.rate;
+		if(this.rate > 0) return 1000/this.rate;
+		else return 0;
 	}
 
 }

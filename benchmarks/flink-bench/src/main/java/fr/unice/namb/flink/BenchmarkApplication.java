@@ -46,7 +46,7 @@ public class BenchmarkApplication {
             StreamExecutionEnvironment env = buildBenchmarkEnvironment(nambConf, flinkConf);
 
             if (env != null){
-
+                System.out.println("Executing Flink!");
                 String executionName = "namb_bench_" + System.currentTimeMillis();
                 env.execute(executionName);
             }
