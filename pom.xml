@@ -15,7 +15,7 @@
         <!-- Dependencies versions -->
         <jackson.version>2.9.4</jackson.version>
         <javatuples.version>1.2</javatuples.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <!-- Platforms API versions -->
         <flink.version>1.7.1</flink.version>
         <heron.version>0.17.4</heron.version>
